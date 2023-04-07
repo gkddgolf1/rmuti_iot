@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "54519034830",
+    "firebase_url": "https://projectgreenhouse-6f492-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "projectgreenhouse-6f492",
+    "storage_bucket": "projectgreenhouse-6f492.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:54519034830:android:8547f42c9cf3903c94f19f",
+        "android_client_info": {
+          "package_name": "com.example.rmuti_iot"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "54519034830-6okkhqufckk7vtocq80t4n9dq402ig90.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBRTkK1mjO90zTCQSpKSts562hfpUwl2gk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "54519034830-6okkhqufckk7vtocq80t4n9dq402ig90.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
