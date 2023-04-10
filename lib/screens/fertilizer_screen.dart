@@ -307,11 +307,24 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                               lineWidth: 14,
                               percent: wheelN,
                               progressColor: Colors.indigo,
-                              center: Text(
-                                "${esp32.rs489.n}%",
-                                style: const TextStyle(
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.bold,
+                              center: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 22),
+                                child: ListTile(
+                                  title: Text(
+                                    "${esp32.rs489.n}",
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  subtitle: const Text(
+                                    "mg/kg",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -335,11 +348,24 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                               lineWidth: 14,
                               percent: wheelP,
                               progressColor: Colors.indigo,
-                              center: Text(
-                                "${esp32.rs489.p}%",
-                                style: const TextStyle(
-                                  fontSize: 32,
-                                  fontWeight: FontWeight.bold,
+                              center: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 22),
+                                child: ListTile(
+                                  title: Text(
+                                    "${esp32.rs489.p}",
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  subtitle: const Text(
+                                    "mg/kg",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -361,11 +387,23 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                           lineWidth: 14,
                           percent: wheelK,
                           progressColor: Colors.indigo,
-                          center: Text(
-                            "${esp32.rs489.k}%",
-                            style: const TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
+                          center: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 22),
+                            child: ListTile(
+                              title: Text(
+                                "${esp32.rs489.k}",
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              subtitle: const Text(
+                                "mg/kg",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -678,7 +716,8 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                       int minute = timestop.minute;
 
                                       databaseReference
-                                          .child('ESP32/setControl/PUMP/setTimeStop/hour')
+                                          .child(
+                                              'ESP32/setControl/PUMP/setTimeStop/hour')
                                           .set(hour);
                                       databaseReference
                                           .child(
