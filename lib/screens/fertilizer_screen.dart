@@ -113,15 +113,15 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
 //ฟังก์ชันความสมดุลแสดง Text ตามค่าที N
   String displayTextN(Esp32 esp32) {
     String textToDisplay = '';
-    if (esp32.rs489.n <= 9) {
+    if (esp32.rs485.n <= 9) {
       textToDisplay = "ต่ำมาก";
-    } else if (esp32.rs489.n >= 10 && esp32.rs489.n <= 100) {
+    } else if (esp32.rs485.n >= 10 && esp32.rs485.n <= 100) {
       textToDisplay = "ต่ำ";
-    } else if (esp32.rs489.n >= 110 && esp32.rs489.n <= 200) {
+    } else if (esp32.rs485.n >= 110 && esp32.rs485.n <= 200) {
       textToDisplay = "ปานกลาง";
-    } else if (esp32.rs489.n >= 210 && esp32.rs489.n <= 300) {
+    } else if (esp32.rs485.n >= 210 && esp32.rs485.n <= 300) {
       textToDisplay = "สูง";
-    } else if (esp32.rs489.n >= 310 && esp32.rs489.n <= 500) {
+    } else if (esp32.rs485.n >= 310 && esp32.rs485.n <= 500) {
       textToDisplay = "สูงมาก";
     }
     return textToDisplay;
@@ -130,15 +130,15 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
   //ฟังก์ชันความสมดุลแสดง Text ตามค่าที P
   String displayTextP(Esp32 esp32) {
     String textToDisplay = '';
-    if (esp32.rs489.n <= 9) {
+    if (esp32.rs485.n <= 9) {
       textToDisplay = "ต่ำมาก";
-    } else if (esp32.rs489.n >= 10 && esp32.rs489.n <= 39) {
+    } else if (esp32.rs485.n >= 10 && esp32.rs485.n <= 39) {
       textToDisplay = "ต่ำ";
-    } else if (esp32.rs489.n >= 40 && esp32.rs489.n <= 69) {
+    } else if (esp32.rs485.n >= 40 && esp32.rs485.n <= 69) {
       textToDisplay = "ปานกลาง";
-    } else if (esp32.rs489.n >= 70 && esp32.rs489.n <= 99) {
+    } else if (esp32.rs485.n >= 70 && esp32.rs485.n <= 99) {
       textToDisplay = "สูง";
-    } else if (esp32.rs489.n >= 100 && esp32.rs489.n <= 120) {
+    } else if (esp32.rs485.n >= 100 && esp32.rs485.n <= 120) {
       textToDisplay = "สูงมาก";
     }
     return textToDisplay;
@@ -147,11 +147,11 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
   //ฟังก์ชันความสมดุลแสดง Text ตามค่าที K
   String displayTextK(Esp32 esp32) {
     String textToDisplay = '';
-    if (esp32.rs489.n <= 39) {
+    if (esp32.rs485.n <= 39) {
       textToDisplay = "ต่ำ";
-    } else if (esp32.rs489.n >= 40 && esp32.rs489.n <= 79) {
+    } else if (esp32.rs485.n >= 40 && esp32.rs485.n <= 79) {
       textToDisplay = "ปานกลาง";
-    } else if (esp32.rs489.n >= 80 && esp32.rs489.n <= 120) {
+    } else if (esp32.rs485.n >= 80 && esp32.rs485.n <= 120) {
       textToDisplay = "สูง";
     }
     return textToDisplay;
@@ -207,9 +207,9 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
 
   Widget BuildFertilizer(Esp32 esp32) {
     // ประกาศตัวแปร wheel ขึ้นมาเพื่อเก็บไปเป็นค่าวงล้อ
-    double wheelN = esp32.rs489.n.toDouble();
-    double wheelP = esp32.rs489.p.toDouble();
-    double wheelK = esp32.rs489.k.toDouble();
+    double wheelN = esp32.rs485.n.toDouble();
+    double wheelP = esp32.rs485.p.toDouble();
+    double wheelK = esp32.rs485.k.toDouble();
     if (wheelN >= 1 && wheelN <= 100) {
       wheelN = wheelN / 100;
     } else if (wheelN > 100) {
@@ -309,10 +309,10 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                               progressColor: Colors.indigo,
                               center: Padding(
                                 padding:
-                                    const EdgeInsets.symmetric(horizontal: 22),
+                                    const EdgeInsets.symmetric(horizontal: 8),
                                 child: ListTile(
                                   title: Text(
-                                    "${esp32.rs489.n}",
+                                    "${esp32.rs485.n}",
                                     style: const TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
@@ -350,10 +350,10 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                               progressColor: Colors.indigo,
                               center: Padding(
                                 padding:
-                                    const EdgeInsets.symmetric(horizontal: 22),
+                                    const EdgeInsets.symmetric(horizontal: 8),
                                 child: ListTile(
                                   title: Text(
-                                    "${esp32.rs489.p}",
+                                    "${esp32.rs485.p}",
                                     style: const TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
@@ -388,10 +388,10 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                           percent: wheelK,
                           progressColor: Colors.indigo,
                           center: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 22),
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
                             child: ListTile(
                               title: Text(
-                                "${esp32.rs489.k}",
+                                "${esp32.rs485.k}",
                                 style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -551,7 +551,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                     // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
 
                                     databaseReference
-                                        .child('ESP32/setTime/npk')
+                                        .child('ESP32/setControl/setTimerMode/npk')
                                         .set(setTime);
                                   },
                                 ),

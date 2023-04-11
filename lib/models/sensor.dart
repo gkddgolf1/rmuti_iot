@@ -12,40 +12,40 @@ String esp32ToJson(Esp32 data) => json.encode(data.toJson());
 class Esp32 {
     Esp32({
         required this.bh1750,
-        required this.rs489,
+        required this.e18D80Nk,
+        required this.rs485,
         required this.rtc1307,
         required this.trTs,
         required this.setAutoMode,
         required this.setControl,
-        required this.setTime,
     });
 
     Bh1750 bh1750;
-    Rs489 rs489;
+    E18D80Nk e18D80Nk;
+    Rs485 rs485;
     Rtc1307 rtc1307;
     TrTs trTs;
-    Set setAutoMode;
+    SetMode setAutoMode;
     SetControl setControl;
-    Set setTime;
 
     factory Esp32.fromJson(Map<String, dynamic> json) => Esp32(
         bh1750: Bh1750.fromJson(json["BH1750"]),
-        rs489: Rs489.fromJson(json["RS489"]),
+        e18D80Nk: E18D80Nk.fromJson(json["E18-D80NK"]),
+        rs485: Rs485.fromJson(json["RS485"]),
         rtc1307: Rtc1307.fromJson(json["RTC1307"]),
         trTs: TrTs.fromJson(json["TrTs"]),
-        setAutoMode: Set.fromJson(json["setAutoMode"]),
+        setAutoMode: SetMode.fromJson(json["setAutoMode"]),
         setControl: SetControl.fromJson(json["setControl"]),
-        setTime: Set.fromJson(json["setTime"]),
     );
 
     Map<String, dynamic> toJson() => {
         "BH1750": bh1750.toJson(),
-        "RS489": rs489.toJson(),
+        "E18-D80NK": e18D80Nk.toJson(),
+        "RS485": rs485.toJson(),
         "RTC1307": rtc1307.toJson(),
         "TrTs": trTs.toJson(),
         "setAutoMode": setAutoMode.toJson(),
         "setControl": setControl.toJson(),
-        "setTime": setTime.toJson(),
     };
 }
 
@@ -65,8 +65,24 @@ class Bh1750 {
     };
 }
 
-class Rs489 {
-    Rs489({
+class E18D80Nk {
+    E18D80Nk({
+        required this.val,
+    });
+
+    int val;
+
+    factory E18D80Nk.fromJson(Map<String, dynamic> json) => E18D80Nk(
+        val: json["val"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "val": val,
+    };
+}
+
+class Rs485 {
+    Rs485({
         required this.k,
         required this.n,
         required this.p,
@@ -76,7 +92,7 @@ class Rs489 {
     int n;
     int p;
 
-    factory Rs489.fromJson(Map<String, dynamic> json) => Rs489(
+    factory Rs485.fromJson(Map<String, dynamic> json) => Rs485(
         k: json["K"],
         n: json["N"],
         p: json["P"],
@@ -109,8 +125,8 @@ class Rtc1307 {
     };
 }
 
-class Set {
-    Set({
+class SetMode {
+    SetMode({
         required this.motor,
         required this.npk,
         required this.pump,
@@ -120,7 +136,7 @@ class Set {
     int npk;
     int pump;
 
-    factory Set.fromJson(Map<String, dynamic> json) => Set(
+    factory SetMode.fromJson(Map<String, dynamic> json) => SetMode(
         motor: json["motor"],
         npk: json["npk"],
         pump: json["pump"],
@@ -138,22 +154,26 @@ class SetControl {
         required this.motor,
         required this.pump,
         required this.setDateTime,
+        required this.setTimerMode,
     });
 
     Motor motor;
     Pump pump;
     SetDateTime setDateTime;
+    SetMode setTimerMode;
 
     factory SetControl.fromJson(Map<String, dynamic> json) => SetControl(
         motor: Motor.fromJson(json["MOTOR"]),
         pump: Pump.fromJson(json["PUMP"]),
         setDateTime: SetDateTime.fromJson(json["setDateTime"]),
+        setTimerMode: SetMode.fromJson(json["setTimerMode"]),
     );
 
     Map<String, dynamic> toJson() => {
         "MOTOR": motor.toJson(),
         "PUMP": pump.toJson(),
         "setDateTime": setDateTime.toJson(),
+        "setTimerMode": setTimerMode.toJson(),
     };
 }
 

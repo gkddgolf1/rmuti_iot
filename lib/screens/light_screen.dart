@@ -503,7 +503,7 @@ class _LightScreenState extends State<LightScreen> {
                                     // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
 
                                     databaseReference
-                                        .child('ESP32/setTime/motor')
+                                        .child('ESP32/setControl/setTimerMode/motor')
                                         .set(setTime);
                                   },
                                 ),
