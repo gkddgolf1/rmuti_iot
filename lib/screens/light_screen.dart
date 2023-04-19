@@ -26,7 +26,6 @@ class _LightScreenState extends State<LightScreen> {
   bool _fullDay = false;
   bool _statusAuto = false;
   bool isSwitched = false;
-  String _selectedButton = "";
 
   bool _isLeftPressed = false;
   bool _isRightPressed = false;
