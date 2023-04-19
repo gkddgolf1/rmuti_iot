@@ -16,7 +16,6 @@ class Esp32 {
         required this.rs485,
         required this.rtc1307,
         required this.trTs,
-        required this.setAutoMode,
         required this.setControl,
     });
 
@@ -25,7 +24,6 @@ class Esp32 {
     Rs485 rs485;
     Rtc1307 rtc1307;
     TrTs trTs;
-    SetMode setAutoMode;
     SetControl setControl;
 
     factory Esp32.fromJson(Map<String, dynamic> json) => Esp32(
@@ -34,7 +32,6 @@ class Esp32 {
         rs485: Rs485.fromJson(json["RS485"]),
         rtc1307: Rtc1307.fromJson(json["RTC1307"]),
         trTs: TrTs.fromJson(json["TrTs"]),
-        setAutoMode: SetMode.fromJson(json["setAutoMode"]),
         setControl: SetControl.fromJson(json["setControl"]),
     );
 
@@ -44,7 +41,6 @@ class Esp32 {
         "RS485": rs485.toJson(),
         "RTC1307": rtc1307.toJson(),
         "TrTs": trTs.toJson(),
-        "setAutoMode": setAutoMode.toJson(),
         "setControl": setControl.toJson(),
     };
 }
@@ -125,46 +121,25 @@ class Rtc1307 {
     };
 }
 
-class SetMode {
-    SetMode({
-        required this.motor,
-        required this.npk,
-        required this.pump,
-    });
-
-    int motor;
-    int npk;
-    int pump;
-
-    factory SetMode.fromJson(Map<String, dynamic> json) => SetMode(
-        motor: json["motor"],
-        npk: json["npk"],
-        pump: json["pump"],
-    );
-
-    Map<String, dynamic> toJson() => {
-        "motor": motor,
-        "npk": npk,
-        "pump": pump,
-    };
-}
-
 class SetControl {
     SetControl({
         required this.motor,
         required this.pump,
+        required this.setAutoMode,
         required this.setDateTime,
         required this.setTimerMode,
     });
 
     Motor motor;
     Pump pump;
+    SetMode setAutoMode;
     SetDateTime setDateTime;
     SetMode setTimerMode;
 
     factory SetControl.fromJson(Map<String, dynamic> json) => SetControl(
         motor: Motor.fromJson(json["MOTOR"]),
         pump: Pump.fromJson(json["PUMP"]),
+        setAutoMode: SetMode.fromJson(json["setAutoMode"]),
         setDateTime: SetDateTime.fromJson(json["setDateTime"]),
         setTimerMode: SetMode.fromJson(json["setTimerMode"]),
     );
@@ -172,6 +147,7 @@ class SetControl {
     Map<String, dynamic> toJson() => {
         "MOTOR": motor.toJson(),
         "PUMP": pump.toJson(),
+        "setAutoMode": setAutoMode.toJson(),
         "setDateTime": setDateTime.toJson(),
         "setTimerMode": setTimerMode.toJson(),
     };
@@ -181,18 +157,21 @@ class Motor {
     Motor({
         required this.left,
         required this.right,
+        required this.setAuto,
         required this.setTimeStart,
         required this.setTimeStop,
     });
 
     int left;
     int right;
+    SetAuto setAuto;
     SetTimeSt setTimeStart;
     SetTimeSt setTimeStop;
 
     factory Motor.fromJson(Map<String, dynamic> json) => Motor(
         left: json["left"],
         right: json["right"],
+        setAuto: SetAuto.fromJson(json["setAuto"]),
         setTimeStart: SetTimeSt.fromJson(json["setTimeStart"]),
         setTimeStop: SetTimeSt.fromJson(json["setTimeStop"]),
     );
@@ -200,8 +179,29 @@ class Motor {
     Map<String, dynamic> toJson() => {
         "left": left,
         "right": right,
+        "setAuto": setAuto.toJson(),
         "setTimeStart": setTimeStart.toJson(),
         "setTimeStop": setTimeStop.toJson(),
+    };
+}
+
+class SetAuto {
+    SetAuto({
+        required this.fullDay,
+        required this.halfDay,
+    });
+
+    int fullDay;
+    int halfDay;
+
+    factory SetAuto.fromJson(Map<String, dynamic> json) => SetAuto(
+        fullDay: json["fullDay"],
+        halfDay: json["halfDay"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "fullDay": fullDay,
+        "halfDay": halfDay,
     };
 }
 
@@ -242,6 +242,30 @@ class Pump {
     Map<String, dynamic> toJson() => {
         "setTimeStart": setTimeStart.toJson(),
         "setTimeStop": setTimeStop.toJson(),
+    };
+}
+
+class SetMode {
+    SetMode({
+        required this.motor,
+        required this.npk,
+        required this.pump,
+    });
+
+    int motor;
+    int npk;
+    int pump;
+
+    factory SetMode.fromJson(Map<String, dynamic> json) => SetMode(
+        motor: json["motor"],
+        npk: json["npk"],
+        pump: json["pump"],
+    );
+
+    Map<String, dynamic> toJson() => {
+        "motor": motor,
+        "npk": npk,
+        "pump": pump,
     };
 }
 

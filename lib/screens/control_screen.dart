@@ -91,7 +91,8 @@ class _SettingScreenState extends State<SettingScreen> {
                       bottom: 0,
                       child: Container(
                         width: 200,
-                        color: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.5),
+                        color: const Color.fromARGB(255, 255, 255, 255)
+                            .withOpacity(0.5),
                         child: const Text(
                           'รอสักครู่...',
                           style: TextStyle(
@@ -218,13 +219,16 @@ class _SettingScreenState extends State<SettingScreen> {
                                           int month = newDate.month;
                                           int year = newDate.year;
                                           databaseReference
-                                              .child('ESP32/setControl/setDateTime')
+                                              .child(
+                                                  'ESP32/setControl/setDateTime')
                                               .set(day);
                                           databaseReference
-                                              .child('ESP32/setControl/setDateTime')
+                                              .child(
+                                                  'ESP32/setControl/setDateTime')
                                               .set(month);
                                           databaseReference
-                                              .child('ESP32/setControl/setDateTime')
+                                              .child(
+                                                  'ESP32/setControl/setDateTime')
                                               .set(year);
                                         },
                                       ),
@@ -282,10 +286,12 @@ class _SettingScreenState extends State<SettingScreen> {
                                           int hour = newTime.hour;
                                           int minute = newTime.minute;
                                           databaseReference
-                                              .child('ESP32/setControl/setDateTime')
+                                              .child(
+                                                  'ESP32/setControl/setDateTime')
                                               .set(hour);
                                           databaseReference
-                                              .child('ESP32/setControl/setDateTime')
+                                              .child(
+                                                  'ESP32/setControl/setDateTime')
                                               .set(minute);
                                         },
                                       ),
@@ -342,7 +348,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                   Text(
-                                    '${esp32.setControl.pump.setTimeStart.hour} : ${esp32.setControl.pump.setTimeStart.minute}',
+                                    '${esp32.setControl.pump.setTimeStart.hour} : ${esp32.setControl.pump.setTimeStart.minute} น.',
                                     style: const TextStyle(
                                       fontSize: 20,
                                     ),
@@ -364,7 +370,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  '${esp32.setControl.pump.setTimeStop.hour} : ${esp32.setControl.pump.setTimeStop.hour}',
+                                  '${esp32.setControl.pump.setTimeStop.hour} : ${esp32.setControl.pump.setTimeStop.hour} น.',
                                   style: const TextStyle(
                                     fontSize: 20,
                                   ),
@@ -407,7 +413,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                   Text(
-                                    '${esp32.setControl.pump.setTimeStart.hour} : ${esp32.setControl.pump.setTimeStart.minute}',
+                                    '${esp32.setControl.pump.setTimeStart.hour} : ${esp32.setControl.pump.setTimeStart.minute} น.',
                                     style: const TextStyle(
                                       fontSize: 20,
                                     ),
@@ -429,7 +435,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  '${esp32.setControl.pump.setTimeStart.hour} : ${esp32.setControl.pump.setTimeStart.hour}',
+                                  '${esp32.setControl.pump.setTimeStart.hour} : ${esp32.setControl.pump.setTimeStart.hour} น.',
                                   style: const TextStyle(
                                     fontSize: 20,
                                   ),
@@ -473,7 +479,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                     ),
                                   ),
                                   Text(
-                                    '${esp32.setControl.motor.setTimeStart.hour} : ${esp32.setControl.motor.setTimeStart.minute}',
+                                    '${esp32.setControl.motor.setTimeStart.hour} : ${esp32.setControl.motor.setTimeStart.minute} น.',
                                     style: const TextStyle(
                                       fontSize: 20,
                                     ),
@@ -496,7 +502,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                   ),
                                 ),
                                 Text(
-                                  '${esp32.setControl.motor.setTimeStop.hour} : ${esp32.setControl.motor.setTimeStop.minute}',
+                                  '${esp32.setControl.motor.setTimeStop.hour} : ${esp32.setControl.motor.setTimeStop.minute} น.',
                                   style: const TextStyle(
                                     fontSize: 20,
                                   ),

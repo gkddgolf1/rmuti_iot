@@ -55,14 +55,14 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
         _status = (status == 1);
       });
     });
-    databaseReference.child('ESP32/setAutoMode/pump').onValue.listen((event) {
+    databaseReference.child('ESP32/setControl/setAutoMode/pump').onValue.listen((event) {
       int statusAuto = (event.snapshot.value as int);
       setState(() {
         _statusAuto = (statusAuto == 1);
       });
     });
     // Listen for changes to the Firebase database
-    databaseReference.child('ESP32/setTime/motor').onValue.listen((event) {
+    databaseReference.child('ESP32/setControl/setTimerMode/pump').onValue.listen((event) {
       int settime = (event.snapshot.value as int);
       setState(() {
         isSwitched = (settime == 1);
@@ -433,7 +433,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                     // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
 
                                     databaseReference
-                                        .child('ESP32/setAutoMode/motor')
+                                        .child('ESP32/setControl/setAutoMode/motor')
                                         .set(statusAuto);
                                   },
                                 ),
@@ -485,7 +485,8 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                     // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
 
                                     databaseReference
-                                        .child('ESP32/setControl/setTimerMode/pump')
+                                        .child(
+                                            'ESP32/setControl/setTimerMode/pump')
                                         .set(setTime);
                                   },
                                 ),

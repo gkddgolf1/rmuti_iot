@@ -48,14 +48,14 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
     });
 
     // Listen for changes to the Firebase database
-    databaseReference.child('ESP32/setAutoMode/npk').onValue.listen((event) {
+    databaseReference.child('ESP32/setControl/setAutoMode/npk').onValue.listen((event) {
       int statusAuto = (event.snapshot.value as int);
       setState(() {
         _statusAuto = (statusAuto == 1);
       });
     });
     // Listen for changes to the Firebase database
-    databaseReference.child('ESP32/setTime/motor').onValue.listen((event) {
+    databaseReference.child('ESP32/setControl/setTimerMode/pump').onValue.listen((event) {
       int settime = (event.snapshot.value as int);
       setState(() {
         isSwitched = (settime == 1);
@@ -307,24 +307,23 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                               lineWidth: 14,
                               percent: wheelN,
                               progressColor: Colors.indigo,
-                              center: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
-                                child: ListTile(
-                                  title: Text(
-                                    "${esp32.rs485.n}",
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                              center: RichText(
+                                text: TextSpan(
+                                  text: " ${esp32.rs485.n}\n",
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
                                   ),
-                                  subtitle: const Text(
-                                    "mg/kg",
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
+                                  children: const <TextSpan>[
+                                    TextSpan(
+                                      text: "mg/kg",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.normal,
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -348,24 +347,23 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                               lineWidth: 14,
                               percent: wheelP,
                               progressColor: Colors.indigo,
-                              center: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8),
-                                child: ListTile(
-                                  title: Text(
-                                    "${esp32.rs485.p}",
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                              center: RichText(
+                                text: TextSpan(
+                                  text: " ${esp32.rs485.p}\n",
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
                                   ),
-                                  subtitle: const Text(
-                                    "mg/kg",
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
+                                  children: const <TextSpan>[
+                                    TextSpan(
+                                      text: "mg/kg",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.normal,
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ),
                               ),
                             ),
@@ -388,23 +386,26 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                           percent: wheelK,
                           progressColor: Colors.indigo,
                           center: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: ListTile(
-                              title: Text(
-                                "${esp32.rs485.k}",
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
+                            padding: const EdgeInsets.all(22),
+                            child: RichText(
+                                text: TextSpan(
+                                  text: " ${esp32.rs485.k}\n",
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                  children: const <TextSpan>[
+                                    TextSpan(
+                                      text: "mg/kg",
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.normal,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              subtitle: const Text(
-                                "mg/kg",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
                           ),
                         ),
                         const Text(
@@ -499,7 +500,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                     int statusAuto = _statusAuto ? 1 : 0;
                                     // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
                                     databaseReference
-                                        .child('ESP32/setAutoMode/npk')
+                                        .child('ESP32/setControl/setAutoMode/npk')
                                         .set(statusAuto);
                                   },
                                 ),
@@ -551,7 +552,8 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                     // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
 
                                     databaseReference
-                                        .child('ESP32/setControl/setTimerMode/npk')
+                                        .child(
+                                            'ESP32/setControl/setTimerMode/npk')
                                         .set(setTime);
                                   },
                                 ),

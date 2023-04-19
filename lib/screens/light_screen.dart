@@ -22,8 +22,11 @@ class _LightScreenState extends State<LightScreen> {
   final StreamController<Esp32> _streamController = StreamController();
   final databaseReference = FirebaseDatabase.instance.ref();
 
+  bool _halfDay = false;
+  bool _fullDay = false;
   bool _statusAuto = false;
   bool isSwitched = false;
+  String _selectedButton = "";
 
   bool _isLeftPressed = false;
   bool _isRightPressed = false;
@@ -35,35 +38,79 @@ class _LightScreenState extends State<LightScreen> {
   DateTime datestop = DateTime(22, 8, 3);
   DateTime timestop = DateTime(15, 55);
 
-  @override
+  /* @override
   void dispose() {
     super.dispose();
     _streamController.close();
-  }
+  } */
 
   @override
   void initState() {
     super.initState();
     _loadSwitchState();
-
-    Timer.periodic(const Duration(seconds: 3), (timer) {
-      getData();
-    });
+    getData();
+    /* Timer.periodic(const Duration(seconds: 3), (timer) {
+      
+    }); */
 
     // Listen for changes to the Firebase database
-    databaseReference.child('ESP32/setAutoMode/motor').onValue.listen((event) {
+    databaseReference
+        .child('ESP32/setControl/setAutoMode/motor')
+        .onValue
+        .listen((event) {
       int statusAuto = (event.snapshot.value as int);
       setState(() {
         _statusAuto = (statusAuto == 1);
       });
     });
     // Listen for changes to the Firebase database
-    databaseReference.child('ESP32/setTime/motor').onValue.listen((event) {
+    databaseReference
+        .child('ESP32/setControl/setTimerMode/motor')
+        .onValue
+        .listen((event) {
       int settime = (event.snapshot.value as int);
       setState(() {
         isSwitched = (settime == 1);
       });
     });
+    // Subscribe to the Firebase Realtime Database reference
+    databaseReference
+        .child('ESP32/setControl/MOTOR/setAuto/halfDay')
+        .onValue
+        .listen(
+      (event) {
+        // Retrieve the data from the event snapshot
+        int halfday = (event.snapshot.value as int);
+
+        // Update the state of the app accordingly
+        setState(() {
+          if (halfday == 1000) {
+            _halfDay = true;
+          } else {
+            _halfDay = false;
+          }
+        });
+      },
+    );
+    // Subscribe to the Firebase Realtime Database reference
+    databaseReference
+        .child('ESP32/setControl/MOTOR/setAuto/fullDay')
+        .onValue
+        .listen(
+      (event) {
+        // Retrieve the data from the event snapshot
+        int fullday = (event.snapshot.value as int);
+
+        // Update the state of the app accordingly
+        setState(() {
+          if (fullday == 1500) {
+            _fullDay = true;
+          } else {
+            _fullDay = false;
+          }
+        });
+      },
+    );
   }
 
   Future<void> getData() async {
@@ -83,7 +130,8 @@ class _LightScreenState extends State<LightScreen> {
     setState(() {
       _statusAuto = prefs.getBool('_statusAuto') ?? false;
       isSwitched = prefs.getBool('isSwitched') ?? false;
-      
+      _halfDay = prefs.getBool('_halfDay') ?? false;
+      _fullDay = prefs.getBool('_fullDay') ?? false;
     });
   }
 
@@ -201,8 +249,7 @@ class _LightScreenState extends State<LightScreen> {
     if (wheel >= 1 && wheel <= 100) {
       wheel = wheel / 100;
     } else if (wheel > 100) {
-      wheel = 100;
-      wheel = wheel / 100;
+      wheel = wheel / 1000;
     }
 
     //ขนาด TextField
@@ -273,11 +320,23 @@ class _LightScreenState extends State<LightScreen> {
                           progressColor: Colors.deepOrange[300],
                           backgroundColor: Colors.deepPurple.shade100,
                           circularStrokeCap: CircularStrokeCap.round,
-                          center: Text(
-                            "${esp32.bh1750.lux}%",
-                            style: const TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
+                          center: RichText(
+                            text: TextSpan(
+                              text: "${esp32.bh1750.lux}\n",
+                              style: const TextStyle(
+                                fontSize: 35,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                              children: const <TextSpan>[
+                                TextSpan(
+                                  text: "   Lux",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.normal,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -314,9 +373,9 @@ class _LightScreenState extends State<LightScreen> {
                             ),
                           ],
                         ),
-                        Text(
+                        const Text(
                           "สถานะม่านบังแสง: เปิด",
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           ),
@@ -407,7 +466,7 @@ class _LightScreenState extends State<LightScreen> {
                             ],
                           ),
                           const SizedBox(height: 20),
-                          Row(
+                          Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Padding(
@@ -433,27 +492,113 @@ class _LightScreenState extends State<LightScreen> {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: FlutterSwitch(
-                                  width: 100,
-                                  height: 40,
-                                  valueFontSize: 25,
-                                  toggleSize: 45.0,
-                                  value: _statusAuto,
-                                  borderRadius: 30.0,
-                                  padding: 8.0,
-                                  showOnOff: true,
-                                  onToggle: (value) {
-                                    setState(() {
-                                      _statusAuto = value;
-                                      _saveSwitchState('_statusAuto', value);
-                                    });
-                                    int statusAuto = _statusAuto ? 1 : 0;
-                                    // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
-                                    databaseReference
-                                        .child('ESP32/setAutoMode/motor')
-                                        .set(statusAuto);
-                                  },
+                                padding:
+                                    const EdgeInsets.only(left: 20, top: 10),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            if (_statusAuto == false) {
+                                              setState(() {
+                                                _halfDay = true;
+                                                _saveSwitchState(
+                                                    '_halfDay', true);
+                                              });
+                                              databaseReference
+                                                  .child(
+                                                      'ESP32/setControl/MOTOR/setAuto/fullDay')
+                                                  .set(0);
+                                              databaseReference
+                                                  .child(
+                                                      'ESP32/setControl/MOTOR/setAuto/halfDay')
+                                                  .set(1000);
+                                            }
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: _halfDay
+                                                ? Colors.blue
+                                                : Colors.grey,
+                                          ),
+                                          child: const Text('ครึ่งวัน'),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            if (_statusAuto == false) {
+                                              setState(() {
+                                                _fullDay = true;
+                                                _saveSwitchState(
+                                                    '_fullDay', true);
+                                              });
+                                              databaseReference
+                                                  .child(
+                                                      'ESP32/setControl/MOTOR/setAuto/halfDay')
+                                                  .set(0);
+                                              databaseReference
+                                                  .child(
+                                                      'ESP32/setControl/MOTOR/setAuto/fullDay')
+                                                  .set(1500);
+                                            }
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: _fullDay
+                                                ? Colors.blue
+                                                : Colors.grey,
+                                          ),
+                                          child: const Text('เต็มวัน'),
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            FlutterSwitch(
+                                              width: 100,
+                                              height: 40,
+                                              valueFontSize: 25,
+                                              toggleSize: 45.0,
+                                              value: _statusAuto,
+                                              borderRadius: 30.0,
+                                              padding: 8.0,
+                                              showOnOff: true,
+                                              onToggle: (value) {
+                                                if (_halfDay) {
+                                                  setState(() {
+                                                    _statusAuto = value;
+                                                    _saveSwitchState(
+                                                        '_statusAuto', value);
+                                                  });
+                                                  int statusAuto =
+                                                      _statusAuto ? 1 : 0;
+                                                  //send values back to Firebase to order watering
+                                                  databaseReference
+                                                      .child(
+                                                          'ESP32/setControl/setAutoMode/motor')
+                                                      .set(statusAuto);
+                                                } else if (_fullDay) {
+                                                  setState(() {
+                                                    _statusAuto = value;
+                                                    _saveSwitchState(
+                                                        '_statusAuto', value);
+                                                  });
+                                                  int statusAuto =
+                                                      _statusAuto ? 1 : 0;
+                                                  //send values back to Firebase to order watering
+                                                  databaseReference
+                                                      .child(
+                                                          'ESP32/setControl/setAutoMode/motor')
+                                                      .set(statusAuto);
+                                                }
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -500,10 +645,10 @@ class _LightScreenState extends State<LightScreen> {
                                       _saveSwitchState('isSwitched', value);
                                     });
                                     int setTime = isSwitched ? 1 : 0;
-                                    // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
 
                                     databaseReference
-                                        .child('ESP32/setControl/setTimerMode/motor')
+                                        .child(
+                                            'ESP32/setControl/setTimerMode/motor')
                                         .set(setTime);
                                   },
                                 ),
@@ -668,7 +813,8 @@ class _LightScreenState extends State<LightScreen> {
                                       int minute = timestop.minute;
 
                                       databaseReference
-                                          .child('ESP32/setControl/MOTOR/setTimeStop/hour')
+                                          .child(
+                                              'ESP32/setControl/MOTOR/setTimeStop/hour')
                                           .set(hour);
                                       databaseReference
                                           .child(
@@ -727,7 +873,7 @@ class TriangleButtonPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
-      ..color = isPressed ? Colors.blue : Colors.grey
+      ..color = isPressed ? Colors.deepOrange : Colors.grey
       ..style = PaintingStyle.fill;
 
     Path path = Path();
