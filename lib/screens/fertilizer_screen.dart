@@ -1,15 +1,10 @@
-import 'dart:async';
-import 'dart:convert';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
-import 'package:intl/intl.dart';
+
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-import 'package:rmuti_iot/models/sensor.dart';
 
 class FertilizerScreen extends StatefulWidget {
   const FertilizerScreen({super.key});
@@ -19,8 +14,12 @@ class FertilizerScreen extends StatefulWidget {
 }
 
 class _FertilizerScreenState extends State<FertilizerScreen> {
-  final StreamController<Esp32> _streamController = StreamController();
   final databaseReference = FirebaseDatabase.instance.ref();
+
+  var N = 0;
+  var P = 0;
+  var K = 0;
+  var _time = '';
 
   bool _statusAuto = false;
   bool isSwitched = false;
@@ -33,46 +32,70 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
   DateTime timestop = DateTime(15, 55);
 
   @override
-  void dispose() {
-    super.dispose();
-    _streamController.close();
-  }
-
-  @override
   void initState() {
     super.initState();
     _loadSwitchState();
 
-    Timer.periodic(const Duration(seconds: 3), (timer) {
-      getData();
-    });
-
     // Listen for changes to the Firebase database
-    databaseReference.child('ESP32/setControl/setAutoMode/npk').onValue.listen((event) {
+    databaseReference
+        .child('ESP32/setControl/setAutoMode/npk')
+        .onValue
+        .listen((event) {
       int statusAuto = (event.snapshot.value as int);
-      setState(() {
-        _statusAuto = (statusAuto == 1);
-      });
+      if (mounted) {
+        setState(() {
+          _statusAuto = (statusAuto == 1);
+        });
+      }
     });
     // Listen for changes to the Firebase database
-    databaseReference.child('ESP32/setControl/setTimerMode/pump').onValue.listen((event) {
+    databaseReference
+        .child('ESP32/setControl/setTimerMode/pump')
+        .onValue
+        .listen((event) {
       int settime = (event.snapshot.value as int);
-      setState(() {
-        isSwitched = (settime == 1);
-      });
+      if (mounted) {
+        setState(() {
+          isSwitched = (settime == 1);
+        });
+      }
     });
-  }
-
-  Future<void> getData() async {
-    var url = Uri.parse(
-        'https://projectgreenhouse-6f492-default-rtdb.asia-southeast1.firebasedatabase.app/ESP32.json');
-
-    final response = await http.get(url);
-    final databody = json.decode(response.body);
-
-    Esp32 esp32 = Esp32.fromJson(databody);
-
-    if (!_streamController.isClosed) _streamController.sink.add(esp32);
+    // RTC1307
+    databaseReference.child('ESP32/RTC1307/Time').onValue.listen((event) {
+      var time = event.snapshot.value;
+      if (mounted) {
+        setState(() {
+          _time = time.toString();
+        });
+      }
+    });
+    // RS485 == N
+    databaseReference.child('ESP32/RS485/N').onValue.listen((event) {
+      int n = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          N = n;
+        });
+      }
+    });
+    // RS485 == P
+    databaseReference.child('ESP32/RS485/P').onValue.listen((event) {
+      int p = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          P = p;
+        });
+      }
+    });
+    // RS485 == K
+    databaseReference.child('ESP32/RS485/K').onValue.listen((event) {
+      int k = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          K = k;
+        });
+      }
+    });
   }
 
   void _loadSwitchState() async {
@@ -111,47 +134,47 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
   }
 
 //ฟังก์ชันความสมดุลแสดง Text ตามค่าที N
-  String displayTextN(Esp32 esp32) {
+  String displayTextN() {
     String textToDisplay = '';
-    if (esp32.rs485.n <= 9) {
+    if (N <= 9) {
       textToDisplay = "ต่ำมาก";
-    } else if (esp32.rs485.n >= 10 && esp32.rs485.n <= 100) {
+    } else if (N >= 10 && N <= 100) {
       textToDisplay = "ต่ำ";
-    } else if (esp32.rs485.n >= 110 && esp32.rs485.n <= 200) {
+    } else if (N >= 110 && N <= 200) {
       textToDisplay = "ปานกลาง";
-    } else if (esp32.rs485.n >= 210 && esp32.rs485.n <= 300) {
+    } else if (N >= 210 && N <= 300) {
       textToDisplay = "สูง";
-    } else if (esp32.rs485.n >= 310 && esp32.rs485.n <= 500) {
+    } else if (N >= 310 && N <= 500) {
       textToDisplay = "สูงมาก";
     }
     return textToDisplay;
   }
 
   //ฟังก์ชันความสมดุลแสดง Text ตามค่าที P
-  String displayTextP(Esp32 esp32) {
+  String displayTextP() {
     String textToDisplay = '';
-    if (esp32.rs485.n <= 9) {
+    if (P <= 9) {
       textToDisplay = "ต่ำมาก";
-    } else if (esp32.rs485.n >= 10 && esp32.rs485.n <= 39) {
+    } else if (P >= 10 && P <= 39) {
       textToDisplay = "ต่ำ";
-    } else if (esp32.rs485.n >= 40 && esp32.rs485.n <= 69) {
+    } else if (P >= 40 && P <= 69) {
       textToDisplay = "ปานกลาง";
-    } else if (esp32.rs485.n >= 70 && esp32.rs485.n <= 99) {
+    } else if (P >= 70 && P <= 99) {
       textToDisplay = "สูง";
-    } else if (esp32.rs485.n >= 100 && esp32.rs485.n <= 120) {
+    } else if (P >= 100 && P <= 120) {
       textToDisplay = "สูงมาก";
     }
     return textToDisplay;
   }
 
   //ฟังก์ชันความสมดุลแสดง Text ตามค่าที K
-  String displayTextK(Esp32 esp32) {
+  String displayTextK() {
     String textToDisplay = '';
-    if (esp32.rs485.n <= 39) {
+    if (K <= 39) {
       textToDisplay = "ต่ำ";
-    } else if (esp32.rs485.n >= 40 && esp32.rs485.n <= 79) {
+    } else if (K >= 40 && K <= 79) {
       textToDisplay = "ปานกลาง";
-    } else if (esp32.rs485.n >= 80 && esp32.rs485.n <= 120) {
+    } else if (K >= 80 && K <= 120) {
       textToDisplay = "สูง";
     }
     return textToDisplay;
@@ -159,57 +182,10 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: StreamBuilder<Esp32>(
-          stream: _streamController.stream,
-          builder: (context, snapdata) {
-            switch (snapdata.connectionState) {
-              case ConnectionState.waiting:
-                return Stack(
-                  children: [
-                    const Image(
-                      image: AssetImage('images/greenhouse.png'),
-                      width: 200,
-                      height: 200,
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      child: Container(
-                        width: 200,
-                        color: const Color.fromARGB(255, 255, 255, 255)
-                            .withOpacity(0.5),
-                        child: const Text(
-                          'รอสักครู่...',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 0, 0, 0),
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              default:
-                if (snapdata.hasError) {
-                  return const Text('Please Wait....');
-                } else {
-                  return BuildFertilizer(snapdata.data!);
-                }
-            }
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget BuildFertilizer(Esp32 esp32) {
     // ประกาศตัวแปร wheel ขึ้นมาเพื่อเก็บไปเป็นค่าวงล้อ
-    double wheelN = esp32.rs485.n.toDouble();
-    double wheelP = esp32.rs485.p.toDouble();
-    double wheelK = esp32.rs485.k.toDouble();
+    double wheelN = N.toDouble();
+    double wheelP = P.toDouble();
+    double wheelK = K.toDouble();
     if (wheelN >= 1 && wheelN <= 100) {
       wheelN = wheelN / 100;
     } else if (wheelN > 100) {
@@ -234,7 +210,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
     screenWidth = MediaQuery.of(context).size.width;
 
     // เปลี่ยนสีข้อความสีส่งมาจากฟังก์ชัน displayText(esp32)   N
-    String message = displayTextN(esp32);
+    String message = displayTextN();
     Color textColor = Colors.black;
     if (message == "ต่ำมาก") {
       textColor = Colors.red;
@@ -283,7 +259,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                 children: [
                   GestureDetector(
                     child: Text(
-                      esp32.rtc1307.time,
+                      _time,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 25,
@@ -309,7 +285,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                               progressColor: Colors.indigo,
                               center: RichText(
                                 text: TextSpan(
-                                  text: " ${esp32.rs485.n}\n",
+                                  text: " $N\n",
                                   style: const TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
@@ -349,7 +325,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                               progressColor: Colors.indigo,
                               center: RichText(
                                 text: TextSpan(
-                                  text: " ${esp32.rs485.p}\n",
+                                  text: " $P\n",
                                   style: const TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
@@ -388,24 +364,24 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                           center: Padding(
                             padding: const EdgeInsets.all(22),
                             child: RichText(
-                                text: TextSpan(
-                                  text: " ${esp32.rs485.k}\n",
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                  children: const <TextSpan>[
-                                    TextSpan(
-                                      text: "mg/kg",
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ],
+                              text: TextSpan(
+                                text: " $K\n",
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
                                 ),
+                                children: const <TextSpan>[
+                                  TextSpan(
+                                    text: "mg/kg",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ],
                               ),
+                            ),
                           ),
                         ),
                         const Text(
@@ -500,7 +476,8 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                     int statusAuto = _statusAuto ? 1 : 0;
                                     // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
                                     databaseReference
-                                        .child('ESP32/setControl/setAutoMode/npk')
+                                        .child(
+                                            'ESP32/setControl/setAutoMode/npk')
                                         .set(statusAuto);
                                   },
                                 ),

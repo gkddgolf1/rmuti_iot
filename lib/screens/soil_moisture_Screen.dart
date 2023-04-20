@@ -1,14 +1,10 @@
-import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/cupertino.dart';
-import 'package:intl/intl.dart';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
-import 'package:http/http.dart' as http;
-import 'package:rmuti_iot/models/sensor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SoilMoistureScreen extends StatefulWidget {
@@ -19,8 +15,10 @@ class SoilMoistureScreen extends StatefulWidget {
 }
 
 class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
-  final StreamController<Esp32> _streamController = StreamController();
   final databaseReference = FirebaseDatabase.instance.ref();
+
+  var soilMoisture = 0;
+  var _time = '';
 
   bool _status = false;
   bool _statusAuto = false;
@@ -34,52 +32,60 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
   DateTime timestop = DateTime(15, 55);
 
   @override
-  void dispose() {
-    super.dispose();
-    _streamController.close();
-  }
-
-  @override
   void initState() {
     super.initState();
     _loadSwitchState();
 
-    Timer.periodic(const Duration(seconds: 3), (timer) {
-      getData();
-    });
-
     // Listen for changes to the Firebase database
     databaseReference.child('ESP32/TrTs/status').onValue.listen((event) {
       int status = (event.snapshot.value as int);
-      setState(() {
-        _status = (status == 1);
-      });
+      if (mounted) {
+        setState(() {
+          _status = (status == 1);
+        });
+      }
     });
-    databaseReference.child('ESP32/setControl/setAutoMode/pump').onValue.listen((event) {
+    databaseReference
+        .child('ESP32/setControl/setAutoMode/pump')
+        .onValue
+        .listen((event) {
       int statusAuto = (event.snapshot.value as int);
-      setState(() {
-        _statusAuto = (statusAuto == 1);
-      });
+      if (mounted) {
+        setState(() {
+          _statusAuto = (statusAuto == 1);
+        });
+      }
     });
     // Listen for changes to the Firebase database
-    databaseReference.child('ESP32/setControl/setTimerMode/pump').onValue.listen((event) {
+    databaseReference
+        .child('ESP32/setControl/setTimerMode/pump')
+        .onValue
+        .listen((event) {
       int settime = (event.snapshot.value as int);
-      setState(() {
-        isSwitched = (settime == 1);
-      });
+      if (mounted) {
+        setState(() {
+          isSwitched = (settime == 1);
+        });
+      }
     });
-  }
-
-  Future<void> getData() async {
-    final url = Uri.parse(
-      'https://projectgreenhouse-6f492-default-rtdb.asia-southeast1.firebasedatabase.app/ESP32.json',
-    );
-
-    final response = await http.get(url);
-    final databody = json.decode(response.body);
-
-    Esp32 esp32 = Esp32.fromJson(databody);
-    if (!_streamController.isClosed) _streamController.sink.add(esp32);
+    // BH1750
+    databaseReference.child('ESP32/TrTs/soil_moisture').onValue.listen((event) {
+      int soilmoisture = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          soilMoisture = soilmoisture;
+        });
+      }
+    });
+    // RTC1307
+    databaseReference.child('ESP32/RTC1307/Time').onValue.listen((event) {
+      var time = event.snapshot.value;
+      if (mounted) {
+        setState(() {
+          _time = time.toString();
+        });
+      }
+    });
   }
 
   void _loadSwitchState() async {
@@ -119,18 +125,17 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
   }
 
   //ฟังก์ชันความสมดุลแสดง Text ตามค่าที่กำหนด
-  String displayText(Esp32 esp32) {
+  String displayText() {
     String textToDisplay = '';
-    if (esp32.trTs.soilMoisture <= 39) {
+    if (soilMoisture <= 39) {
       textToDisplay = "สภาวะวิกฤติ";
-    } else if (esp32.trTs.soilMoisture >= 40 && esp32.trTs.soilMoisture <= 49) {
+    } else if (soilMoisture >= 40 && soilMoisture <= 49) {
       textToDisplay = "สภาวะดินแห้ง";
-    } else if (esp32.trTs.soilMoisture >= 50 && esp32.trTs.soilMoisture <= 69) {
+    } else if (soilMoisture >= 50 && soilMoisture <= 69) {
       textToDisplay = "สภาวะดินปกติ";
-    } else if (esp32.trTs.soilMoisture >= 70 && esp32.trTs.soilMoisture <= 79) {
+    } else if (soilMoisture >= 70 && soilMoisture <= 79) {
       textToDisplay = "สภาวะดินแฉะ";
-    } else if (esp32.trTs.soilMoisture >= 80 &&
-        esp32.trTs.soilMoisture <= 100) {
+    } else if (soilMoisture >= 80 && soilMoisture <= 100) {
       textToDisplay = "สภาวะอันตรายต่อพืช";
     }
 
@@ -139,55 +144,8 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: StreamBuilder<Esp32>(
-          stream: _streamController.stream,
-          builder: (context, snapdata) {
-            switch (snapdata.connectionState) {
-              case ConnectionState.waiting:
-                return Stack(
-                  children: [
-                    const Image(
-                      image: AssetImage('images/greenhouse.png'),
-                      width: 200,
-                      height: 200,
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      child: Container(
-                        width: 200,
-                        color: const Color.fromARGB(255, 255, 255, 255)
-                            .withOpacity(0.5),
-                        child: const Text(
-                          'รอสักครู่...',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 0, 0, 0),
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              default:
-                if (snapdata.hasError) {
-                  return const Text('Please Wait....');
-                } else {
-                  return BuildFertilizer(snapdata.data!);
-                }
-            }
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget BuildFertilizer(Esp32 esp32) {
-    // เปลี่ยนสีข้อความสีส่งมาจากฟังก์ชัน displayText(esp32)
-    String message = displayText(esp32);
+    // เปลี่ยนสีข้อความสีส่งมาจากฟังก์ชัน displayText()
+    String message = displayText();
     Color textColor = Colors.black;
     if (message == "สภาวะวิกฤติ") {
       textColor = Colors.red;
@@ -202,7 +160,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
     }
 
     // ประกาศตัวแปร wheel ขึ้นมาเพื่อเก็บไปเป็นค่าวงล้อ
-    double wheel = esp32.trTs.soilMoisture.toDouble();
+    double wheel = soilMoisture.toDouble();
     if (wheel >= 1 && wheel <= 100) {
       wheel = wheel / 100;
     } else if (wheel > 100) {
@@ -252,7 +210,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                 children: [
                   GestureDetector(
                     child: Text(
-                      esp32.rtc1307.time,
+                      _time,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 25,
@@ -279,7 +237,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                           backgroundColor: Colors.deepPurple.shade100,
                           circularStrokeCap: CircularStrokeCap.round,
                           center: Text(
-                            "${esp32.trTs.soilMoisture}%",
+                            "$soilMoisture%",
                             style: const TextStyle(
                               fontSize: 32,
                               fontWeight: FontWeight.bold,
@@ -433,7 +391,8 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                     // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
 
                                     databaseReference
-                                        .child('ESP32/setControl/setAutoMode/motor')
+                                        .child(
+                                            'ESP32/setControl/setAutoMode/motor')
                                         .set(statusAuto);
                                   },
                                 ),

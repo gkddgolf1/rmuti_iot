@@ -1,15 +1,10 @@
-import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/cupertino.dart';
-import 'package:intl/intl.dart';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-
-import '../models/sensor.dart';
 
 class LightScreen extends StatefulWidget {
   const LightScreen({super.key});
@@ -19,8 +14,14 @@ class LightScreen extends StatefulWidget {
 }
 
 class _LightScreenState extends State<LightScreen> {
-  final StreamController<Esp32> _streamController = StreamController();
   final databaseReference = FirebaseDatabase.instance.ref();
+
+  var _lux = 0;
+  var _time = '';
+
+  // sensor ตัวสีเหลือง && sensor สี
+  var _status1 = 0;
+  var _status2 = 0;
 
   bool _halfDay = false;
   bool _fullDay = false;
@@ -37,91 +38,114 @@ class _LightScreenState extends State<LightScreen> {
   DateTime datestop = DateTime(22, 8, 3);
   DateTime timestop = DateTime(15, 55);
 
-  /* @override
-  void dispose() {
-    super.dispose();
-    _streamController.close();
-  } */
-
   @override
   void initState() {
     super.initState();
     _loadSwitchState();
-    getData();
-    /* Timer.periodic(const Duration(seconds: 3), (timer) {
-      
-    }); */
 
-    // Listen for changes to the Firebase database
+    // _statusAuto
     databaseReference
         .child('ESP32/setControl/setAutoMode/motor')
         .onValue
         .listen((event) {
       int statusAuto = (event.snapshot.value as int);
-      setState(() {
-        _statusAuto = (statusAuto == 1);
-      });
+      if (mounted) {
+        setState(() {
+          _statusAuto = (statusAuto == 1);
+        });
+      }
     });
-    // Listen for changes to the Firebase database
+
+    // isSwitched
     databaseReference
         .child('ESP32/setControl/setTimerMode/motor')
         .onValue
         .listen((event) {
       int settime = (event.snapshot.value as int);
-      setState(() {
-        isSwitched = (settime == 1);
-      });
+      if (mounted) {
+        setState(() {
+          isSwitched = (settime == 1);
+        });
+      }
     });
-    // Subscribe to the Firebase Realtime Database reference
+
+    // _halfDay
     databaseReference
         .child('ESP32/setControl/MOTOR/setAuto/halfDay')
         .onValue
         .listen(
       (event) {
-        // Retrieve the data from the event snapshot
         int halfday = (event.snapshot.value as int);
-
-        // Update the state of the app accordingly
-        setState(() {
-          if (halfday == 1000) {
-            _halfDay = true;
-          } else {
-            _halfDay = false;
-          }
-        });
+        if (mounted) {
+          setState(() {
+            if (halfday == 1000) {
+              _halfDay = true;
+            } else {
+              _halfDay = false;
+            }
+          });
+        }
       },
     );
-    // Subscribe to the Firebase Realtime Database reference
+
+    // _fullDay
     databaseReference
         .child('ESP32/setControl/MOTOR/setAuto/fullDay')
         .onValue
         .listen(
       (event) {
-        // Retrieve the data from the event snapshot
         int fullday = (event.snapshot.value as int);
-
-        // Update the state of the app accordingly
-        setState(() {
-          if (fullday == 1500) {
-            _fullDay = true;
-          } else {
-            _fullDay = false;
-          }
-        });
+        if (mounted) {
+          setState(() {
+            if (fullday == 1500) {
+              _fullDay = true;
+            } else {
+              _fullDay = false;
+            }
+          });
+        }
       },
     );
-  }
 
-  Future<void> getData() async {
-    final url = Uri.parse(
-      'https://projectgreenhouse-6f492-default-rtdb.asia-southeast1.firebasedatabase.app/ESP32.json',
-    );
+    // BH1750
+    databaseReference.child('ESP32/BH1750/Lux').onValue.listen((event) {
+      int lux = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          _lux = lux;
+        });
+      }
+    });
 
-    final response = await http.get(url);
-    final databody = json.decode(response.body);
+    // RTC1307
+    databaseReference.child('ESP32/RTC1307/Time').onValue.listen((event) {
+      var time = event.snapshot.value;
+      if (mounted) {
+        setState(() {
+          _time = time.toString();
+        });
+      }
+    });
 
-    Esp32 esp32 = Esp32.fromJson(databody);
-    if (!_streamController.isClosed) _streamController.sink.add(esp32);
+    // E18-D80NK (sensor สีตัวเหลือง)
+    databaseReference.child('ESP32/E18-D80NK/status').onValue.listen((event) {
+      int status1 = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          _status1 = status1;
+        });
+      }
+    });
+
+    // TCS-34725 (sensor สี)
+    databaseReference.child('ESP32/TCS-34725/status').onValue.listen((event) {
+      int status2 = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          _status2 = status2;
+        });
+      }
+    });
   }
 
   void _loadSwitchState() async {
@@ -170,69 +194,34 @@ class _LightScreenState extends State<LightScreen> {
   }
 
   //ฟังก์ชันความสมดุลแสดง Text ตามค่าที่กำหนด
-  String displayText(Esp32 esp32) {
+  String displayText() {
     String textToDisplay = '';
-    if (esp32.bh1750.lux <= 30) {
+    if (_lux <= 30) {
       textToDisplay = "Low balance";
-    } else if (esp32.bh1750.lux > 30 && esp32.bh1750.lux < 70) {
+    } else if (_lux > 30 && _lux < 70) {
       textToDisplay = 'Normal balance';
-    } else if (esp32.bh1750.lux >= 70) {
+    } else if (_lux >= 70) {
       textToDisplay = 'High Balance';
     }
     return textToDisplay;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: StreamBuilder<Esp32>(
-          stream: _streamController.stream,
-          builder: (context, snapdata) {
-            switch (snapdata.connectionState) {
-              case ConnectionState.waiting:
-                return Stack(
-                  children: [
-                    const Image(
-                      image: AssetImage('images/greenhouse.png'),
-                      width: 200,
-                      height: 200,
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      child: Container(
-                        width: 200,
-                        color: const Color.fromARGB(255, 255, 255, 255)
-                            .withOpacity(0.5),
-                        child: const Text(
-                          'รอสักครู่...',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 0, 0, 0),
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              default:
-                if (snapdata.hasError) {
-                  return const Text('Please Wait....');
-                } else {
-                  return BuildFertilizer(snapdata.data!);
-                }
-            }
-          },
-        ),
-      ),
-    );
+  String statusCurtain() {
+    String statusDisplay = '';
+    if (_status1 == 1) {
+      statusDisplay = "ปิด";
+    } else if (_status2 == 1) {
+      statusDisplay = "เปิด";
+    } else if (_status1 == 0 && _status2 == 0) {
+      statusDisplay = "กำลังทำงาน";
+    }
+    return statusDisplay;
   }
 
-  Widget BuildFertilizer(Esp32 esp32) {
-    // เปลี่ยนสีข้อความสีส่งมาจากฟังก์ชัน displayText(esp32)
-    String message = displayText(esp32);
+  @override
+  Widget build(BuildContext context) {
+    // เปลี่ยนสีข้อความสีส่งมาจากฟังก์ชัน displayText()
+    String message = displayText();
     Color textColor = Colors.black;
     if (message == "Low balance") {
       textColor = Colors.orange;
@@ -242,13 +231,25 @@ class _LightScreenState extends State<LightScreen> {
       textColor = Colors.red;
     }
 
-    // ประกาศตัวแปร wheel ขึ้นมาเพื่อเก็บไปเป็นค่าวงล้อ
-    double wheel = esp32.bh1750.lux.toDouble();
+    // เปลี่ยนสีข้อความสีส่งมาจากฟังก์ชัน statusCurtain()
+    String statuscurtain = statusCurtain();
+    Color statuscurtainColor = Colors.black;
+    if (statuscurtain == "ปิด") {
+      statuscurtainColor = Colors.green;
+    } else if (statuscurtain == "เปิด") {
+      statuscurtainColor = Colors.green;
+    } else if (statuscurtain == "กำลังทำงาน") {
+      statuscurtainColor = Colors.orange;
+    }
 
+    // ประกาศตัวแปร wheel ขึ้นมาเพื่อเก็บไปเป็นค่าวงล้อ
+    double wheel = _lux.toDouble();
     if (wheel >= 1 && wheel <= 100) {
       wheel = wheel / 100;
-    } else if (wheel > 100) {
+    } else if (wheel > 100 && wheel <= 1000) {
       wheel = wheel / 1000;
+    } else if (wheel > 1000) {
+      wheel = wheel / 10000;
     }
 
     //ขนาด TextField
@@ -293,7 +294,7 @@ class _LightScreenState extends State<LightScreen> {
                 children: [
                   GestureDetector(
                     child: Text(
-                      esp32.rtc1307.time,
+                      _time.toString(),
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 25,
@@ -321,7 +322,8 @@ class _LightScreenState extends State<LightScreen> {
                           circularStrokeCap: CircularStrokeCap.round,
                           center: RichText(
                             text: TextSpan(
-                              text: "${esp32.bh1750.lux}\n",
+                              //text: "${esp32.bh1750.lux}\n",
+                              text: '$_lux\n',
                               style: const TextStyle(
                                 fontSize: 35,
                                 fontWeight: FontWeight.bold,
@@ -372,12 +374,25 @@ class _LightScreenState extends State<LightScreen> {
                             ),
                           ],
                         ),
-                        const Text(
-                          "สถานะม่านบังแสง: เปิด",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "สถานะม่านบังแสง: ",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              statuscurtain,
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: statuscurtainColor,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

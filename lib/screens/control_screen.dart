@@ -1,12 +1,6 @@
-import 'dart:async';
-import 'dart:convert';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-
-import '../models/sensor.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -16,39 +10,147 @@ class SettingScreen extends StatefulWidget {
 }
 
 class _SettingScreenState extends State<SettingScreen> {
-  final StreamController<Esp32> _streamController = StreamController();
   final databaseReference = FirebaseDatabase.instance.ref();
 
-  @override
-  void dispose() {
-    super.dispose();
-    _streamController.close();
-  }
+  var _time = '';
+  var _date = '';
+
+  // Motor
+  var startHourMotor = 0;
+  var startMinMotor = 0;
+  var stopHourMotor = 0;
+  var stopMinMotor = 0;
+
+  // Pump
+  var startHourPump = 0;
+  var startMinPump = 0;
+  var stopHourPump = 0;
+  var stopMinPump = 0;
+
+  DateTime date = DateTime(22, 8, 3);
+  DateTime time = DateTime(15, 55);
 
   @override
   void initState() {
     super.initState();
 
-    Timer.periodic(const Duration(seconds: 3), (timer) {
-      getData();
+    // RTC1307 == Time
+    databaseReference.child('ESP32/RTC1307/Time').onValue.listen((event) {
+      var time = event.snapshot.value;
+      if (mounted) {
+        setState(() {
+          _time = time.toString();
+        });
+      }
+    });
+    // RTC1307 == Date
+    databaseReference.child('ESP32/RTC1307/Date').onValue.listen((event) {
+      var date = event.snapshot.value;
+      if (mounted) {
+        setState(() {
+          _date = date.toString();
+        });
+      }
+    });
+    /* -----------------------------Motor---------------------------------------- */
+    // StartHourMotor
+    databaseReference
+        .child('ESP32/setControl/MOTOR/setTimeStart/hour')
+        .onValue
+        .listen((event) {
+      int starthourmotor = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          startHourMotor = starthourmotor;
+        });
+      }
+    });
+    // StartMinMotor
+    databaseReference
+        .child('ESP32/setControl/MOTOR/setTimeStart/minute')
+        .onValue
+        .listen((event) {
+      int startminmotor = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          startMinMotor = startminmotor;
+        });
+      }
+    });
+    // StopHourMotor
+    databaseReference
+        .child('ESP32/setControl/MOTOR/setTimeStop/hour')
+        .onValue
+        .listen((event) {
+      int stophourmotor = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          stopHourMotor = stophourmotor;
+        });
+      }
+    });
+    // StopMinMotor
+    databaseReference
+        .child('ESP32/setControl/MOTOR/setTimeStop/minute')
+        .onValue
+        .listen((event) {
+      int stopminmotor = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          stopMinMotor = stopminmotor;
+        });
+      }
+    });
+/* -----------------------------Pump---------------------------------------- */
+    // StartHourPump
+    databaseReference
+        .child('ESP32/setControl/PUMP/setTimeStart/hour')
+        .onValue
+        .listen((event) {
+      int starthourpump = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          startHourPump = starthourpump;
+        });
+      }
+    });
+    // StartMinPump
+    databaseReference
+        .child('ESP32/setControl/PUMP/setTimeStart/minute')
+        .onValue
+        .listen((event) {
+      int startminpump = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          startMinPump = startminpump;
+        });
+      }
+    });
+    // StopHourPump
+    databaseReference
+        .child('ESP32/setControl/PUMP/setTimeStop/hour')
+        .onValue
+        .listen((event) {
+      int stophourpump = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          stopHourPump = stophourpump;
+        });
+      }
+    });
+    // StopMinPump
+    databaseReference
+        .child('ESP32/setControl/PUMP/setTimeStop/minute')
+        .onValue
+        .listen((event) {
+      int stopminpump = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          stopMinPump = stopminpump;
+        });
+      }
     });
   }
-
-  Future<void> getData() async {
-    final url = Uri.parse(
-      'https://projectgreenhouse-6f492-default-rtdb.asia-southeast1.firebasedatabase.app/ESP32.json',
-    );
-
-    final response = await http.get(url);
-    final databody = json.decode(response.body);
-
-    Esp32 esp32 = Esp32.fromJson(databody);
-    if (!_streamController.isClosed) _streamController.sink.add(esp32);
-  }
-
-  DateTime date = DateTime(22, 8, 3);
-  DateTime time = DateTime(15, 55);
-  //DateTime dateTime = DateTime(23, 8, 3, 17, 45);
 
   void _showDialog(Widget child) {
     showCupertinoModalPopup<void>(
@@ -71,55 +173,7 @@ class _SettingScreenState extends State<SettingScreen> {
             ));
   }
 
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: StreamBuilder<Esp32>(
-          stream: _streamController.stream,
-          builder: (context, snapdata) {
-            switch (snapdata.connectionState) {
-              case ConnectionState.waiting:
-                return Stack(
-                  children: [
-                    const Image(
-                      image: AssetImage('images/greenhouse.png'),
-                      width: 200,
-                      height: 200,
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      child: Container(
-                        width: 200,
-                        color: const Color.fromARGB(255, 255, 255, 255)
-                            .withOpacity(0.5),
-                        child: const Text(
-                          'รอสักครู่...',
-                          style: TextStyle(
-                            color: Color.fromARGB(255, 0, 0, 0),
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              default:
-                if (snapdata.hasError) {
-                  return const Text('Please Wait....');
-                } else {
-                  return buildSetting(snapdata.data!);
-                }
-            }
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget buildSetting(Esp32 esp32) {
     return Scaffold(
       backgroundColor: Colors.indigo.shade50,
       body: SafeArea(
@@ -155,7 +209,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 children: [
                   GestureDetector(
                     child: Text(
-                      esp32.rtc1307.time,
+                      _time,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 25,
@@ -238,7 +292,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          esp32.rtc1307.date,
+                                          _date,
                                           style: const TextStyle(
                                             fontSize: 20,
                                           ),
@@ -301,7 +355,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          esp32.rtc1307.time,
+                                          _time,
                                           style: const TextStyle(
                                             fontSize: 20,
                                           ),
@@ -348,7 +402,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                   Text(
-                                    '${esp32.setControl.pump.setTimeStart.hour} : ${esp32.setControl.pump.setTimeStart.minute} น.',
+                                    '$startHourPump : $startMinPump น.',
                                     style: const TextStyle(
                                       fontSize: 20,
                                     ),
@@ -370,7 +424,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  '${esp32.setControl.pump.setTimeStop.hour} : ${esp32.setControl.pump.setTimeStop.hour} น.',
+                                  '$stopHourPump : $stopMinPump น.',
                                   style: const TextStyle(
                                     fontSize: 20,
                                   ),
@@ -413,7 +467,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                   Text(
-                                    '${esp32.setControl.pump.setTimeStart.hour} : ${esp32.setControl.pump.setTimeStart.minute} น.',
+                                    '$startHourPump : $startMinPump น.',
                                     style: const TextStyle(
                                       fontSize: 20,
                                     ),
@@ -435,7 +489,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  '${esp32.setControl.pump.setTimeStart.hour} : ${esp32.setControl.pump.setTimeStart.hour} น.',
+                                  '$stopHourPump : $stopMinPump น.',
                                   style: const TextStyle(
                                     fontSize: 20,
                                   ),
@@ -479,7 +533,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                     ),
                                   ),
                                   Text(
-                                    '${esp32.setControl.motor.setTimeStart.hour} : ${esp32.setControl.motor.setTimeStart.minute} น.',
+                                    '$startHourMotor : $startMinMotor น.',
                                     style: const TextStyle(
                                       fontSize: 20,
                                     ),
@@ -502,7 +556,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                   ),
                                 ),
                                 Text(
-                                  '${esp32.setControl.motor.setTimeStop.hour} : ${esp32.setControl.motor.setTimeStop.minute} น.',
+                                  '$stopHourMotor : $stopMinMotor น.',
                                   style: const TextStyle(
                                     fontSize: 20,
                                   ),
