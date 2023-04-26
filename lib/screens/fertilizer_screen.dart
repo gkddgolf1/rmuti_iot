@@ -18,11 +18,19 @@ class FertilizerScreen extends StatefulWidget {
 
 class _FertilizerScreenState extends State<FertilizerScreen> {
   final databaseReference = FirebaseDatabase.instance.ref();
-
+  // รับมาแสดง
   var N = 0;
   var P = 0;
   var K = 0;
   var _time = '';
+  var setN = 0;
+  var setP = 0;
+  var setK = 0;
+
+  // นำไป set
+  TextEditingController valueN = TextEditingController();
+  TextEditingController valueP = TextEditingController();
+  TextEditingController valueK = TextEditingController();
 
   bool _statusAuto = false;
   bool isSwitched = false;
@@ -96,6 +104,33 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
       if (mounted) {
         setState(() {
           K = k;
+        });
+      }
+    });
+    // setN
+    databaseReference.child('ESP32/setControl/NPK/N').onValue.listen((event) {
+      int n = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          setN = n;
+        });
+      }
+    });
+    // setP
+    databaseReference.child('ESP32/setControl/NPK/P').onValue.listen((event) {
+      int p = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          setP = p;
+        });
+      }
+    });
+    //  setK
+    databaseReference.child('ESP32/setControl/NPK/K').onValue.listen((event) {
+      int k = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          setK = k;
         });
       }
     });
@@ -300,7 +335,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                       style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.normal,
-                                        color: Colors.grey,
+                                        color: Colors.black54,
                                       ),
                                     ),
                                   ],
@@ -341,7 +376,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                       style: TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.normal,
-                                        color: Colors.grey,
+                                        color: Colors.black54,
                                       ),
                                     ),
                                   ],
@@ -382,7 +417,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.normal,
-                                      color: Colors.grey,
+                                      color: Colors.black54,
                                     ),
                                   ),
                                 ],
@@ -420,6 +455,42 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                             ),
                           ],
                         ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "ตั้งค่าให้ปุ๋ย: ",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              'N: $setN ',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: textColor,
+                              ),
+                            ),
+                            Text(
+                              'P: $setP ',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: textColor,
+                              ),
+                            ),
+                            Text(
+                              'K: $setK ',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: textColor,
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                     const SizedBox(height: 32),
@@ -438,6 +509,133 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                       ),
                       child: Column(
                         children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 24),
+                                child: Row(
+                                  children: const [
+                                    Text(
+                                      'ตั้งค่าปุ๋ย',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(width: 2),
+                                    Tooltip(
+                                      message: 'ใส่ค่า NPK',
+                                      triggerMode: TooltipTriggerMode
+                                          .tap, // tooltip text
+                                      child: Icon(Icons.help_outline),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 24),
+                                    child: SizedBox(
+                                      width: 60,
+                                      height: 40,
+                                      child: Center(
+                                        child: TextField(
+                                          controller: valueN,
+                                          maxLength: 3,
+                                          keyboardType: TextInputType.number,
+                                          style: const TextStyle(fontSize: 18),
+                                          decoration: const InputDecoration(
+                                            labelText: 'N',
+                                            counterText: '',
+                                            labelStyle: TextStyle(fontSize: 15),
+                                            focusedBorder: OutlineInputBorder(),
+                                            enabledBorder: OutlineInputBorder(
+                                              borderRadius: BorderRadius.all(
+                                                Radius.circular(10.0),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(1),
+                                    child: SizedBox(
+                                      width: 60,
+                                      height: 40,
+                                      child: TextField(
+                                        controller: valueP,
+                                        maxLength: 3,
+                                        keyboardType: TextInputType.number,
+                                        style: const TextStyle(fontSize: 18),
+                                        decoration: const InputDecoration(
+                                          labelText: 'P',
+                                          counterText: '',
+                                          labelStyle: TextStyle(fontSize: 15),
+                                          focusedBorder: OutlineInputBorder(),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(10.0),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(1),
+                                    child: SizedBox(
+                                      width: 60,
+                                      height: 40,
+                                      child: TextField(
+                                        controller: valueK,
+                                        maxLength: 3,
+                                        keyboardType: TextInputType.number,
+                                        style: const TextStyle(fontSize: 18),
+                                        decoration: const InputDecoration(
+                                          labelText: 'K',
+                                          counterText: '',
+                                          labelStyle: TextStyle(fontSize: 15),
+                                          focusedBorder: OutlineInputBorder(),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(10.0),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(10),
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        int setN = int.parse(valueN.text);
+                                        int setP = int.parse(valueP.text);
+                                        int setK = int.parse(valueK.text);
+                                        databaseReference
+                                            .child('ESP32/setControl/NPK/N')
+                                            .set(setN);
+                                        databaseReference
+                                            .child('ESP32/setControl/NPK/P')
+                                            .set(setP);
+                                        databaseReference
+                                            .child('ESP32/setControl/NPK/K')
+                                            .set(setK);
+                                      },
+                                      child: const Text('Submit'),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [

@@ -335,7 +335,7 @@ class _LightScreenState extends State<LightScreen> {
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.normal,
-                                    color: Colors.grey,
+                                    color: Colors.black54,
                                   ),
                                 ),
                               ],

@@ -3,9 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:intl/intl.dart' show NumberFormat;
 import 'package:percent_indicator/percent_indicator.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:syncfusion_flutter_core/theme.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 class SoilMoistureScreen extends StatefulWidget {
   const SoilMoistureScreen({super.key});
@@ -19,6 +22,9 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
 
   var soilMoisture = 0;
   var _time = '';
+  var speedPump = 0;
+
+  double _speedPump = 0;
 
   bool _status = false;
   bool _statusAuto = false;
@@ -37,7 +43,10 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
     _loadSwitchState();
 
     // Listen for changes to the Firebase database
-    databaseReference.child('ESP32/TrTs/status').onValue.listen((event) {
+    databaseReference
+        .child('ESP32/setControl/PUMP/status')
+        .onValue
+        .listen((event) {
       int status = (event.snapshot.value as int);
       if (mounted) {
         setState(() {
@@ -83,6 +92,18 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
       if (mounted) {
         setState(() {
           _time = time.toString();
+        });
+      }
+    });
+    // speedPump
+    databaseReference
+        .child('ESP32/setControl/PUMP/speedPump')
+        .onValue
+        .listen((event) {
+      int speedpump = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          speedPump = speedpump;
         });
       }
     });
@@ -157,6 +178,14 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
       textColor = Colors.orange;
     } else if (message == "สภาวะอันตรายต่อพืช") {
       textColor = Colors.red;
+    }
+
+    //
+    Color rangeColor = Colors.black;
+    if (speedPump >= 0 && speedPump <= 80) {
+      rangeColor = Colors.green;
+    } else {
+      rangeColor = Colors.red;
     }
 
     // ประกาศตัวแปร wheel ขึ้นมาเพื่อเก็บไปเป็นค่าวงล้อ
@@ -277,6 +306,25 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                             ),
                           ],
                         ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "แรงดันน้ำปัจจุบัน: ",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '$speedPump',
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                     const SizedBox(height: 32),
@@ -295,6 +343,61 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                       ),
                       child: Column(
                         children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 24),
+                                child: Row(
+                                  children: const [
+                                    Text(
+                                      'แรงดันน้ำ',
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(width: 2),
+                                    Tooltip(
+                                      message: 'เปิด-ปิดน้ำ',
+                                      triggerMode: TooltipTriggerMode
+                                          .tap, // tooltip text
+                                      child: Icon(Icons.help_outline),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SfSliderTheme(
+                                data: SfSliderThemeData(
+                                  tooltipBackgroundColor: Colors.blue,
+                                  overlayColor: Colors.transparent,
+                                  activeTrackColor: rangeColor,
+                                  thumbColor: rangeColor,
+                                  inactiveTrackColor: rangeColor,
+                                ),
+                                child: SfSlider(
+                                  //enableTooltip: true,
+                                  numberFormat: NumberFormat('#'),
+                                  showLabels: true,
+                                  interval: 20,
+                                  min: 0,
+                                  max: 100,
+                                  value: _speedPump,
+                                  onChanged: (dynamic values) {
+                                    setState(() {
+                                      _speedPump = values;
+                                    });
+                                    int speedPump = _speedPump.truncate();
+                                    databaseReference
+                                        .child(
+                                            'ESP32/setControl/PUMP/speedPump')
+                                        .set(speedPump);
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [

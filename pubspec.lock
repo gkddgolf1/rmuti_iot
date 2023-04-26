@@ -510,13 +510,13 @@ packages:
     source: hosted
     version: "1.2.0"
   syncfusion_flutter_core:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: syncfusion_flutter_core
-      sha256: "6c704aa944ae5dfc4ae7c473d52eba551acfa39fff277bae3cb355cdb2457f76"
+      sha256: "05b079cb1be26a8d5c1afe714172d2eed9178049f4a7dc773b2cbb8b053eff8d"
       url: "https://pub.dev"
     source: hosted
-    version: "21.1.35"
+    version: "21.1.41"
   syncfusion_flutter_datepicker:
     dependency: "direct main"
     description:
@@ -525,6 +525,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "21.1.35"
+  syncfusion_flutter_sliders:
+    dependency: "direct main"
+    description:
+      name: syncfusion_flutter_sliders
+      sha256: "7370875d8873e727d436b0f17b14905be5a268f640602eb674521855c54607b1"
+      url: "https://pub.dev"
+    source: hosted
+    version: "21.1.41"
   term_glyph:
     dependency: transitive
     description:
