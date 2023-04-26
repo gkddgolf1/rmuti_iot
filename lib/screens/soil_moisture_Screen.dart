@@ -339,7 +339,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                     int status = _status ? 1 : 0;
                                     // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
                                     databaseReference
-                                        .child('ESP32/TrTs/status')
+                                        .child('ESP32/setControl/PUMP/status')
                                         .set(status);
                                   },
                                 ),

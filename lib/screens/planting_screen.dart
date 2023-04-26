@@ -92,7 +92,8 @@ class _PlantingScreenState extends State<PlantingScreen> {
                       bottom: 0,
                       child: Container(
                         width: 200,
-                        color: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.5),
+                        color: const Color.fromARGB(255, 255, 255, 255)
+                            .withOpacity(0.5),
                         child: const Text(
                           'รอสักครู่...',
                           style: TextStyle(
@@ -214,7 +215,7 @@ class _PlantingScreenState extends State<PlantingScreen> {
                                         // This is called when the user changes the time.
                                         onDateTimeChanged: (DateTime newDate) {
                                           setState(() => date = newDate);
-                                         
+
                                           int day = newDate.day;
                                           int month = newDate.month;
                                           int year = newDate.year;

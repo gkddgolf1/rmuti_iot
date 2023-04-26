@@ -196,12 +196,12 @@ class _LightScreenState extends State<LightScreen> {
   //ฟังก์ชันความสมดุลแสดง Text ตามค่าที่กำหนด
   String displayText() {
     String textToDisplay = '';
-    if (_lux <= 30) {
-      textToDisplay = "Low balance";
-    } else if (_lux > 30 && _lux < 70) {
-      textToDisplay = 'Normal balance';
-    } else if (_lux >= 70) {
-      textToDisplay = 'High Balance';
+    if (_lux <= 7000) {
+      textToDisplay = "ความเข้มแสงน้อย";
+    } else if (_lux > 7000 && _lux < 15000) {
+      textToDisplay = 'ความเข้มแสงปกติ';
+    } else if (_lux > 15000) {
+      textToDisplay = 'ความเข้มแสงมาก';
     }
     return textToDisplay;
   }
@@ -223,11 +223,11 @@ class _LightScreenState extends State<LightScreen> {
     // เปลี่ยนสีข้อความสีส่งมาจากฟังก์ชัน displayText()
     String message = displayText();
     Color textColor = Colors.black;
-    if (message == "Low balance") {
+    if (message == "ความเข้มแสงน้อย") {
       textColor = Colors.orange;
-    } else if (message == "Normal balance") {
+    } else if (message == "ความเข้มแสงปกติ") {
       textColor = Colors.green;
-    } else if (message == "High Balance") {
+    } else if (message == "ความเข้มแสงมาก") {
       textColor = Colors.red;
     }
 
@@ -335,6 +335,7 @@ class _LightScreenState extends State<LightScreen> {
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.normal,
+                                    color: Colors.grey,
                                   ),
                                 ),
                               ],

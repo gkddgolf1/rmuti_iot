@@ -2,6 +2,7 @@
 //
 //     final esp32 = esp32FromJson(jsonString);
 
+import 'package:dio/dio.dart';
 import 'package:meta/meta.dart';
 import 'dart:convert';
 
@@ -12,32 +13,43 @@ String esp32ToJson(Esp32 data) => json.encode(data.toJson());
 class Esp32 {
   Esp32({
     required this.bh1750,
+    required this.e18D80Nk,
     required this.rs485,
     required this.rtc1307,
+    required this.tcs34725,
     required this.trTs,
+    required this.countRecord,
     required this.setControl,
   });
 
   Bh1750 bh1750;
-
+  E18D80Nk e18D80Nk;
   Rs485 rs485;
   Rtc1307 rtc1307;
+  E18D80Nk tcs34725;
   TrTs trTs;
+  CountRecord countRecord;
   SetControl setControl;
 
   factory Esp32.fromJson(Map<String, dynamic> json) => Esp32(
         bh1750: Bh1750.fromJson(json["BH1750"]),
+        e18D80Nk: E18D80Nk.fromJson(json["E18-D80NK"]),
         rs485: Rs485.fromJson(json["RS485"]),
         rtc1307: Rtc1307.fromJson(json["RTC1307"]),
+        tcs34725: E18D80Nk.fromJson(json["TCS-34725"]),
         trTs: TrTs.fromJson(json["TrTs"]),
+        countRecord: CountRecord.fromJson(json["count_Record"]),
         setControl: SetControl.fromJson(json["setControl"]),
       );
 
   Map<String, dynamic> toJson() => {
         "BH1750": bh1750.toJson(),
+        "E18-D80NK": e18D80Nk.toJson(),
         "RS485": rs485.toJson(),
         "RTC1307": rtc1307.toJson(),
+        "TCS-34725": tcs34725.toJson(),
         "TrTs": trTs.toJson(),
+        "count_Record": countRecord.toJson(),
         "setControl": setControl.toJson(),
       };
 }
@@ -55,6 +67,38 @@ class Bh1750 {
 
   Map<String, dynamic> toJson() => {
         "Lux": lux,
+      };
+}
+
+class CountRecord {
+  CountRecord({
+    required this.min,
+  });
+
+  int min;
+
+  factory CountRecord.fromJson(Map<String, dynamic> json) => CountRecord(
+        min: json["min"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "min": min,
+      };
+}
+
+class E18D80Nk {
+  E18D80Nk({
+    required this.status,
+  });
+
+  int status;
+
+  factory E18D80Nk.fromJson(Map<String, dynamic> json) => E18D80Nk(
+        status: json["status"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "status": status,
       };
 }
 
@@ -210,19 +254,23 @@ class Pump {
   Pump({
     required this.setTimeStart,
     required this.setTimeStop,
+    required this.status,
   });
 
   SetTimeSt setTimeStart;
   SetTimeSt setTimeStop;
+  int status;
 
   factory Pump.fromJson(Map<String, dynamic> json) => Pump(
         setTimeStart: SetTimeSt.fromJson(json["setTimeStart"]),
         setTimeStop: SetTimeSt.fromJson(json["setTimeStop"]),
+        status: json["status"],
       );
 
   Map<String, dynamic> toJson() => {
         "setTimeStart": setTimeStart.toJson(),
         "setTimeStop": setTimeStop.toJson(),
+        "status": status,
       };
 }
 

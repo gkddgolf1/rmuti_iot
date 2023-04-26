@@ -193,7 +193,6 @@ class _MyHomePageState extends State<MyHomePage> {
                           icon: 'images/control.png',
                           title: 'การตั้งค่า',
                         ),
-                       
                       ],
                     ),
                   ],
