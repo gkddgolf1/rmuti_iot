@@ -174,33 +174,39 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
 //ฟังก์ชันความสมดุลแสดง Text ตามค่าที N
   String displayTextN() {
     String textToDisplay = '';
-    if (N <= 9) {
-      textToDisplay = "ต่ำมาก";
-    } else if (N >= 10 && N <= 100) {
-      textToDisplay = "ต่ำ";
-    } else if (N >= 110 && N <= 200) {
+    if (N < 90 && P < 10 && K < 100) {
+      textToDisplay = "ขาดปุ๋ย";
+    } else if (N >= 90 && N < 120 && P >= 10 && P < 20 && K >= 100 && K < 150) {
+      textToDisplay = "ปุ๋ยน้อย";
+    } else if (N >= 120 &&
+        N < 150 &&
+        P >= 20 &&
+        P < 40 &&
+        K >= 150 &&
+        K < 200) {
       textToDisplay = "ปานกลาง";
-    } else if (N >= 210 && N <= 300) {
-      textToDisplay = "สูง";
-    } else if (N >= 310 && N <= 500) {
-      textToDisplay = "สูงมาก";
+    } else if (N >= 150 &&
+        N < 200 &&
+        P >= 40 &&
+        P < 80 &&
+        K >= 200 &&
+        K < 250) {
+      textToDisplay = "อุดมสมบูรณ์";
     }
     return textToDisplay;
   }
 
-  //ฟังก์ชันความสมดุลแสดง Text ตามค่าที P
+  /* //ฟังก์ชันความสมดุลแสดง Text ตามค่าที P
   String displayTextP() {
     String textToDisplay = '';
-    if (P <= 9) {
-      textToDisplay = "ต่ำมาก";
-    } else if (P >= 10 && P <= 39) {
-      textToDisplay = "ต่ำ";
-    } else if (P >= 40 && P <= 69) {
+    if (P < 10) {
+      textToDisplay = "ขาดปุ๋ย";
+    } else if (P >= 10 && P < 20) {
+      textToDisplay = "ปุ๋ยน้อย";
+    } else if (P >= 20 && P < 40) {
       textToDisplay = "ปานกลาง";
-    } else if (P >= 70 && P <= 99) {
-      textToDisplay = "สูง";
-    } else if (P >= 100 && P <= 120) {
-      textToDisplay = "สูงมาก";
+    } else if (P >= 40 && P < 80) {
+      textToDisplay = "อุดมสมบูรณ์";
     }
     return textToDisplay;
   }
@@ -208,15 +214,17 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
   //ฟังก์ชันความสมดุลแสดง Text ตามค่าที K
   String displayTextK() {
     String textToDisplay = '';
-    if (K <= 39) {
-      textToDisplay = "ต่ำ";
-    } else if (K >= 40 && K <= 79) {
+    if (K < 100) {
+      textToDisplay = "ขาดปุ๋ย";
+    } else if (K >= 100 && K < 150) {
+      textToDisplay = "ปุ๋ยน้อย";
+    } else if (K >= 150 && K < 200) {
       textToDisplay = "ปานกลาง";
-    } else if (K >= 80 && K <= 120) {
-      textToDisplay = "สูง";
+    } else if (K >= 200 && K < 250) {
+      textToDisplay = "อุดมสมบูรณ์";
     }
     return textToDisplay;
-  }
+  } */
 
   @override
   Widget build(BuildContext context) {
@@ -250,16 +258,14 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
     // เปลี่ยนสีข้อความสีส่งมาจากฟังก์ชัน displayText(esp32)   N
     String message = displayTextN();
     Color textColor = Colors.black;
-    if (message == "ต่ำมาก") {
+    if (message == "ขาดปุ๋ย") {
       textColor = Colors.red;
-    } else if (message == "ต่ำ") {
+    } else if (message == "ปุ๋ยน้อย") {
       textColor = Colors.orange;
     } else if (message == "ปานกลาง") {
       textColor = Colors.green;
-    } else if (message == "สูง") {
+    } else if (message == "อุดมสมบูรณ์") {
       textColor = Colors.orange;
-    } else if (message == "สูงมาก") {
-      textColor = Colors.red;
     }
 
     return Scaffold(
@@ -439,7 +445,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Text(
-                              "ความสมดุล: ",
+                              "ความอุดมสมบูรณ์: ",
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -455,38 +461,38 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                             ),
                           ],
                         ),
+                        const SizedBox(
+                          height: 20,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Text(
                               "ตั้งค่าให้ปุ๋ย: ",
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 15,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             Text(
                               'N: $setN ',
-                              style: TextStyle(
-                                fontSize: 18,
+                              style: const TextStyle(
+                                fontSize: 15,
                                 fontWeight: FontWeight.bold,
-                                color: textColor,
                               ),
                             ),
                             Text(
                               'P: $setP ',
-                              style: TextStyle(
-                                fontSize: 18,
+                              style: const TextStyle(
+                                fontSize: 15,
                                 fontWeight: FontWeight.bold,
-                                color: textColor,
                               ),
                             ),
                             Text(
                               'K: $setK ',
-                              style: TextStyle(
-                                fontSize: 18,
+                              style: const TextStyle(
+                                fontSize: 15,
                                 fontWeight: FontWeight.bold,
-                                color: textColor,
                               ),
                             ),
                           ],
@@ -615,6 +621,15 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                   Padding(
                                     padding: const EdgeInsets.all(10),
                                     child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(18.0),
+                                        ),
+                                        backgroundColor: Colors.transparent,
+                                        padding: const EdgeInsets.all(0.0),
+                                        elevation: 0.0,
+                                      ),
                                       onPressed: () {
                                         int setN = int.parse(valueN.text);
                                         int setP = int.parse(valueP.text);
@@ -629,7 +644,31 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                             .child('ESP32/setControl/NPK/K')
                                             .set(setK);
                                       },
-                                      child: const Text('Submit'),
+                                      child: Ink(
+                                        decoration: BoxDecoration(
+                                          gradient: const LinearGradient(
+                                            colors: [
+                                              Colors.blue,
+                                              Colors.purple
+                                            ],
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(18.0),
+                                        ),
+                                        child: Container(
+                                          constraints: const BoxConstraints(
+                                              maxWidth: 100.0, minHeight: 40.0),
+                                          alignment: Alignment.center,
+                                          child: const Text(
+                                            "Submit",
+                                            textAlign: TextAlign.center,
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],

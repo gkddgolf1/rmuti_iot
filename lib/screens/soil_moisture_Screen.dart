@@ -23,8 +23,10 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
   var soilMoisture = 0;
   var _time = '';
   var speedPump = 0;
+  var setSoilmoisture = 0;
 
   double _speedPump = 0;
+  double _setSoilmoisture = 0;
 
   bool _status = false;
   bool _statusAuto = false;
@@ -107,6 +109,18 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
         });
       }
     });
+    // setSoilmoisture
+    databaseReference
+        .child('ESP32/setControl/PUMP/setSoilmoilsture')
+        .onValue
+        .listen((event) {
+      int setsoilmoisture = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          setSoilmoisture = setsoilmoisture;
+        });
+      }
+    });
   }
 
   void _loadSwitchState() async {
@@ -115,12 +129,18 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
       _status = prefs.getBool('_status') ?? false;
       _statusAuto = prefs.getBool('_statusAuto') ?? false;
       isSwitched = prefs.getBool('isSwitched') ?? false;
+      _speedPump = prefs.getDouble('_speedPump') ?? 0.0;
+      _setSoilmoisture = prefs.getDouble('_setSoilmoisture') ?? 0.0;
     });
   }
 
-  void _saveSwitchState(String key, bool value) async {
+  void _saveSwitchState(String key, dynamic value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(key, value);
+    if (value is bool) {
+      await prefs.setBool(key, value);
+    } else if (value is double) {
+      await prefs.setDouble(key, value);
+    }
   }
 
   // ฟังก์ชันโชว์ ui นาฬิกาเมื่อกด
@@ -180,12 +200,20 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
       textColor = Colors.red;
     }
 
-    //
+    // เปลี่ยนสี slide แรงดันน้ำ
     Color rangeColor = Colors.black;
     if (speedPump >= 0 && speedPump <= 80) {
       rangeColor = Colors.green;
     } else {
       rangeColor = Colors.red;
+    }
+
+    // เปลี่ยนสี slide ความชื้น
+    Color soilColor = Colors.black;
+    if (setSoilmoisture >= 0 && setSoilmoisture <= 80) {
+      soilColor = Colors.green;
+    } else {
+      soilColor = Colors.red;
     }
 
     // ประกาศตัวแปร wheel ขึ้นมาเพื่อเก็บไปเป็นค่าวงล้อ
@@ -306,26 +334,169 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                             ),
                           ],
                         ),
+                        const SizedBox(
+                          height: 20,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Text(
                               "แรงดันน้ำปัจจุบัน: ",
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 15,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             Text(
                               '$speedPump',
                               style: const TextStyle(
-                                fontSize: 20,
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "ระดับความชื้นปกติ: ",
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '$setSoilmoisture',
+                              style: const TextStyle(
+                                fontSize: 15,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                           ],
                         ),
                       ],
+                    ),
+                    const SizedBox(height: 32),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _roundedButton(title: 'Setting', isActive: true),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                            child: Row(
+                              children: const [
+                                Text(
+                                  'แรงดันน้ำ',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(width: 2),
+                                Tooltip(
+                                  message: 'ปรับแรงดันของปั้มน้ำ',
+                                  triggerMode:
+                                      TooltipTriggerMode.tap, // tooltip text
+                                  child: Icon(Icons.help_outline),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SfSliderTheme(
+                            data: SfSliderThemeData(
+                              tooltipBackgroundColor: Colors.blue,
+                              overlayColor: Colors.transparent,
+                              activeTrackColor: rangeColor,
+                              thumbColor: rangeColor,
+                              inactiveTrackColor: rangeColor,
+                            ),
+                            child: SfSlider(
+                              //enableTooltip: true,
+                              numberFormat: NumberFormat('#'),
+                              showLabels: true,
+                              interval: 20,
+                              min: 0,
+                              max: 100,
+                              value: _speedPump,
+                              onChanged: (value) {
+                                setState(() {
+                                  _speedPump = value;
+                                  _saveSwitchState('_speedPump', value);
+                                });
+                                int speedPump = _speedPump.truncate();
+                                databaseReference
+                                    .child('ESP32/setControl/PUMP/speedPump')
+                                    .set(speedPump);
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                            child: Row(
+                              children: const [
+                                Text(
+                                  'ความชื้น',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(width: 2),
+                                Tooltip(
+                                  message: 'ตั้งค่าความชื้นที่เหมาะสมกับต้นไม้',
+                                  triggerMode:
+                                      TooltipTriggerMode.tap, // tooltip text
+                                  child: Icon(Icons.help_outline),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SfSliderTheme(
+                            data: SfSliderThemeData(
+                              tooltipBackgroundColor: Colors.blue,
+                              overlayColor: Colors.transparent,
+                              activeTrackColor: soilColor,
+                              thumbColor: soilColor,
+                              inactiveTrackColor: soilColor,
+                            ),
+                            child: SfSlider(
+                              //enableTooltip: true,
+                              numberFormat: NumberFormat('#'),
+                              showLabels: true,
+                              interval: 20,
+                              min: 0,
+                              max: 100,
+                              value: _setSoilmoisture,
+                              onChanged: (dynamic value) {
+                                setState(() {
+                                  _setSoilmoisture = value;
+                                  _saveSwitchState('_setSoilmoisture', value);
+                                });
+                                int setsoilmoisture =
+                                    _setSoilmoisture.truncate();
+                                databaseReference
+                                    .child(
+                                        'ESP32/setControl/PUMP/setSoilmoilsture')
+                                    .set(setsoilmoisture);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: 32),
                     Row(
@@ -343,61 +514,6 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                       ),
                       child: Column(
                         children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 24),
-                                child: Row(
-                                  children: const [
-                                    Text(
-                                      'แรงดันน้ำ',
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    SizedBox(width: 2),
-                                    Tooltip(
-                                      message: 'เปิด-ปิดน้ำ',
-                                      triggerMode: TooltipTriggerMode
-                                          .tap, // tooltip text
-                                      child: Icon(Icons.help_outline),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SfSliderTheme(
-                                data: SfSliderThemeData(
-                                  tooltipBackgroundColor: Colors.blue,
-                                  overlayColor: Colors.transparent,
-                                  activeTrackColor: rangeColor,
-                                  thumbColor: rangeColor,
-                                  inactiveTrackColor: rangeColor,
-                                ),
-                                child: SfSlider(
-                                  //enableTooltip: true,
-                                  numberFormat: NumberFormat('#'),
-                                  showLabels: true,
-                                  interval: 20,
-                                  min: 0,
-                                  max: 100,
-                                  value: _speedPump,
-                                  onChanged: (dynamic values) {
-                                    setState(() {
-                                      _speedPump = values;
-                                    });
-                                    int speedPump = _speedPump.truncate();
-                                    databaseReference
-                                        .child(
-                                            'ESP32/setControl/PUMP/speedPump')
-                                        .set(speedPump);
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -466,7 +582,8 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                     ),
                                     SizedBox(width: 2),
                                     Tooltip(
-                                      message: 'จะรดน้ำเมื่อดินแห้ง',
+                                      message:
+                                          'จะรดน้ำเมื่อความชื้นต่ำกว่ากำหนด',
                                       triggerMode: TooltipTriggerMode
                                           .tap, // tooltip text
                                       child: Icon(Icons.help_outline),
@@ -495,7 +612,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
 
                                     databaseReference
                                         .child(
-                                            'ESP32/setControl/setAutoMode/motor')
+                                            'ESP32/setControl/setAutoMode/pump')
                                         .set(statusAuto);
                                   },
                                 ),
