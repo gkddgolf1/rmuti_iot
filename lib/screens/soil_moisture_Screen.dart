@@ -25,9 +25,6 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
   double speedPump = 0;
   double setSoilmoisture = 0;
 
-  double _speedPump = 0;
-  double _setSoilmoisture = 0;
-
   bool _status = false;
   bool _statusAuto = false;
   bool isSwitched = false;
@@ -247,7 +244,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                     },
                     child: const Icon(
                       Icons.arrow_back_ios,
-                      color: Colors.indigo,
+                      color: Colors.brown,
                     ),
                   ),
                   const Text(
@@ -286,19 +283,11 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                         const SizedBox(
                           height: 30,
                         ),
-                        CircularPercentIndicator(
-                          radius: 100,
-                          lineWidth: 20,
-                          percent: wheel,
-                          progressColor: Colors.deepPurple,
-                          backgroundColor: Colors.deepPurple.shade100,
-                          circularStrokeCap: CircularStrokeCap.round,
-                          center: Text(
-                            "$soilMoisture%",
-                            style: const TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        Container(
+                          child: _wheelCircle(
+                            percentWheel: wheel,
+                            textTitel: "$soilMoisture%",
+                            textLong: "Soil Moisture",
                           ),
                         ),
                         const SizedBox(
@@ -868,15 +857,61 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
         horizontal: 32,
       ),
       decoration: BoxDecoration(
-        color: isActive ? Colors.indigo : Colors.transparent,
+        color: isActive ? Colors.brown : Colors.transparent,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.indigo),
+        border: Border.all(color: Colors.brown),
       ),
       child: Text(
         title,
         style: TextStyle(
           color: isActive ? Colors.white : Colors.black,
         ),
+      ),
+    );
+  }
+
+  Widget _wheelCircle({
+    required double percentWheel,
+    required String textTitel,
+    required String textLong,
+  }) {
+    return CircularPercentIndicator(
+      radius: 90,
+      lineWidth: 20,
+      percent: percentWheel,
+      backgroundWidth: 10,
+      backgroundColor: Colors.deepPurple.shade100,
+      circularStrokeCap: CircularStrokeCap.round,
+      rotateLinearGradient: true,
+      maskFilter: const MaskFilter.blur(BlurStyle.solid, 8.0),
+      linearGradient: const LinearGradient(
+        colors: [
+          Color.fromARGB(255, 100, 74, 64),
+          Color.fromARGB(255, 116, 83, 70),
+          Color.fromARGB(255, 139, 96, 79),
+        ],
+        stops: [0.0, 0.5, 1.0],
+      ),
+      center: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            textTitel,
+            style: const TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: Colors.brown,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            textLong,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[700],
+            ),
+          ),
+        ],
       ),
     );
   }

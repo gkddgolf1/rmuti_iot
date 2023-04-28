@@ -274,7 +274,7 @@ class _LightScreenState extends State<LightScreen> {
                     },
                     child: const Icon(
                       Icons.arrow_back_ios,
-                      color: Colors.indigo,
+                      color: Color.fromARGB(255, 228, 142, 14),
                     ),
                   ),
                   const Text(
@@ -313,35 +313,10 @@ class _LightScreenState extends State<LightScreen> {
                         const SizedBox(
                           height: 30,
                         ),
-                        CircularPercentIndicator(
-                          radius: 100,
-                          lineWidth: 20,
-                          percent: wheel,
-                          progressColor: Colors.deepOrange[300],
-                          backgroundColor: Colors.deepPurple.shade100,
-                          circularStrokeCap: CircularStrokeCap.round,
-                          center: RichText(
-                            text: TextSpan(
-                              //text: "${esp32.bh1750.lux}\n",
-                              text: '$_lux\n',
-                              style: const TextStyle(
-                                fontSize: 35,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                              ),
-                              children: const <TextSpan>[
-                                TextSpan(
-                                  text: "   Lux",
-                                  style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.normal,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        _wheelCircle(
+                            percentWheel: wheel,
+                            textTitel: "$_lux",
+                            textLong: "Lux"),
                         const SizedBox(
                           height: 20,
                         ),
@@ -535,7 +510,8 @@ class _LightScreenState extends State<LightScreen> {
                                           },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: _halfDay
-                                                ? Colors.blue
+                                                ? const Color.fromARGB(
+                                                    255, 228, 142, 14)
                                                 : Colors.grey,
                                           ),
                                           child: const Text('ครึ่งวัน'),
@@ -560,7 +536,8 @@ class _LightScreenState extends State<LightScreen> {
                                           },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: _fullDay
-                                                ? Colors.blue
+                                                ? const Color.fromARGB(
+                                                    255, 228, 142, 14)
                                                 : Colors.grey,
                                           ),
                                           child: const Text('เต็มวัน'),
@@ -865,15 +842,63 @@ class _LightScreenState extends State<LightScreen> {
         horizontal: 32,
       ),
       decoration: BoxDecoration(
-        color: isActive ? Colors.indigo : Colors.transparent,
+        color: isActive
+            ? const Color.fromARGB(255, 228, 142, 14)
+            : Colors.transparent,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.indigo),
+        border: Border.all(color: const Color.fromARGB(255, 228, 142, 14)),
       ),
       child: Text(
         title,
         style: TextStyle(
           color: isActive ? Colors.white : Colors.black,
         ),
+      ),
+    );
+  }
+
+  Widget _wheelCircle({
+    required double percentWheel,
+    required String textTitel,
+    required String textLong,
+  }) {
+    return CircularPercentIndicator(
+      radius: 120,
+      lineWidth: 20,
+      percent: percentWheel,
+      backgroundWidth: 10,
+      backgroundColor: Colors.deepPurple.shade100,
+      circularStrokeCap: CircularStrokeCap.round,
+      rotateLinearGradient: true,
+      maskFilter: const MaskFilter.blur(BlurStyle.solid, 8.0),
+      linearGradient: const LinearGradient(
+        colors: [
+          Color.fromARGB(255, 180, 138, 22),
+          Color.fromARGB(255, 207, 156, 13),
+          Color.fromARGB(255, 255, 187, 0),
+        ],
+        stops: [0.0, 0.5, 1.0],
+      ),
+      center: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            textTitel,
+            style: const TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: Colors.deepOrange,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            textLong,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[700],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -888,7 +913,8 @@ class TriangleButtonPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
-      ..color = isPressed ? Colors.deepOrange : Colors.grey
+      ..color =
+          isPressed ? const Color.fromARGB(255, 228, 142, 14) : Colors.grey
       ..style = PaintingStyle.fill;
 
     Path path = Path();

@@ -286,7 +286,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                     },
                     child: const Icon(
                       Icons.arrow_back_ios,
-                      color: Colors.indigo,
+                      color: Color.fromARGB(255, 24, 116, 24),
                     ),
                   ),
                   const Text(
@@ -317,36 +317,20 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                 child: ListView(
                   physics: const BouncingScrollPhysics(),
                   children: [
+                    const SizedBox(
+                      height: 30,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Column(
                           children: [
-                            CircularPercentIndicator(
-                              radius: 60,
-                              lineWidth: 14,
-                              percent: wheelN,
-                              progressColor: Colors.indigo,
-                              center: RichText(
-                                text: TextSpan(
-                                  text: " $N\n",
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                  children: const <TextSpan>[
-                                    TextSpan(
-                                      text: "mg/kg",
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.normal,
-                                        color: Colors.black54,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            _wheelCircle(
+                                percentWheel: wheelN,
+                                textTitel: "$N",
+                                textLong: "mg/kg"),
+                            const SizedBox(
+                              height: 20,
                             ),
                             const Text(
                               "ค่า N",
@@ -358,36 +342,17 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                           ],
                         ),
                         const SizedBox(
-                          width: 40,
+                          width: 10,
                           height: 180,
                         ),
                         Column(
                           children: [
-                            CircularPercentIndicator(
-                              radius: 60,
-                              lineWidth: 14,
-                              percent: wheelP,
-                              progressColor: Colors.indigo,
-                              center: RichText(
-                                text: TextSpan(
-                                  text: " $P\n",
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                  children: const <TextSpan>[
-                                    TextSpan(
-                                      text: "mg/kg",
-                                      style: TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.normal,
-                                        color: Colors.black54,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            _wheelCircle(
+                                percentWheel: wheelP,
+                                textTitel: "$P",
+                                textLong: "mg/kg"),
+                            const SizedBox(
+                              height: 20,
                             ),
                             const Text(
                               "ค่า P",
@@ -402,34 +367,12 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                     ),
                     Column(
                       children: [
-                        CircularPercentIndicator(
-                          radius: 60,
-                          lineWidth: 14,
-                          percent: wheelK,
-                          progressColor: Colors.indigo,
-                          center: Padding(
-                            padding: const EdgeInsets.all(22),
-                            child: RichText(
-                              text: TextSpan(
-                                text: " $K\n",
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                                children: const <TextSpan>[
-                                  TextSpan(
-                                    text: "mg/kg",
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.normal,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
+                        _wheelCircle(
+                            percentWheel: wheelN,
+                            textTitel: "$K",
+                            textLong: "mg/kg"),
+                        const SizedBox(
+                          height: 20,
                         ),
                         const Text(
                           "ค่า K",
@@ -648,8 +591,9 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                         decoration: BoxDecoration(
                                           gradient: const LinearGradient(
                                             colors: [
-                                              Colors.blue,
-                                              Colors.purple
+                                              Color.fromARGB(255, 24, 116, 24),
+                                              Color.fromARGB(255, 26, 160, 26),
+                                              Color.fromARGB(255, 24, 156, 24),
                                             ],
                                             begin: Alignment.topLeft,
                                             end: Alignment.bottomRight,
@@ -965,6 +909,52 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
     );
   }
 
+  Widget _wheelCircle({
+    required double percentWheel,
+    required String textTitel,
+    required String textLong,
+  }) {
+    return CircularPercentIndicator(
+      radius: 80,
+      lineWidth: 16,
+      percent: percentWheel,
+      backgroundWidth: 10,
+      backgroundColor: Colors.deepPurple.shade100,
+      circularStrokeCap: CircularStrokeCap.round,
+      rotateLinearGradient: true,
+      maskFilter: const MaskFilter.blur(BlurStyle.solid, 8.0),
+      linearGradient: const LinearGradient(
+        colors: [
+          Color.fromRGBO(22, 86, 182, 1),
+          Color.fromARGB(255, 13, 33, 206),
+          Color.fromARGB(255, 5, 30, 247),
+        ],
+        stops: [0.0, 0.5, 1.0],
+      ),
+      center: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            textTitel,
+            style: const TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: Color.fromARGB(255, 24, 116, 24),
+            ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            textLong,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[700],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _roundedButton({
     required String title,
     bool isActive = false,
@@ -975,9 +965,11 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
         horizontal: 32,
       ),
       decoration: BoxDecoration(
-        color: isActive ? Colors.indigo : Colors.transparent,
+        color: isActive
+            ? const Color.fromARGB(255, 24, 116, 24)
+            : Colors.transparent,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.indigo),
+        border: Border.all(color: const Color.fromARGB(255, 24, 116, 24)),
       ),
       child: Text(
         title,
