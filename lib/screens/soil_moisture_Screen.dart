@@ -10,6 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
+import '../buttons/buttons.dart';
+
 class SoilMoistureScreen extends StatefulWidget {
   const SoilMoistureScreen({super.key});
 
@@ -370,7 +372,10 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _roundedButton(title: 'Control', isActive: true),
+                        roundedButton(
+                          title: 'Settings',
+                          color: Colors.brown,
+                        ),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -491,7 +496,10 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _roundedButton(title: 'GENERAL', isActive: true),
+                        roundedButton(
+                          title: 'Control',
+                          color: Colors.brown,
+                        ),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -668,7 +676,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _roundedButton(title: 'Set Time', isActive: true),
+                        roundedButton(title: 'Set Time', color: Colors.brown),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -794,7 +802,13 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: ElevatedButton(
+                                  child: elevatedButton(
+                                    text: "Set Start",
+                                    colors: [
+                                      const Color.fromARGB(255, 100, 74, 64),
+                                      const Color.fromARGB(255, 116, 83, 70),
+                                      const Color.fromARGB(255, 139, 96, 79),
+                                    ],
                                     onPressed: () {
                                       int hour = timestart.hour;
                                       int minute = timestart.minute;
@@ -808,12 +822,17 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                               'ESP32/setControl/PUMP/setTimeStart/minute')
                                           .set(minute);
                                     },
-                                    child: const Text('Set Start'),
                                   ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: ElevatedButton(
+                                  child: elevatedButton(
+                                    text: "Set Stop",
+                                    colors: [
+                                      const Color.fromARGB(255, 100, 74, 64),
+                                      const Color.fromARGB(255, 116, 83, 70),
+                                      const Color.fromARGB(255, 139, 96, 79),
+                                    ],
                                     onPressed: () {
                                       int hour = timestop.hour;
                                       int minute = timestop.minute;
@@ -827,7 +846,6 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                               'ESP32/setControl/PUMP/setTimeStop/minute')
                                           .set(minute);
                                     },
-                                    child: const Text('Set Stop'),
                                   ),
                                 ),
                               ],
@@ -842,29 +860,6 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _roundedButton({
-    required String title,
-    bool isActive = false,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: 12,
-        horizontal: 32,
-      ),
-      decoration: BoxDecoration(
-        color: isActive ? Colors.brown : Colors.transparent,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.brown),
-      ),
-      child: Text(
-        title,
-        style: TextStyle(
-          color: isActive ? Colors.white : Colors.black,
         ),
       ),
     );

@@ -6,6 +6,8 @@ import 'package:flutter_switch/flutter_switch.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../buttons/buttons.dart';
+
 class LightScreen extends StatefulWidget {
   const LightScreen({super.key});
 
@@ -376,7 +378,10 @@ class _LightScreenState extends State<LightScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _roundedButton(title: 'GENERAL', isActive: true),
+                        roundedButton(
+                          title: 'Control',
+                          color: const Color.fromARGB(255, 228, 142, 14),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -654,7 +659,10 @@ class _LightScreenState extends State<LightScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _roundedButton(title: 'Set Time', isActive: true),
+                        roundedButton(
+                          title: 'Set Time',
+                          color: const Color.fromARGB(255, 228, 142, 14),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -780,7 +788,13 @@ class _LightScreenState extends State<LightScreen> {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: ElevatedButton(
+                                  child: elevatedButton(
+                                    text: "Set Start",
+                                    colors: [
+                                      const Color.fromARGB(255, 184, 116, 15),
+                                      const Color.fromARGB(255, 201, 125, 12),
+                                      const Color.fromARGB(255, 247, 150, 4)
+                                    ],
                                     onPressed: () {
                                       int hour = timestart.hour;
                                       int minute = timestart.minute;
@@ -794,12 +808,17 @@ class _LightScreenState extends State<LightScreen> {
                                               'ESP32/setControl/MOTOR/setTimeStart/minute')
                                           .set(minute);
                                     },
-                                    child: const Text('Set Start'),
                                   ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: ElevatedButton(
+                                  child: elevatedButton(
+                                    text: "Set Stop",
+                                    colors: [
+                                      const Color.fromARGB(255, 184, 116, 15),
+                                      const Color.fromARGB(255, 201, 125, 12),
+                                      const Color.fromARGB(255, 247, 150, 4)
+                                    ],
                                     onPressed: () {
                                       int hour = timestop.hour;
                                       int minute = timestop.minute;
@@ -813,7 +832,6 @@ class _LightScreenState extends State<LightScreen> {
                                               'ESP32/setControl/MOTOR/setTimeStop/minute')
                                           .set(minute);
                                     },
-                                    child: const Text('Set Stop'),
                                   ),
                                 ),
                               ],
@@ -827,31 +845,6 @@ class _LightScreenState extends State<LightScreen> {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _roundedButton({
-    required String title,
-    bool isActive = false,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: 12,
-        horizontal: 32,
-      ),
-      decoration: BoxDecoration(
-        color: isActive
-            ? const Color.fromARGB(255, 228, 142, 14)
-            : Colors.transparent,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color.fromARGB(255, 228, 142, 14)),
-      ),
-      child: Text(
-        title,
-        style: TextStyle(
-          color: isActive ? Colors.white : Colors.black,
         ),
       ),
     );

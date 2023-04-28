@@ -51,6 +51,7 @@ dependencies:
   dio: ^5.1.1
   syncfusion_flutter_sliders: ^21.1.41
   syncfusion_flutter_core: ^21.1.41
+  google_fonts: ^4.0.4
   
   
   
@@ -98,6 +99,8 @@ flutter:
     - images/greenhouse.png
     - images/sun.gif
     
+
+    - google_fonts/
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

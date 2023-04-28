@@ -1,5 +1,4 @@
-import 'dart:async';
-
+import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:rmuti_iot/buttons/buttons.dart';
 
 class FertilizerScreen extends StatefulWidget {
   const FertilizerScreen({super.key});
@@ -32,6 +32,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
   TextEditingController valueP = TextEditingController();
   TextEditingController valueK = TextEditingController();
 
+  // สวิท
   bool _statusAuto = false;
   bool isSwitched = false;
 
@@ -446,7 +447,9 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _roundedButton(title: 'GENERAL', isActive: true),
+                        roundedButton(
+                            title: 'Control',
+                            color: const Color.fromARGB(255, 24, 116, 24)),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -730,7 +733,9 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _roundedButton(title: 'Set Time', isActive: true),
+                        roundedButton(
+                            title: 'Set Time',
+                            color: const Color.fromARGB(255, 24, 116, 24)),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -856,7 +861,13 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: ElevatedButton(
+                                  child: elevatedButton(
+                                    text: "Set Start",
+                                    colors: [
+                                      const Color.fromARGB(255, 24, 116, 24),
+                                      const Color.fromARGB(255, 26, 160, 26),
+                                      const Color.fromARGB(255, 24, 156, 24)
+                                    ],
                                     onPressed: () {
                                       int hour = timestart.hour;
                                       int minute = timestart.minute;
@@ -870,12 +881,17 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                               'ESP32/setControl/PUMP/setTimeStart/minute')
                                           .set(minute);
                                     },
-                                    child: const Text('Set Start'),
                                   ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: ElevatedButton(
+                                  child: elevatedButton(
+                                    text: "Set Stop",
+                                    colors: [
+                                      const Color.fromARGB(255, 24, 116, 24),
+                                      const Color.fromARGB(255, 26, 160, 26),
+                                      const Color.fromARGB(255, 24, 156, 24),
+                                    ],
                                     onPressed: () {
                                       int hour = timestop.hour;
                                       int minute = timestop.minute;
@@ -889,7 +905,6 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                               'ESP32/setControl/PUMP/setTimeStop/minute')
                                           .set(minute);
                                     },
-                                    child: const Text('Set Stop'),
                                   ),
                                 ),
                               ],
@@ -922,12 +937,12 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
       backgroundColor: Colors.deepPurple.shade100,
       circularStrokeCap: CircularStrokeCap.round,
       rotateLinearGradient: true,
-      maskFilter: const MaskFilter.blur(BlurStyle.solid, 8.0),
+      maskFilter: const MaskFilter.blur(BlurStyle.solid, 5.0),
       linearGradient: const LinearGradient(
         colors: [
-          Color.fromRGBO(22, 86, 182, 1),
-          Color.fromARGB(255, 13, 33, 206),
-          Color.fromARGB(255, 5, 30, 247),
+          Color.fromARGB(255, 25, 92, 179),
+          Color.fromARGB(255, 14, 100, 212),
+          Color.fromARGB(255, 3, 108, 245),
         ],
         stops: [0.0, 0.5, 1.0],
       ),
@@ -936,46 +951,21 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
         children: [
           Text(
             textTitel,
-            style: const TextStyle(
+            style: GoogleFonts.roboto(
               fontSize: 32,
               fontWeight: FontWeight.bold,
-              color: Color.fromARGB(255, 24, 116, 24),
+              color: const Color.fromARGB(255, 24, 116, 24),
             ),
           ),
           const SizedBox(height: 5),
           Text(
             textLong,
-            style: TextStyle(
+            style: GoogleFonts.roboto(
               fontSize: 16,
               color: Colors.grey[700],
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _roundedButton({
-    required String title,
-    bool isActive = false,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        vertical: 12,
-        horizontal: 32,
-      ),
-      decoration: BoxDecoration(
-        color: isActive
-            ? const Color.fromARGB(255, 24, 116, 24)
-            : Colors.transparent,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color.fromARGB(255, 24, 116, 24)),
-      ),
-      child: Text(
-        title,
-        style: TextStyle(
-          color: isActive ? Colors.white : Colors.black,
-        ),
       ),
     );
   }
