@@ -22,8 +22,8 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
 
   var soilMoisture = 0;
   var _time = '';
-  var speedPump = 0;
-  var setSoilmoisture = 0;
+  double speedPump = 0;
+  double setSoilmoisture = 0;
 
   double _speedPump = 0;
   double _setSoilmoisture = 0;
@@ -42,7 +42,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
   @override
   void initState() {
     super.initState();
-    _loadSwitchState();
+    //_loadSwitchState();
 
     // Listen for changes to the Firebase database
     databaseReference
@@ -105,7 +105,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
       int speedpump = (event.snapshot.value as int);
       if (mounted) {
         setState(() {
-          speedPump = speedpump;
+          speedPump = speedpump.toDouble();
         });
       }
     });
@@ -117,13 +117,13 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
       int setsoilmoisture = (event.snapshot.value as int);
       if (mounted) {
         setState(() {
-          setSoilmoisture = setsoilmoisture;
+          setSoilmoisture = setsoilmoisture.toDouble();
         });
       }
     });
   }
 
-  void _loadSwitchState() async {
+/*   void _loadSwitchState() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       _status = prefs.getBool('_status') ?? false;
@@ -141,7 +141,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
     } else if (value is double) {
       await prefs.setDouble(key, value);
     }
-  }
+  } */
 
   // ฟังก์ชันโชว์ ui นาฬิกาเมื่อกด
   void _showDialog(Widget child) {
@@ -381,7 +381,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _roundedButton(title: 'Setting', isActive: true),
+                        _roundedButton(title: 'Control', isActive: true),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -430,16 +430,16 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                               interval: 20,
                               min: 0,
                               max: 100,
-                              value: _speedPump,
-                              onChanged: (value) {
+                              value: speedPump,
+                              onChanged: (dynamic value) {
                                 setState(() {
-                                  _speedPump = value;
-                                  _saveSwitchState('_speedPump', value);
+                                  speedPump = value;
+                                  //_saveSwitchState('_speedPump', value);
                                 });
-                                int speedPump = _speedPump.truncate();
+                                int speedpump = speedPump.truncate();
                                 databaseReference
                                     .child('ESP32/setControl/PUMP/speedPump')
-                                    .set(speedPump);
+                                    .set(speedpump);
                               },
                             ),
                           ),
@@ -480,14 +480,14 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                               interval: 20,
                               min: 0,
                               max: 100,
-                              value: _setSoilmoisture,
+                              value: setSoilmoisture,
                               onChanged: (dynamic value) {
                                 setState(() {
-                                  _setSoilmoisture = value;
-                                  _saveSwitchState('_setSoilmoisture', value);
+                                  setSoilmoisture = value;
+                                  //_saveSwitchState('_setSoilmoisture', value);
                                 });
                                 int setsoilmoisture =
-                                    _setSoilmoisture.truncate();
+                                    setSoilmoisture.truncate();
                                 databaseReference
                                     .child(
                                         'ESP32/setControl/PUMP/setSoilmoilsture')
@@ -553,7 +553,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                   onToggle: (value) {
                                     setState(() {
                                       _status = value;
-                                      _saveSwitchState('_status', value);
+                                      //_saveSwitchState('_status', value);
                                     });
                                     int status = _status ? 1 : 0;
                                     // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
@@ -605,7 +605,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                   onToggle: (value) async {
                                     setState(() {
                                       _statusAuto = value;
-                                      _saveSwitchState('_statusAuto', value);
+                                      //_saveSwitchState('_statusAuto', value);
                                     });
                                     int statusAuto = _statusAuto ? 1 : 0;
                                     // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
@@ -658,7 +658,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                   onToggle: (value) {
                                     setState(() {
                                       isSwitched = value;
-                                      _saveSwitchState('isSwitched', value);
+                                      // _saveSwitchState('isSwitched', value);
                                     });
                                     int setTime = isSwitched ? 1 : 0;
                                     // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
@@ -812,11 +812,11 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
 
                                       databaseReference
                                           .child(
-                                              'ESP32/setControl/PUMP/setTimeStart')
+                                              'ESP32/setControl/PUMP/setTimeStart/hour')
                                           .set(hour);
                                       databaseReference
                                           .child(
-                                              'ESP32/setControl/PUMP/setTimeStart')
+                                              'ESP32/setControl/PUMP/setTimeStart/minute')
                                           .set(minute);
                                     },
                                     child: const Text('Set Start'),
@@ -831,11 +831,11 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
 
                                       databaseReference
                                           .child(
-                                              'ESP32/setControl/PUMP/setTimeStop')
+                                              'ESP32/setControl/PUMP/setTimeStop/hour')
                                           .set(hour);
                                       databaseReference
                                           .child(
-                                              'ESP32/setControl/PUMP/setTimeStop')
+                                              'ESP32/setControl/PUMP/setTimeStop/minute')
                                           .set(minute);
                                     },
                                     child: const Text('Set Stop'),

@@ -45,9 +45,9 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
   @override
   void initState() {
     super.initState();
-    _loadSwitchState();
+    //_loadSwitchState();
 
-    // Listen for changes to the Firebase database
+    // setAutoMode
     databaseReference
         .child('ESP32/setControl/setAutoMode/npk')
         .onValue
@@ -59,9 +59,9 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
         });
       }
     });
-    // Listen for changes to the Firebase database
+    // setTimerMode
     databaseReference
-        .child('ESP32/setControl/setTimerMode/pump')
+        .child('ESP32/setControl/setTimerMode/npk')
         .onValue
         .listen((event) {
       int settime = (event.snapshot.value as int);
@@ -136,7 +136,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
     });
   }
 
-  void _loadSwitchState() async {
+  /* void _loadSwitchState() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       _statusAuto = prefs.getBool('_statusAuto') ?? false;
@@ -147,7 +147,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
   void _saveSwitchState(String key, bool value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool(key, value);
-  }
+  } */
 
   // ฟังก์ชันโชว์ ui นาฬิกาเมื่อกด
   void _showDialog(Widget child) {
@@ -714,7 +714,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                   onToggle: (value) {
                                     setState(() {
                                       _statusAuto = value;
-                                      _saveSwitchState('_statusAuto', value);
+                                      //_saveSwitchState('_statusAuto', value);
                                     });
                                     int statusAuto = _statusAuto ? 1 : 0;
                                     // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
@@ -766,7 +766,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                   onToggle: (value) {
                                     setState(() {
                                       isSwitched = value;
-                                      _saveSwitchState('isSwitched', value);
+                                      //_saveSwitchState('isSwitched', value);
                                     });
                                     int setTime = isSwitched ? 1 : 0;
 

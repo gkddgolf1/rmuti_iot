@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:rmuti_iot/screens/control_screen.dart';
 import 'package:rmuti_iot/screens/light_screen.dart';
@@ -51,6 +52,13 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final databaseReference = FirebaseDatabase.instance.ref();
+
+  bool viewSoil = false;
+  bool viewLux = false;
+  bool viewNPK = false;
+  bool viewSetting = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,13 +126,23 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: [
                         _cardMenu(
                           onTap: () {
+                            int sendsoil = 1;
+                            databaseReference
+                                .child('ESP32/setControl/view/soil')
+                                .set(sendsoil);
+
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) =>
                                     const SoilMoistureScreen(),
                               ),
-                            );
+                            ).then((_) {
+                              int sendsoil = 0;
+                              databaseReference
+                                  .child('ESP32/setControl/view/soil')
+                                  .set(sendsoil);
+                            });
                           },
                           icon: 'images/humidity.png',
                           title: 'ความชื้นดิน',
