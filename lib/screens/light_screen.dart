@@ -296,7 +296,7 @@ class _LightScreenState extends State<LightScreen> {
                 children: [
                   GestureDetector(
                     child: Text(
-                      _time.toString(),
+                      "$_time น.",
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 25,

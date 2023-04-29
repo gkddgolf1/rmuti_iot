@@ -54,11 +54,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final databaseReference = FirebaseDatabase.instance.ref();
 
-  bool viewSoil = false;
-  bool viewLux = false;
-  bool viewNPK = false;
-  bool viewSetting = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: const [
                   Text(
-                    'Hi',
+                    'Green House',
                     style: TextStyle(
                       fontSize: 18,
                       color: Colors.indigo,
@@ -149,12 +144,22 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                         _cardMenu(
                           onTap: () {
+                            int sendNPK = 1;
+                            databaseReference
+                                .child('ESP32/setControl/view/npk')
+                                .set(sendNPK);
+
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => const FertilizerScreen(),
                               ),
-                            );
+                            ).then((_) {
+                              int sendNPK = 0;
+                              databaseReference
+                                  .child('ESP32/setControl/view/npk')
+                                  .set(sendNPK);
+                            });
                           },
                           icon: 'images/fertilizer.png',
                           title: 'การให้ปุ๋ย',
@@ -169,24 +174,44 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: [
                         _cardMenu(
                           onTap: () {
+                            int sendLux = 1;
+                            databaseReference
+                                .child('ESP32/setControl/view/lux')
+                                .set(sendLux);
+
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => const LightScreen(),
                               ),
-                            );
+                            ).then((_) {
+                              int sendLux = 0;
+                              databaseReference
+                                  .child('ESP32/setControl/view/lux')
+                                  .set(sendLux);
+                            });
                           },
                           icon: 'images/sun.png',
                           title: 'การให้แสง',
                         ),
                         _cardMenu(
                           onTap: () {
+                            int sendPlant = 1;
+                            databaseReference
+                                .child('ESP32/setControl/view/plant')
+                                .set(sendPlant);
+
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => const PlantingScreen(),
                               ),
-                            );
+                            ).then((_) {
+                              int sendPlant = 0;
+                              databaseReference
+                                  .child('ESP32/setControl/view/plant')
+                                  .set(sendPlant);
+                            });
                           },
                           icon: 'images/picture.png',
                           title: 'ดูแปลงปลูก',
@@ -201,12 +226,22 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: [
                         _cardMenu(
                           onTap: () {
+                            int sendSetting = 1;
+                            databaseReference
+                                .child('ESP32/setControl/view/setting')
+                                .set(sendSetting);
+
                             Navigator.push(
                               context,
                               MaterialPageRoute(
                                 builder: (context) => const SettingScreen(),
                               ),
-                            );
+                            ).then((_) {
+                              int sendSetting = 0;
+                              databaseReference
+                                  .child('ESP32/setControl/view/setting')
+                                  .set(sendSetting);
+                            });
                           },
                           icon: 'images/control.png',
                           title: 'การตั้งค่า',

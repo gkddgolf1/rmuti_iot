@@ -304,7 +304,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                 children: [
                   GestureDetector(
                     child: Text(
-                      _time,
+                      "$_time น.",
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 25,
@@ -874,11 +874,11 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
 
                                       databaseReference
                                           .child(
-                                              'ESP32/setControl/PUMP/setTimeStart/hour')
+                                              'ESP32/setControl/NPK/setTimeStart/hour')
                                           .set(hour);
                                       databaseReference
                                           .child(
-                                              'ESP32/setControl/PUMP/setTimeStart/minute')
+                                              'ESP32/setControl/NPK/setTimeStart/minute')
                                           .set(minute);
                                     },
                                   ),
@@ -898,11 +898,11 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
 
                                       databaseReference
                                           .child(
-                                              'ESP32/setControl/PUMP/setTimeStop/hour')
+                                              'ESP32/setControl/NPK/setTimeStop/hour')
                                           .set(hour);
                                       databaseReference
                                           .child(
-                                              'ESP32/setControl/PUMP/setTimeStop/minute')
+                                              'ESP32/setControl/NPK/setTimeStop/minute')
                                           .set(minute);
                                     },
                                   ),

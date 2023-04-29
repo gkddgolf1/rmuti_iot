@@ -27,6 +27,12 @@ class _SettingScreenState extends State<SettingScreen> {
   var stopHourPump = 0;
   var stopMinPump = 0;
 
+  // NPK
+  var startHourNPK = 0;
+  var startMinNPK = 0;
+  var stopHourNPK = 0;
+  var stopMinNPK = 0;
+
   DateTime date = DateTime(22, 8, 3);
   DateTime time = DateTime(15, 55);
 
@@ -150,6 +156,55 @@ class _SettingScreenState extends State<SettingScreen> {
         });
       }
     });
+    /* -----------------------------NPK---------------------------------------- */
+    // StartHourPump
+    databaseReference
+        .child('ESP32/setControl/NPK/setTimeStart/hour')
+        .onValue
+        .listen((event) {
+      int starthourNPK = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          startHourNPK = starthourNPK;
+        });
+      }
+    });
+    // StartMinPump
+    databaseReference
+        .child('ESP32/setControl/NPK/setTimeStart/minute')
+        .onValue
+        .listen((event) {
+      int startminNPK = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          startMinNPK = startminNPK;
+        });
+      }
+    });
+    // StopHourPump
+    databaseReference
+        .child('ESP32/setControl/NPK/setTimeStop/hour')
+        .onValue
+        .listen((event) {
+      int stophourNPK = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          stopHourNPK = stophourNPK;
+        });
+      }
+    });
+    // StopMinPump
+    databaseReference
+        .child('ESP32/setControl/NPK/setTimeStop/minute')
+        .onValue
+        .listen((event) {
+      int stopminNPK = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          stopMinNPK = stopminNPK;
+        });
+      }
+    });
   }
 
   void _showDialog(Widget child) {
@@ -209,7 +264,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 children: [
                   GestureDetector(
                     child: Text(
-                      _time,
+                      "$_time น.",
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 25,
@@ -467,7 +522,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                   Text(
-                                    '$startHourPump : $startMinPump น.',
+                                    '$startHourNPK : $startMinNPK น.',
                                     style: const TextStyle(
                                       fontSize: 20,
                                     ),
@@ -489,7 +544,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  '$stopHourPump : $stopMinPump น.',
+                                  '$stopHourNPK : $stopMinNPK น.',
                                   style: const TextStyle(
                                     fontSize: 20,
                                   ),

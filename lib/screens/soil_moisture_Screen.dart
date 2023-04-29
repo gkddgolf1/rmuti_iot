@@ -24,6 +24,9 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
 
   var soilMoisture = 0;
   var _time = '';
+  var _speedPump = 0;
+  var _setSoil = 0;
+
   double speedPump = 0;
   double setSoilmoisture = 0;
 
@@ -102,9 +105,11 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
         .onValue
         .listen((event) {
       int speedpump = (event.snapshot.value as int);
+
       if (mounted) {
         setState(() {
           speedPump = speedpump.toDouble();
+          _speedPump = speedpump;
         });
       }
     });
@@ -117,6 +122,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
       if (mounted) {
         setState(() {
           setSoilmoisture = setsoilmoisture.toDouble();
+          _setSoil = setsoilmoisture;
         });
       }
     });
@@ -266,7 +272,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                 children: [
                   GestureDetector(
                     child: Text(
-                      _time,
+                      "$_time น.",
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 25,
@@ -339,7 +345,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                               ),
                             ),
                             Text(
-                              '$speedPump',
+                              '$_speedPump',
                               style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
@@ -358,7 +364,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                               ),
                             ),
                             Text(
-                              '$setSoilmoisture',
+                              '$_setSoil',
                               style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
