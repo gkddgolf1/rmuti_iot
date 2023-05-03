@@ -951,16 +951,16 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
         children: [
           Text(
             textTitel,
-            style: GoogleFonts.roboto(
+            style: const TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
-              color: const Color.fromARGB(255, 24, 116, 24),
+              color: Color.fromARGB(255, 24, 116, 24),
             ),
           ),
           const SizedBox(height: 5),
           Text(
             textLong,
-            style: GoogleFonts.roboto(
+            style: TextStyle(
               fontSize: 16,
               color: Colors.grey[700],
             ),
