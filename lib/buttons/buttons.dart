@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 // ปุ่มกด Submit
 Widget elevatedButton({
@@ -56,7 +55,7 @@ Widget roundedButton({
     ),
     child: Text(
       title,
-      style: GoogleFonts.roboto(
+      style: const TextStyle(
         color: Colors.white,
       ),
     ),
