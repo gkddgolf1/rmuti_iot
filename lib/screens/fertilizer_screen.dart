@@ -1,4 +1,3 @@
-import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -291,7 +290,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                     ),
                   ),
                   const Text(
-                    "แสดงค่าปุ๋ย",
+                    "Fertilizer",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
