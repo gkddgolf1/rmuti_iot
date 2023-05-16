@@ -2,6 +2,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../buttons/buttons.dart';
+
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
 
@@ -13,7 +15,6 @@ class _SettingScreenState extends State<SettingScreen> {
   final databaseReference = FirebaseDatabase.instance.ref();
 
   var _time = '';
-  var _date = '';
 
   // Motor
   var startHourMotor = 0;
@@ -49,7 +50,7 @@ class _SettingScreenState extends State<SettingScreen> {
         });
       }
     });
-    // RTC1307 == Date
+    /* // RTC1307 == Date
     databaseReference.child('ESP32/RTC1307/Date').onValue.listen((event) {
       var date = event.snapshot.value;
       if (mounted) {
@@ -57,7 +58,8 @@ class _SettingScreenState extends State<SettingScreen> {
           _date = date.toString();
         });
       }
-    });
+    }); */
+
     /* -----------------------------Motor---------------------------------------- */
     // StartHourMotor
     databaseReference
@@ -228,6 +230,7 @@ class _SettingScreenState extends State<SettingScreen> {
             ));
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.indigo.shade50,
@@ -323,22 +326,6 @@ class _SettingScreenState extends State<SettingScreen> {
                                         // This is called when the user changes the time.
                                         onDateTimeChanged: (DateTime newDate) {
                                           setState(() => date = newDate);
-
-                                          int day = newDate.day;
-                                          int month = newDate.month;
-                                          int year = newDate.year;
-                                          databaseReference
-                                              .child(
-                                                  'ESP32/setControl/setDateTime')
-                                              .set(day);
-                                          databaseReference
-                                              .child(
-                                                  'ESP32/setControl/setDateTime')
-                                              .set(month);
-                                          databaseReference
-                                              .child(
-                                                  'ESP32/setControl/setDateTime')
-                                              .set(year);
                                         },
                                       ),
                                     ),
@@ -347,7 +334,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          _date,
+                                          "${date.day}-${date.month}-${date.year}",
                                           style: const TextStyle(
                                             fontSize: 20,
                                           ),
@@ -387,21 +374,6 @@ class _SettingScreenState extends State<SettingScreen> {
                                         // This is called when the user changes the time.
                                         onDateTimeChanged: (DateTime newTime) {
                                           setState(() => time = newTime);
-                                          /* Map<String, dynamic> timeNew = {
-                                            'hour': time.hour,
-                                            'minute': time.minute,
-                                            // 'second': time.second,
-                                          }; */
-                                          int hour = newTime.hour;
-                                          int minute = newTime.minute;
-                                          databaseReference
-                                              .child(
-                                                  'ESP32/setControl/setDateTime')
-                                              .set(hour);
-                                          databaseReference
-                                              .child(
-                                                  'ESP32/setControl/setDateTime')
-                                              .set(minute);
                                         },
                                       ),
                                     ),
@@ -410,7 +382,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          _time,
+                                          "${time.hour}:${time.minute} น.",
                                           style: const TextStyle(
                                             fontSize: 20,
                                           ),
@@ -418,6 +390,51 @@ class _SettingScreenState extends State<SettingScreen> {
                                       ],
                                     ),
                                   ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            // ignore: prefer_const_literals_to_create_immutables
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: elevatedButton(
+                                  text: "Set Start",
+                                  colors: [
+                                    const Color.fromARGB(255, 184, 116, 15),
+                                    const Color.fromARGB(255, 201, 125, 12),
+                                    const Color.fromARGB(255, 247, 150, 4)
+                                  ],
+                                  onPressed: () {
+                                    int day = date.day;
+                                    int month = date.month;
+                                    int year = date.year;
+                                    databaseReference
+                                        .child(
+                                            'ESP32/setControl/setDateTime/day')
+                                        .set(day);
+                                    databaseReference
+                                        .child(
+                                            'ESP32/setControl/setDateTime/month')
+                                        .set(month);
+                                    databaseReference
+                                        .child(
+                                            'ESP32/setControl/setDateTime/year')
+                                        .set(year);
+
+                                    int hour = time.hour;
+                                    int minute = time.minute;
+                                    databaseReference
+                                        .child(
+                                            'ESP32/setControl/setDateTime/hour')
+                                        .set(hour);
+                                    databaseReference
+                                        .child(
+                                            'ESP32/setControl/setDateTime/minute')
+                                        .set(minute);
+                                  },
                                 ),
                               ),
                             ],

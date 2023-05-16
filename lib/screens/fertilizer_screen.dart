@@ -463,11 +463,10 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                           Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 24),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24),
                                 child: Row(
-                                  children: const [
+                                  children: [
                                     Text(
                                       'ตั้งค่าปุ๋ย',
                                       style: TextStyle(
@@ -624,11 +623,10 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 24),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24),
                                 child: Row(
-                                  children: const [
+                                  children: [
                                     Text(
                                       'Auto Fertilizer',
                                       style: TextStyle(
@@ -668,6 +666,10 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                         .child(
                                             'ESP32/setControl/setAutoMode/npk')
                                         .set(statusAuto);
+                                    databaseReference
+                                        .child(
+                                            'ESP32/setControl/setTimerMode/npk')
+                                        .set(0);
                                   },
                                 ),
                               ),
@@ -676,11 +678,10 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 24),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24),
                                 child: Row(
-                                  children: const [
+                                  children: [
                                     Text(
                                       'Set Time',
                                       style: TextStyle(
@@ -715,11 +716,14 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                       //_saveSwitchState('isSwitched', value);
                                     });
                                     int setTime = isSwitched ? 1 : 0;
-
                                     databaseReference
                                         .child(
                                             'ESP32/setControl/setTimerMode/npk')
                                         .set(setTime);
+                                    databaseReference
+                                        .child(
+                                            'ESP32/setControl/setAutoMode/npk')
+                                        .set(0);
                                   },
                                 ),
                               ),
@@ -748,25 +752,24 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                         ),
                         child: Column(
                           children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 24),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 24),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
-                                children: const [
+                                children: [
                                   Text(
                                     'Set Time On',
                                     style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                  Text(
+                                  /* Text(
                                     'Set Time Off',
                                     style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold),
-                                  ),
+                                  ), */
                                 ],
                               ),
                             ),
@@ -813,7 +816,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                     ),
                                   ),
                                 ),
-                                Padding(
+                                /* Padding(
                                   padding:
                                       const EdgeInsets.symmetric(horizontal: 0),
                                   child: SizedBox(
@@ -852,7 +855,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                       ),
                                     ),
                                   ),
-                                ),
+                                ), */
                               ],
                             ),
                             Row(
@@ -882,7 +885,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                     },
                                   ),
                                 ),
-                                Padding(
+                                /* Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: elevatedButton(
                                     text: "Set Stop",
@@ -905,7 +908,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                           .set(minute);
                                     },
                                   ),
-                                ),
+                                ), */
                               ],
                             )
                           ],

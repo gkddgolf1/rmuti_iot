@@ -2,7 +2,6 @@
 //
 //     final esp32 = esp32FromJson(jsonString);
 
-import 'package:meta/meta.dart';
 import 'dart:convert';
 
 Esp32 esp32FromJson(String str) => Esp32.fromJson(json.decode(str));

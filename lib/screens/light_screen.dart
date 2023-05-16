@@ -393,10 +393,10 @@ class _LightScreenState extends State<LightScreen> {
                       ),
                       child: Column(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 24),
                             child: Row(
-                              children: const [
+                              children: [
                                 Text(
                                   'Curtain control',
                                   style: TextStyle(
@@ -464,11 +464,10 @@ class _LightScreenState extends State<LightScreen> {
                           Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 24),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24),
                                 child: Row(
-                                  children: const [
+                                  children: [
                                     Text(
                                       'Auto Curtain',
                                       style: TextStyle(
@@ -603,11 +602,10 @@ class _LightScreenState extends State<LightScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 24),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24),
                                 child: Row(
-                                  children: const [
+                                  children: [
                                     Text(
                                       'Set Time',
                                       style: TextStyle(
@@ -676,13 +674,12 @@ class _LightScreenState extends State<LightScreen> {
                         ),
                         child: Column(
                           children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 24),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 24),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
-                                children: const [
+                                children: [
                                   Text(
                                     'Set Time On',
                                     style: TextStyle(

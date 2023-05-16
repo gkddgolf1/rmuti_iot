@@ -6,7 +6,6 @@ import 'package:flutter_switch/flutter_switch.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 import 'package:percent_indicator/percent_indicator.dart';
 
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
@@ -46,7 +45,6 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
     super.initState();
     //_loadSwitchState();
 
-    // Listen for changes to the Firebase database
     databaseReference
         .child('ESP32/setControl/PUMP/status')
         .onValue
@@ -69,7 +67,6 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
         });
       }
     });
-    // Listen for changes to the Firebase database
     databaseReference
         .child('ESP32/setControl/setTimerMode/pump')
         .onValue
@@ -394,10 +391,10 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 24),
                             child: Row(
-                              children: const [
+                              children: [
                                 Text(
                                   'แรงดันน้ำ',
                                   style: TextStyle(
@@ -444,10 +441,10 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                             ),
                           ),
                           const SizedBox(height: 32),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 24),
                             child: Row(
-                              children: const [
+                              children: [
                                 Text(
                                   'ความชื้น',
                                   style: TextStyle(
@@ -520,11 +517,10 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 24),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24),
                                 child: Row(
-                                  children: const [
+                                  children: [
                                     Text(
                                       'Sprinkle',
                                       style: TextStyle(
@@ -571,11 +567,10 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 24),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24),
                                 child: Row(
-                                  children: const [
+                                  children: [
                                     Text(
                                       'Auto Sprinkle',
                                       style: TextStyle(
@@ -612,11 +607,14 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                     });
                                     int statusAuto = _statusAuto ? 1 : 0;
                                     // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
-
                                     databaseReference
                                         .child(
                                             'ESP32/setControl/setAutoMode/pump')
                                         .set(statusAuto);
+                                    databaseReference
+                                        .child(
+                                            'ESP32/setControl/setTimerMode/pump')
+                                        .set(0);
                                   },
                                 ),
                               ),
@@ -625,11 +623,10 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 24),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24),
                                 child: Row(
-                                  children: const [
+                                  children: [
                                     Text(
                                       'Set Time',
                                       style: TextStyle(
@@ -665,11 +662,14 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                     });
                                     int setTime = isSwitched ? 1 : 0;
                                     // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
-
                                     databaseReference
                                         .child(
                                             'ESP32/setControl/setTimerMode/pump')
                                         .set(setTime);
+                                    databaseReference
+                                        .child(
+                                            'ESP32/setControl/setAutoMode/pump')
+                                        .set(0);
                                   },
                                 ),
                               ),
@@ -696,13 +696,12 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                         ),
                         child: Column(
                           children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 24),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 24),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
-                                children: const [
+                                children: [
                                   Text(
                                     'Set Time On',
                                     style: TextStyle(
