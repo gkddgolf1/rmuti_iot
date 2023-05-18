@@ -19,12 +19,12 @@ void main() async {
 }
 
 class MyHttpOverrides extends HttpOverrides {
-  @override
+  /* @override
   HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
       ..badCertificateCallback =
           (X509Certificate cert, String host, int port) => false;
-  }
+  } */
 }
 
 class MyApp extends StatelessWidget {
