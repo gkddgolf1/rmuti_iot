@@ -246,7 +246,7 @@ class _LightScreenState extends State<LightScreen> {
 
     // ประกาศตัวแปร wheel ขึ้นมาเพื่อเก็บไปเป็นค่าวงล้อ
     double wheel = _lux.toDouble();
-    if (wheel >= 1 && wheel <= 100) {
+    if (wheel >= 0 && wheel <= 100) {
       wheel = wheel / 100;
     } else if (wheel > 100 && wheel <= 1000) {
       wheel = wheel / 1000;

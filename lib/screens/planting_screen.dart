@@ -20,13 +20,12 @@ class _PlantingScreenState extends State<PlantingScreen> {
   bool isLoading = true;
   DateTime? selectedDate;
   var _time = '';
+  int visibleImageCount = 10;
 
   @override
   void initState() {
     super.initState();
     loadImages();
-
-    // RTC1307
     databaseReference.child('ESP32/RTC1307/Time').onValue.listen((event) {
       var time = event.snapshot.value;
       if (mounted) {
@@ -45,9 +44,6 @@ class _PlantingScreenState extends State<PlantingScreen> {
       String url = await ref.getDownloadURL();
       FullMetadata metadata = await ref.getMetadata();
       DateTime createdTime = metadata.timeCreated!;
-      print('Image URL: $url');
-      print('Time Created: $createdTime');
-
       imageList.add({
         'url': url,
         'createdTime': createdTime,
@@ -55,11 +51,14 @@ class _PlantingScreenState extends State<PlantingScreen> {
     });
 
     imageList.sort((a, b) => b['createdTime'].compareTo(a['createdTime']));
+    List<String> loadedImageUrls = List<String>.from(
+        imageList.map((e) => e['url']).take(visibleImageCount));
+    List<DateTime> loadedCreatedTimes = List<DateTime>.from(
+        imageList.map((e) => e['createdTime']).take(visibleImageCount));
 
     setState(() {
-      imageUrls = List<String>.from(imageList.map((e) => e['url']).toList());
-      createdTimes =
-          List<DateTime>.from(imageList.map((e) => e['createdTime']).toList());
+      imageUrls = loadedImageUrls;
+      createdTimes = loadedCreatedTimes;
       isLoading = false;
     });
   }
@@ -89,6 +88,15 @@ class _PlantingScreenState extends State<PlantingScreen> {
         selectedDate = pickedDate;
       });
     }
+  }
+
+  void _loadMoreImages() {
+    setState(() {
+      visibleImageCount += 10;
+      if (visibleImageCount >= imageUrls.length) {
+        visibleImageCount = imageUrls.length;
+      }
+    });
   }
 
   @override
@@ -168,8 +176,8 @@ class _PlantingScreenState extends State<PlantingScreen> {
                         ),
                         Text(
                           selectedDate != null
-                              ? DateFormat('MMM d, y').format(selectedDate!)
-                              : DateFormat('MMM d, y').format(DateTime.now()),
+                              ? DateFormat('yyyy-MM-dd').format(selectedDate!)
+                              : DateFormat('yyyy-MM-dd').format(DateTime.now()),
                           style: const TextStyle(
                             fontSize: 20,
                             fontStyle: FontStyle.italic,
@@ -195,8 +203,8 @@ class _PlantingScreenState extends State<PlantingScreen> {
                         : Expanded(
                             child: GridView.count(
                               crossAxisCount: 2,
-                              children: List.generate(filteredImageUrls.length,
-                                  (index) {
+                              children:
+                                  List.generate(visibleImageCount, (index) {
                                 return GestureDetector(
                                   onTap: () => _onImageTap(
                                     filteredImageUrls[index],
@@ -231,6 +239,18 @@ class _PlantingScreenState extends State<PlantingScreen> {
                               }),
                             ),
                           ),
+                    if (visibleImageCount < imageUrls.length)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: elevatedButton(
+                          onPressed: _loadMoreImages,
+                          text: 'Load More',
+                          colors: [
+                            Colors.indigo,
+                            Colors.indigo,
+                          ],
+                        ),
+                      ),
                   ],
                 ),
               ),
