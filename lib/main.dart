@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -54,6 +55,31 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final databaseReference = FirebaseDatabase.instance.ref();
 
+  var _temp = 0.0;
+  double _hum = 2.02;
+
+  @override
+  void initState() {
+    super.initState();
+
+    databaseReference.child('ESP32/SHT31/temperature').onValue.listen((event) {
+      double temperature = (event.snapshot.value as double);
+      if (mounted) {
+        setState(() {
+          _temp = temperature;
+        });
+      }
+    });
+    databaseReference.child('ESP32/SHT31/humidity').onValue.listen((event) {
+      double humidity = (event.snapshot.value as double);
+      if (mounted) {
+        setState(() {
+          _hum = humidity;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,7 +133,17 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 48),
+                    const SizedBox(height: 20),
+                    Center(
+                      child: Text(
+                        'อุณหภูมิ: $_temp°C\nความชื้น: $_hum%',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                     const Text(
                       'SERVICES',
                       style: TextStyle(
