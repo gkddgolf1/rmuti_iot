@@ -117,11 +117,24 @@ class _MyHomePageState extends State<MyHomePage> {
                   physics: const BouncingScrollPhysics(),
                   children: [
                     const SizedBox(height: 32),
-                    Center(
-                      child: Image.asset(
-                        'images/banner.png',
-                        scale: 1.2,
-                      ),
+                    Row(
+                      children: [
+                        Center(
+                          child: Image.asset(
+                            'images/banner.png',
+                            scale: 1.2,
+                          ),
+                        ),
+                        Center(
+                          child: Text(
+                            'อุณหภูมิ: $_temp°C\nความชื้น: $_hum%',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     const Center(
@@ -133,16 +146,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    Center(
-                      child: Text(
-                        'อุณหภูมิ: $_temp°C\nความชื้น: $_hum%',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ),
+                    //const SizedBox(height: 20),
+
                     const SizedBox(height: 20),
                     const Text(
                       'SERVICES',
