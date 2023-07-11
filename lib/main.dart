@@ -1,9 +1,8 @@
-import 'dart:ffi';
 import 'dart:io';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:rmuti_iot/screens/control_screen.dart';
 import 'package:rmuti_iot/screens/light_screen.dart';
 import 'package:rmuti_iot/screens/soil_moisture_Screen.dart';
@@ -14,18 +13,19 @@ import 'screens/planting_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  HttpOverrides.global = MyHttpOverrides();
 
   runApp(const MyApp());
 }
 
-/* class MyHttpOverrides extends HttpOverrides {
+class MyHttpOverrides extends HttpOverrides {
   /* @override
   HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
       ..badCertificateCallback =
           (X509Certificate cert, String host, int port) => false;
   } */
-} */
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -54,15 +54,15 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final databaseReference = FirebaseDatabase.instance.ref();
 
-  var _temp = 0.0;
-  double _hum = 2.02;
+  var _temp = 0;
+  var _hum = 2;
 
   @override
   void initState() {
     super.initState();
 
     databaseReference.child('ESP32/SHT31/temperature').onValue.listen((event) {
-      double temperature = (event.snapshot.value as double);
+      int temperature = (event.snapshot.value as int);
       if (mounted) {
         setState(() {
           _temp = temperature;
@@ -70,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     });
     databaseReference.child('ESP32/SHT31/humidity').onValue.listen((event) {
-      double humidity = (event.snapshot.value as double);
+      int humidity = (event.snapshot.value as int);
       if (mounted) {
         setState(() {
           _hum = humidity;
@@ -116,11 +116,55 @@ class _MyHomePageState extends State<MyHomePage> {
                   physics: const BouncingScrollPhysics(),
                   children: [
                     const SizedBox(height: 32),
-                    Center(
-                      child: Image.asset(
-                        'images/banner.png',
-                        scale: 1.2,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Center(
+                          child: Image.asset(
+                            'images/banner.png',
+                            scale: 1.6,
+                          ),
+                        ),
+                        Column(
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  '$_temp',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.grey.shade800,
+                                  ),
+                                ),
+                                Image.asset(
+                                  'images/temp.png',
+                                  height: 30,
+                                  //color: Colors.grey[800],
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Text(
+                                  '$_hum',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.grey.shade800,
+                                  ),
+                                ),
+                                Image.asset(
+                                  'images/hum.png',
+                                  height: 30,
+                                  //color: Colors.grey[800],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 16),
                     const Center(
@@ -133,15 +177,26 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    Center(
-                      child: Text(
-                        'อุณหภูมิ: $_temp°C\nความชื้น: $_hum%',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
-                        ),
+                    /*  Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('$_temp'),
+                          Image.asset(
+                            'images/temp.png',
+                            height: 30,
+                            //color: Colors.grey[800],
+                          ),
+                          Text('$_hum'),
+                          Image.asset(
+                            'images/hum.png',
+                            height: 30,
+                            //color: Colors.grey[800],
+                          ),
+                        ],
                       ),
-                    ),
+                    
+                    ), */
                     const SizedBox(height: 20),
                     const Text(
                       'SERVICES',
