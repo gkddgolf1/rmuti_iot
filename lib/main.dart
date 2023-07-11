@@ -14,19 +14,18 @@ import 'screens/planting_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  HttpOverrides.global = MyHttpOverrides();
 
   runApp(const MyApp());
 }
 
-class MyHttpOverrides extends HttpOverrides {
+/* class MyHttpOverrides extends HttpOverrides {
   /* @override
   HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
       ..badCertificateCallback =
           (X509Certificate cert, String host, int port) => false;
   } */
-}
+} */
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
