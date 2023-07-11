@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:rmuti_iot/screens/control_screen.dart';
 import 'package:rmuti_iot/screens/light_screen.dart';
 import 'package:rmuti_iot/screens/soil_moisture_Screen.dart';

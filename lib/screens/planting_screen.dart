@@ -22,10 +22,12 @@ class _PlantingScreenState extends State<PlantingScreen> {
   void initState() {
     super.initState();
     fetchImageUrls().then((images) {
-      setState(() {
-        imageList = images;
-        showMoreButton = imageList.length > visibleImageCount;
-      });
+      if (mounted) {
+        setState(() {
+          imageList = images;
+          showMoreButton = imageList.length > visibleImageCount;
+        });
+      }
     });
   }
 
