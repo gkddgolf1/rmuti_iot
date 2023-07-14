@@ -12,19 +12,20 @@ import 'screens/planting_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  HttpOverrides.global = MyHttpOverrides();
+
+  //HttpOverrides.global = MyHttpOverrides();
 
   runApp(const MyApp());
 }
 
-class MyHttpOverrides extends HttpOverrides {
-  /* @override
+/*class MyHttpOverrides extends HttpOverrides {
+  @override
   HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
       ..badCertificateCallback =
           (X509Certificate cert, String host, int port) => false;
-  } */
-}
+  } 
+}*/
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -58,7 +59,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
+    getData();
     super.initState();
+  }
+
+  void getData() {
+    final databaseReference = FirebaseDatabase.instance.ref();
 
     databaseReference.child('ESP32/SHT31/temperature').onValue.listen((event) {
       int temperature = (event.snapshot.value as int);
@@ -121,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         Center(
                           child: Image.asset(
                             'images/banner.png',
-                            scale: 1.6,
+                            scale: 1.7,
                           ),
                         ),
                         Column(
@@ -129,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             Row(
                               children: [
                                 Text(
-                                  '$_temp',
+                                  '$_temp °C',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 20,
@@ -147,7 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             Row(
                               children: [
                                 Text(
-                                  '$_hum',
+                                  '$_hum %',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 20,
