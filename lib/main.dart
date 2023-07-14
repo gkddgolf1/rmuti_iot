@@ -13,19 +13,19 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  //HttpOverrides.global = MyHttpOverrides();
+  HttpOverrides.global = MyHttpOverrides();
 
   runApp(const MyApp());
 }
 
-/*class MyHttpOverrides extends HttpOverrides {
+class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
     return super.createHttpClient(context)
       ..badCertificateCallback =
           (X509Certificate cert, String host, int port) => false;
-  } 
-}*/
+  }
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -54,8 +54,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final databaseReference = FirebaseDatabase.instance.ref();
 
-  var _temp = 0;
-  var _hum = 2;
+  var _temp = 0.0;
+  var _hum = 2.0;
 
   @override
   void initState() {
@@ -67,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final databaseReference = FirebaseDatabase.instance.ref();
 
     databaseReference.child('ESP32/SHT31/temperature').onValue.listen((event) {
-      int temperature = (event.snapshot.value as int);
+      double temperature = (event.snapshot.value as double);
       if (mounted) {
         setState(() {
           _temp = temperature;
@@ -75,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
       }
     });
     databaseReference.child('ESP32/SHT31/humidity').onValue.listen((event) {
-      int humidity = (event.snapshot.value as int);
+      double humidity = (event.snapshot.value as double);
       if (mounted) {
         setState(() {
           _hum = humidity;
@@ -121,55 +121,11 @@ class _MyHomePageState extends State<MyHomePage> {
                   physics: const BouncingScrollPhysics(),
                   children: [
                     const SizedBox(height: 32),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Center(
-                          child: Image.asset(
-                            'images/banner.png',
-                            scale: 1.7,
-                          ),
-                        ),
-                        Column(
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  '$_temp °C',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                    color: Colors.grey.shade800,
-                                  ),
-                                ),
-                                Image.asset(
-                                  'images/temp.png',
-                                  height: 30,
-                                  //color: Colors.grey[800],
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Text(
-                                  '$_hum %',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                    color: Colors.grey.shade800,
-                                  ),
-                                ),
-                                Image.asset(
-                                  'images/hum.png',
-                                  height: 30,
-                                  //color: Colors.grey[800],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
+                    Center(
+                      child: Image.asset(
+                        'images/banner.png',
+                        scale: 1.3,
+                      ),
                     ),
                     const SizedBox(height: 16),
                     const Center(
@@ -182,26 +138,45 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    /*  Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('$_temp'),
-                          Image.asset(
-                            'images/temp.png',
-                            height: 30,
-                            //color: Colors.grey[800],
-                          ),
-                          Text('$_hum'),
-                          Image.asset(
-                            'images/hum.png',
-                            height: 30,
-                            //color: Colors.grey[800],
-                          ),
-                        ],
-                      ),
-                    
-                    ), */
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              '$_temp °C',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.grey.shade800,
+                              ),
+                            ),
+                            Image.asset(
+                              'images/temp.png',
+                              height: 30,
+                              //color: Colors.grey[800],
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              '$_hum %',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: Colors.grey.shade800,
+                              ),
+                            ),
+                            Image.asset(
+                              'images/hum.png',
+                              height: 30,
+                              //color: Colors.grey[800],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 20),
                     const Text(
                       'SERVICES',
