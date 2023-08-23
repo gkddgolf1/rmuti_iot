@@ -54,8 +54,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final databaseReference = FirebaseDatabase.instance.ref();
 
-  var _temp = 0.0;
-  var _hum = 2.0;
+  dynamic _temp;
+  dynamic _hum;
 
   @override
   void initState() {
@@ -66,16 +66,22 @@ class _MyHomePageState extends State<MyHomePage> {
   void getData() {
     final databaseReference = FirebaseDatabase.instance.ref();
 
-    databaseReference.child('ESP32/SHT31/temperature').onValue.listen((event) {
-      double temperature = (event.snapshot.value as double);
+    databaseReference
+        .child('ESP32/views/SHT31/temperature')
+        .onValue
+        .listen((event) {
+      dynamic temperature = (event.snapshot.value as dynamic);
       if (mounted) {
         setState(() {
           _temp = temperature;
         });
       }
     });
-    databaseReference.child('ESP32/SHT31/humidity').onValue.listen((event) {
-      double humidity = (event.snapshot.value as double);
+    databaseReference
+        .child('ESP32/views/SHT31/humidity')
+        .onValue
+        .listen((event) {
+      dynamic humidity = (event.snapshot.value as dynamic);
       if (mounted) {
         setState(() {
           _hum = humidity;

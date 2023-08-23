@@ -47,6 +47,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
     super.initState();
     //_loadSwitchState();
 
+    // ----------------------- setControl -------------------------- //
     // setAutoMode
     databaseReference
         .child('ESP32/setControl/setAutoMode/npk')
@@ -68,42 +69,6 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
       if (mounted) {
         setState(() {
           isSwitched = (settime == 1);
-        });
-      }
-    });
-    // RTC1307
-    databaseReference.child('ESP32/RTC1307/Time').onValue.listen((event) {
-      var time = event.snapshot.value;
-      if (mounted) {
-        setState(() {
-          _time = time.toString();
-        });
-      }
-    });
-    // RS485 == N
-    databaseReference.child('ESP32/RS485/N').onValue.listen((event) {
-      int n = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          N = n;
-        });
-      }
-    });
-    // RS485 == P
-    databaseReference.child('ESP32/RS485/P').onValue.listen((event) {
-      int p = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          P = p;
-        });
-      }
-    });
-    // RS485 == K
-    databaseReference.child('ESP32/RS485/K').onValue.listen((event) {
-      int k = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          K = k;
         });
       }
     });
@@ -131,6 +96,44 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
       if (mounted) {
         setState(() {
           setK = k;
+        });
+      }
+    });
+
+    // ---------------------------- views ------------------------ //
+    // RTC1307
+    databaseReference.child('ESP32/views/RTC1307/Time').onValue.listen((event) {
+      var time = event.snapshot.value;
+      if (mounted) {
+        setState(() {
+          _time = time.toString();
+        });
+      }
+    });
+    // RS485 == N
+    databaseReference.child('ESP32/views/RS485/N').onValue.listen((event) {
+      int n = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          N = n;
+        });
+      }
+    });
+    // RS485 == P
+    databaseReference.child('ESP32/views/RS485/P').onValue.listen((event) {
+      int p = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          P = p;
+        });
+      }
+    });
+    // RS485 == K
+    databaseReference.child('ESP32/views/RS485/K').onValue.listen((event) {
+      int k = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          K = k;
         });
       }
     });
@@ -874,14 +877,12 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                       int hour = timestart.hour;
                                       int minute = timestart.minute;
 
+                                      String setTimeStart = '$hour:$minute';
+
                                       databaseReference
                                           .child(
-                                              'ESP32/setControl/NPK/setTimeStart/hour')
-                                          .set(hour);
-                                      databaseReference
-                                          .child(
-                                              'ESP32/setControl/NPK/setTimeStart/minute')
-                                          .set(minute);
+                                              'ESP32/setControl/NPK/setTimeStart')
+                                          .set(setTimeStart);
                                     },
                                   ),
                                 ),

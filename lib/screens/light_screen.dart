@@ -45,6 +45,7 @@ class _LightScreenState extends State<LightScreen> {
     super.initState();
     _loadSwitchState();
 
+    // ------------------- setControl ------------------- //
     // _statusAuto
     databaseReference
         .child('ESP32/setControl/setAutoMode/motor')
@@ -109,8 +110,9 @@ class _LightScreenState extends State<LightScreen> {
       },
     );
 
+    // ------------------------- views ------------------------- //
     // BH1750
-    databaseReference.child('ESP32/BH1750/Lux').onValue.listen((event) {
+    databaseReference.child('ESP32/views/BH1750/Lux').onValue.listen((event) {
       int lux = (event.snapshot.value as int);
       if (mounted) {
         setState(() {
@@ -120,7 +122,7 @@ class _LightScreenState extends State<LightScreen> {
     });
 
     // RTC1307
-    databaseReference.child('ESP32/RTC1307/Time').onValue.listen((event) {
+    databaseReference.child('ESP32/views/RTC1307/Time').onValue.listen((event) {
       var time = event.snapshot.value;
       if (mounted) {
         setState(() {
@@ -130,7 +132,10 @@ class _LightScreenState extends State<LightScreen> {
     });
 
     // E18-D80NK (sensor สีตัวเหลือง)
-    databaseReference.child('ESP32/E18-D80NK/status').onValue.listen((event) {
+    databaseReference
+        .child('ESP32/views/E18-D80NK/status')
+        .onValue
+        .listen((event) {
       int status1 = (event.snapshot.value as int);
       if (mounted) {
         setState(() {
@@ -140,7 +145,10 @@ class _LightScreenState extends State<LightScreen> {
     });
 
     // TCS-34725 (sensor สี)
-    databaseReference.child('ESP32/TCS-34725/status').onValue.listen((event) {
+    databaseReference
+        .child('ESP32/views/TCS-34725/status')
+        .onValue
+        .listen((event) {
       int status2 = (event.snapshot.value as int);
       if (mounted) {
         setState(() {
@@ -796,14 +804,12 @@ class _LightScreenState extends State<LightScreen> {
                                       int hour = timestart.hour;
                                       int minute = timestart.minute;
 
+                                      String setTimeStart = '$hour:$minute';
+
                                       databaseReference
                                           .child(
-                                              'ESP32/setControl/MOTOR/setTimeStart/hour')
-                                          .set(hour);
-                                      databaseReference
-                                          .child(
-                                              'ESP32/setControl/MOTOR/setTimeStart/minute')
-                                          .set(minute);
+                                              'ESP32/setControl/MOTOR/setTimeStart')
+                                          .set(setTimeStart);
                                     },
                                   ),
                                 ),
@@ -820,14 +826,12 @@ class _LightScreenState extends State<LightScreen> {
                                       int hour = timestop.hour;
                                       int minute = timestop.minute;
 
+                                      String setTimeStop = '$hour:$minute';
+
                                       databaseReference
                                           .child(
-                                              'ESP32/setControl/MOTOR/setTimeStop/hour')
-                                          .set(hour);
-                                      databaseReference
-                                          .child(
-                                              'ESP32/setControl/MOTOR/setTimeStop/minute')
-                                          .set(minute);
+                                              'ESP32/setControl/MOTOR/setTimeStop')
+                                          .set(setTimeStop);
                                     },
                                   ),
                                 ),

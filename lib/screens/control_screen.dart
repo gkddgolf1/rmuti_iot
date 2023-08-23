@@ -17,22 +17,16 @@ class _SettingScreenState extends State<SettingScreen> {
   var _time = '';
 
   // Motor
-  var startHourMotor = 0;
-  var startMinMotor = 0;
-  var stopHourMotor = 0;
-  var stopMinMotor = 0;
+  String startMotor = '0';
+  String stopMotor = '0';
 
   // Pump
-  var startHourPump = 0;
-  var startMinPump = 0;
-  var stopHourPump = 0;
-  var stopMinPump = 0;
+  String startPump = '0';
+  String stopPump = '0';
 
   // NPK
-  var startHourNPK = 0;
-  var startMinNPK = 0;
-  var stopHourNPK = 0;
-  var stopMinNPK = 0;
+  String startNPK = '0';
+  String stopNPK = '0';
 
   DateTime date = DateTime(22, 8, 3);
   DateTime time = DateTime(15, 55);
@@ -42,7 +36,7 @@ class _SettingScreenState extends State<SettingScreen> {
     super.initState();
 
     // RTC1307 == Time
-    databaseReference.child('ESP32/RTC1307/Time').onValue.listen((event) {
+    databaseReference.child('ESP32/views/RTC1307/Time').onValue.listen((event) {
       var time = event.snapshot.value;
       if (mounted) {
         setState(() {
@@ -50,160 +44,116 @@ class _SettingScreenState extends State<SettingScreen> {
         });
       }
     });
-    /* // RTC1307 == Date
-    databaseReference.child('ESP32/RTC1307/Date').onValue.listen((event) {
-      var date = event.snapshot.value;
-      if (mounted) {
-        setState(() {
-          _date = date.toString();
-        });
-      }
-    }); */
 
     /* -----------------------------Motor---------------------------------------- */
     // StartHourMotor
     databaseReference
-        .child('ESP32/setControl/MOTOR/setTimeStart/hour')
+        .child('ESP32/setControl/MOTOR/setTimeStart')
         .onValue
         .listen((event) {
-      int starthourmotor = (event.snapshot.value as int);
+      String startmotor = (event.snapshot.value as String);
       if (mounted) {
         setState(() {
-          startHourMotor = starthourmotor;
-        });
-      }
-    });
-    // StartMinMotor
-    databaseReference
-        .child('ESP32/setControl/MOTOR/setTimeStart/minute')
-        .onValue
-        .listen((event) {
-      int startminmotor = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          startMinMotor = startminmotor;
+          startMotor = startmotor;
         });
       }
     });
     // StopHourMotor
     databaseReference
-        .child('ESP32/setControl/MOTOR/setTimeStop/hour')
+        .child('ESP32/setControl/MOTOR/setTimeStop')
         .onValue
         .listen((event) {
-      int stophourmotor = (event.snapshot.value as int);
+      String stopmotor = (event.snapshot.value as String);
       if (mounted) {
         setState(() {
-          stopHourMotor = stophourmotor;
+          stopMotor = stopmotor;
         });
       }
     });
-    // StopMinMotor
-    databaseReference
-        .child('ESP32/setControl/MOTOR/setTimeStop/minute')
-        .onValue
-        .listen((event) {
-      int stopminmotor = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          stopMinMotor = stopminmotor;
-        });
-      }
-    });
+
 /* -----------------------------Pump---------------------------------------- */
     // StartHourPump
     databaseReference
-        .child('ESP32/setControl/PUMP/setTimeStart/hour')
+        .child('ESP32/setControl/PUMP/setTimeStart')
         .onValue
         .listen((event) {
-      int starthourpump = (event.snapshot.value as int);
+      String startpump = (event.snapshot.value as String);
       if (mounted) {
         setState(() {
-          startHourPump = starthourpump;
-        });
-      }
-    });
-    // StartMinPump
-    databaseReference
-        .child('ESP32/setControl/PUMP/setTimeStart/minute')
-        .onValue
-        .listen((event) {
-      int startminpump = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          startMinPump = startminpump;
+          startPump = startpump;
         });
       }
     });
     // StopHourPump
     databaseReference
-        .child('ESP32/setControl/PUMP/setTimeStop/hour')
+        .child('ESP32/setControl/PUMP/setTimeStop')
         .onValue
         .listen((event) {
-      int stophourpump = (event.snapshot.value as int);
+      String stoppump = (event.snapshot.value as String);
       if (mounted) {
         setState(() {
-          stopHourPump = stophourpump;
+          stopPump = stoppump;
         });
       }
     });
     // StopMinPump
     databaseReference
-        .child('ESP32/setControl/PUMP/setTimeStop/minute')
+        .child('ESP32/setControl/PUMP/setTimeStop')
         .onValue
         .listen((event) {
-      int stopminpump = (event.snapshot.value as int);
+      String stoppump = (event.snapshot.value as String);
       if (mounted) {
         setState(() {
-          stopMinPump = stopminpump;
+          stopPump = stoppump;
         });
       }
     });
     /* -----------------------------NPK---------------------------------------- */
     // StartHourPump
     databaseReference
-        .child('ESP32/setControl/NPK/setTimeStart/hour')
+        .child('ESP32/setControl/NPK/setTimeStart')
         .onValue
         .listen((event) {
-      int starthourNPK = (event.snapshot.value as int);
+      String startNPK = (event.snapshot.value as String);
       if (mounted) {
         setState(() {
-          startHourNPK = starthourNPK;
+          startNPK = startNPK;
         });
       }
     });
     // StartMinPump
     databaseReference
-        .child('ESP32/setControl/NPK/setTimeStart/minute')
+        .child('ESP32/setControl/NPK/setTimeStart')
         .onValue
         .listen((event) {
-      int startminNPK = (event.snapshot.value as int);
+      String startNPK = (event.snapshot.value as String);
       if (mounted) {
         setState(() {
-          startMinNPK = startminNPK;
+          startNPK = startNPK;
         });
       }
     });
     // StopHourPump
     databaseReference
-        .child('ESP32/setControl/NPK/setTimeStop/hour')
+        .child('ESP32/setControl/NPK/setTimeStop')
         .onValue
         .listen((event) {
-      int stophourNPK = (event.snapshot.value as int);
+      String stopNPK = (event.snapshot.value as String);
       if (mounted) {
         setState(() {
-          stopHourNPK = stophourNPK;
+          stopNPK = stopNPK;
         });
       }
     });
     // StopMinPump
     databaseReference
-        .child('ESP32/setControl/NPK/setTimeStop/minute')
+        .child('ESP32/setControl/NPK/setTimeStop')
         .onValue
         .listen((event) {
-      int stopminNPK = (event.snapshot.value as int);
+      String stopNPK = (event.snapshot.value as String);
       if (mounted) {
         setState(() {
-          stopMinNPK = stopminNPK;
+          stopNPK = stopNPK;
         });
       }
     });
@@ -474,7 +424,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                   Text(
-                                    '$startHourPump : $startMinPump น.',
+                                    '$startPump น.',
                                     style: const TextStyle(
                                       fontSize: 20,
                                     ),
@@ -496,7 +446,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  '$stopHourPump : $stopMinPump น.',
+                                  '$stopPump น.',
                                   style: const TextStyle(
                                     fontSize: 20,
                                   ),
@@ -539,7 +489,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                   Text(
-                                    '$startHourNPK : $startMinNPK น.',
+                                    '$startNPK น.',
                                     style: const TextStyle(
                                       fontSize: 20,
                                     ),
@@ -561,7 +511,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  '$stopHourNPK : $stopMinNPK น.',
+                                  '$stopNPK น.',
                                   style: const TextStyle(
                                     fontSize: 20,
                                   ),
@@ -605,7 +555,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                     ),
                                   ),
                                   Text(
-                                    '$startHourMotor : $startMinMotor น.',
+                                    '$startMotor น.',
                                     style: const TextStyle(
                                       fontSize: 20,
                                     ),
@@ -628,7 +578,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                   ),
                                 ),
                                 Text(
-                                  '$stopHourMotor : $stopMinMotor น.',
+                                  '$stopMotor น.',
                                   style: const TextStyle(
                                     fontSize: 20,
                                   ),

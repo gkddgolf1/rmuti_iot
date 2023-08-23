@@ -45,6 +45,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
     super.initState();
     //_loadSwitchState();
 
+    // ------------------- setControl ------------------- //
     databaseReference
         .child('ESP32/setControl/PUMP/status')
         .onValue
@@ -78,24 +79,6 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
         });
       }
     });
-    // BH1750
-    databaseReference.child('ESP32/TrTs/soil_moisture').onValue.listen((event) {
-      int soilmoisture = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          soilMoisture = soilmoisture;
-        });
-      }
-    });
-    // RTC1307
-    databaseReference.child('ESP32/RTC1307/Time').onValue.listen((event) {
-      var time = event.snapshot.value;
-      if (mounted) {
-        setState(() {
-          _time = time.toString();
-        });
-      }
-    });
     // speedPump
     databaseReference
         .child('ESP32/setControl/PUMP/speedPump')
@@ -120,6 +103,30 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
         setState(() {
           setSoilmoisture = setsoilmoisture.toDouble();
           _setSoil = setsoilmoisture;
+        });
+      }
+    });
+
+    // ----------------------- views ------------------------- //
+
+    // BH1750
+    databaseReference
+        .child('ESP32/views/TrTs/soil_moisture')
+        .onValue
+        .listen((event) {
+      int soilmoisture = (event.snapshot.value as int);
+      if (mounted) {
+        setState(() {
+          soilMoisture = soilmoisture;
+        });
+      }
+    });
+    // RTC1307
+    databaseReference.child('ESP32/views/RTC1307/Time').onValue.listen((event) {
+      var time = event.snapshot.value;
+      if (mounted) {
+        setState(() {
+          _time = time.toString();
         });
       }
     });
@@ -818,14 +825,12 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                       int hour = timestart.hour;
                                       int minute = timestart.minute;
 
+                                      String setTimeStart = '$hour:$minute';
+
                                       databaseReference
                                           .child(
-                                              'ESP32/setControl/PUMP/setTimeStart/hour')
-                                          .set(hour);
-                                      databaseReference
-                                          .child(
-                                              'ESP32/setControl/PUMP/setTimeStart/minute')
-                                          .set(minute);
+                                              'ESP32/setControl/PUMP/setTimeStart')
+                                          .set(setTimeStart);
                                     },
                                   ),
                                 ),
@@ -842,14 +847,12 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                       int hour = timestop.hour;
                                       int minute = timestop.minute;
 
+                                      String setTimeStop = '$hour:$minute';
+
                                       databaseReference
                                           .child(
-                                              'ESP32/setControl/PUMP/setTimeStop/hour')
-                                          .set(hour);
-                                      databaseReference
-                                          .child(
-                                              'ESP32/setControl/PUMP/setTimeStop/minute')
-                                          .set(minute);
+                                              'ESP32/setControl/PUMP/setTimeStop')
+                                          .set(setTimeStop);
                                     },
                                   ),
                                 ),
