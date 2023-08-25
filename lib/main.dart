@@ -57,6 +57,8 @@ class _MyHomePageState extends State<MyHomePage> {
   dynamic _temp;
   dynamic _hum;
 
+  Color textColor = Colors.grey.shade800;
+
   @override
   void initState() {
     getData();
@@ -101,14 +103,14 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Row(
+               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     'Green House',
                     style: TextStyle(
                       fontSize: 18,
-                      color: Colors.indigo,
+                      color: textColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -116,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     quarterTurns: 135,
                     child: Icon(
                       Icons.bar_chart_rounded,
-                      color: Colors.indigo,
+                      color: textColor,
                       size: 28,
                     ),
                   )
@@ -134,10 +136,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    const Center(
+                     Center(
                       child: Text(
                         'Smart Farm',
                         style: TextStyle(
+                          color: textColor,
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
                         ),
@@ -154,7 +157,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
-                                color: Colors.grey.shade800,
+                                color: textColor,
                               ),
                             ),
                             Image.asset(
@@ -171,7 +174,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
-                                color: Colors.grey.shade800,
+                                color: textColor,
                               ),
                             ),
                             Image.asset(
@@ -184,9 +187,10 @@ class _MyHomePageState extends State<MyHomePage> {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    const Text(
+                     Text(
                       'SERVICES',
                       style: TextStyle(
+                        color: textColor,
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
@@ -217,6 +221,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           },
                           icon: 'images/humidity.png',
                           title: 'ความชื้นดิน',
+                          colors: textColor,
                         ),
                         _cardMenu(
                           onTap: () {
@@ -239,8 +244,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           },
                           icon: 'images/fertilizer.png',
                           title: 'การให้ปุ๋ย',
-                          //color: Colors.indigoAccent,
-                          //fontColor: Colors.white,
+                          colors: textColor,
                         ),
                       ],
                     ),
@@ -269,6 +273,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           },
                           icon: 'images/sun.png',
                           title: 'การให้แสง',
+                          colors: textColor,
                         ),
                         _cardMenu(
                           onTap: () {
@@ -291,8 +296,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           },
                           icon: 'images/picture.png',
                           title: 'ดูแปลงปลูก',
-                          //color: Colors.indigoAccent,
-                          //fontColor: Colors.white,
+                         colors: textColor,
                         ),
                       ],
                     ),
@@ -321,6 +325,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           },
                           icon: 'images/control.png',
                           title: 'การตั้งค่า',
+                          colors: textColor,
                         ),
                       ],
                     ),
@@ -337,9 +342,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget _cardMenu({
     required String title,
     required String icon,
+    required Color colors,
     VoidCallback? onTap,
     Color color = Colors.white,
-    Color fontColor = Colors.grey,
+    
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -358,7 +364,7 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 10),
             Text(
               title,
-              style: TextStyle(fontWeight: FontWeight.bold, color: fontColor),
+              style: TextStyle(fontWeight: FontWeight.bold, color: colors),
             )
           ],
         ),

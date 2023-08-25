@@ -16,6 +16,8 @@ class _SettingScreenState extends State<SettingScreen> {
 
   var _time = '';
 
+  Color textColor = Colors.grey.shade800;
+
   // Motor
   String startMotor = '0';
   String stopMotor = '0';
@@ -198,16 +200,17 @@ class _SettingScreenState extends State<SettingScreen> {
                     onTap: () {
                       Navigator.pop(context);
                     },
-                    child: const Icon(
+                    child:  Icon(
                       Icons.arrow_back_ios,
-                      color: Colors.indigo,
+                      color: textColor,
                     ),
                   ),
-                  const Text(
+                   Text(
                     "Setting",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
+                      color: textColor,
                     ),
                   ),
                 ],
@@ -361,29 +364,22 @@ class _SettingScreenState extends State<SettingScreen> {
                                     int day = date.day;
                                     int month = date.month;
                                     int year = date.year;
+
+                                    String setDate = '$day-$month-$year';
                                     databaseReference
                                         .child(
-                                            'ESP32/setControl/setDateTime/day')
-                                        .set(day);
-                                    databaseReference
-                                        .child(
-                                            'ESP32/setControl/setDateTime/month')
-                                        .set(month);
-                                    databaseReference
-                                        .child(
-                                            'ESP32/setControl/setDateTime/year')
-                                        .set(year);
+                                            'ESP32/setControl/setDateTime/date')
+                                        .set(setDate);
+                                   
 
                                     int hour = time.hour;
                                     int minute = time.minute;
+                                    String setTime = '$hour:$minute';
                                     databaseReference
                                         .child(
-                                            'ESP32/setControl/setDateTime/hour')
-                                        .set(hour);
-                                    databaseReference
-                                        .child(
-                                            'ESP32/setControl/setDateTime/minute')
-                                        .set(minute);
+                                            'ESP32/setControl/setDateTime/time')
+                                        .set(setTime);
+                                    
                                   },
                                 ),
                               ),
