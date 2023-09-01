@@ -7,6 +7,7 @@ import 'package:intl/intl.dart' show NumberFormat;
 import 'package:percent_indicator/percent_indicator.dart';
 
 import 'package:syncfusion_flutter_core/theme.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 import '../buttons/buttons.dart';
@@ -21,15 +22,21 @@ class SoilMoistureScreen extends StatefulWidget {
 class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
   final databaseReference = FirebaseDatabase.instance.ref();
 
-  Color toneColor = Colors.grey.shade800;
+  Color toneColor = Colors.grey.shade600;
+
+  final double horizontalPadding = 15;
+  final double verticalPadding = 15;
 
   var soilMoisture = 0;
   var _time = '';
   var _speedPump = 0;
   var _setSoil = 0;
 
-  double speedPump = 0;
-  double setSoilmoisture = 0;
+  List<int> allowedValues = [1, 2, 3];
+  List<int> allowedValuesSet = [20, 40, 60, 80, 100];
+
+  var speedPump = 0;
+  var setSoilmoisture = 0;
 
   bool _status = false;
   bool _statusAuto = false;
@@ -90,7 +97,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
 
       if (mounted) {
         setState(() {
-          speedPump = speedpump.toDouble();
+          speedPump = speedpump;
           _speedPump = speedpump;
         });
       }
@@ -103,7 +110,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
       int setsoilmoisture = (event.snapshot.value as int);
       if (mounted) {
         setState(() {
-          setSoilmoisture = setsoilmoisture.toDouble();
+          setSoilmoisture = setsoilmoisture;
           _setSoil = setsoilmoisture;
         });
       }
@@ -133,26 +140,6 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
       }
     });
   }
-
-/*   void _loadSwitchState() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _status = prefs.getBool('_status') ?? false;
-      _statusAuto = prefs.getBool('_statusAuto') ?? false;
-      isSwitched = prefs.getBool('isSwitched') ?? false;
-      _speedPump = prefs.getDouble('_speedPump') ?? 0.0;
-      _setSoilmoisture = prefs.getDouble('_setSoilmoisture') ?? 0.0;
-    });
-  }
-
-  void _saveSwitchState(String key, dynamic value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (value is bool) {
-      await prefs.setBool(key, value);
-    } else if (value is double) {
-      await prefs.setDouble(key, value);
-    }
-  } */
 
   // ฟังก์ชันโชว์ ui นาฬิกาเมื่อกด
   void _showDialog(Widget child) {
@@ -340,51 +327,6 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "แรงดันน้ำปัจจุบัน: ",
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: toneColor,
-                              ),
-                            ),
-                            Text(
-                              '$_speedPump',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: toneColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "ระดับความชื้นปกติ: ",
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: toneColor,
-                              ),
-                            ),
-                            Text(
-                              '$_setSoil',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: toneColor,
-                              ),
-                            ),
-                          ],
-                        ),
                       ],
                     ),
                     const SizedBox(height: 32),
@@ -392,7 +334,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         roundedButton(
-                          title: 'Settings',
+                          title: 'การตั้งค่า',
                           color: toneColor,
                         ),
                       ],
@@ -407,6 +349,51 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "แรงดันน้ำ: ",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: toneColor,
+                                ),
+                              ),
+                              Text(
+                                '$speedPump',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: toneColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "ระดับความชื้น: ",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: toneColor,
+                                ),
+                              ),
+                              Text(
+                                '$setSoilmoisture',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                  color: toneColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 24),
                             child: Row(
@@ -441,16 +428,25 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                               //enableTooltip: true,
                               numberFormat: NumberFormat('#'),
                               showLabels: true,
-                              interval: 20,
-                              min: 0,
-                              max: 100,
+                              showTicks: true,
+
+                              interval: 1,
+                              min: 1,
+                              max: 3,
                               value: speedPump,
                               onChanged: (dynamic value) {
+                                int roundedValue = value.round();
+                                int nearestAllowedValue = allowedValues.reduce(
+                                  (a, b) => (roundedValue - a).abs() <
+                                          (roundedValue - b).abs()
+                                      ? a
+                                      : b,
+                                );
                                 setState(() {
-                                  speedPump = value;
-                                  //_saveSwitchState('_speedPump', value);
+                                  speedPump = nearestAllowedValue;
                                 });
                                 int speedpump = speedPump.truncate();
+
                                 databaseReference
                                     .child('ESP32/setControl/PUMP/speedPump')
                                     .set(speedpump);
@@ -493,12 +489,20 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                               numberFormat: NumberFormat('#'),
                               showLabels: true,
                               interval: 20,
-                              min: 0,
+                              min: 20,
                               max: 100,
-                              value: setSoilmoisture,
+                              value: setSoilmoisture.toDouble(),
                               onChanged: (dynamic value) {
+                                int roundedValue = value.round();
+                                int nearestAllowedValueSet =
+                                    allowedValuesSet.reduce(
+                                  (a, b) => (roundedValue - a).abs() <
+                                          (roundedValue - b).abs()
+                                      ? a
+                                      : b,
+                                );
                                 setState(() {
-                                  setSoilmoisture = value;
+                                  setSoilmoisture = nearestAllowedValueSet;
                                   //_saveSwitchState('_setSoilmoisture', value);
                                 });
                                 int setsoilmoisture =
@@ -518,7 +522,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         roundedButton(
-                          title: 'Control',
+                          title: 'การทำงาน',
                           color: toneColor,
                         ),
                       ],
@@ -541,7 +545,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                 child: Row(
                                   children: [
                                     Text(
-                                      'Sprinkle',
+                                      'รดน้ำ',
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -562,9 +566,11 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                 padding: const EdgeInsets.all(10),
                                 child: FlutterSwitch(
                                   width: 100,
-                                  height: 40,
-                                  valueFontSize: 25,
-                                  toggleSize: 45.0,
+                                  height: 42,
+                                  activeText: 'เปิด',
+                                  inactiveText: 'ปิด',
+                                  valueFontSize: 20,
+                                  toggleSize: 25.0,
                                   value: _status,
                                   borderRadius: 30.0,
                                   padding: 8.0,
@@ -594,7 +600,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                 child: Row(
                                   children: [
                                     Text(
-                                      'Auto Sprinkle',
+                                      'อัตโนมัติ',
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -616,9 +622,11 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                 padding: const EdgeInsets.all(10),
                                 child: FlutterSwitch(
                                   width: 100,
-                                  height: 40,
-                                  valueFontSize: 25,
-                                  toggleSize: 45.0,
+                                  height: 42,
+                                  activeText: 'เปิด',
+                                  inactiveText: 'ปิด',
+                                  valueFontSize: 20,
+                                  toggleSize: 25.0,
                                   value: _statusAuto,
                                   borderRadius: 30.0,
                                   padding: 8.0,
@@ -653,7 +661,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                 child: Row(
                                   children: [
                                     Text(
-                                      'Set Time',
+                                      'ตั้งเวลา',
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -674,9 +682,11 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                 padding: const EdgeInsets.all(10),
                                 child: FlutterSwitch(
                                   width: 100,
-                                  height: 40,
-                                  valueFontSize: 25,
-                                  toggleSize: 45.0,
+                                  height: 42,
+                                  activeText: 'เปิด',
+                                  inactiveText: 'ปิด',
+                                  valueFontSize: 20,
+                                  toggleSize: 25.0,
                                   value: isSwitched,
                                   borderRadius: 30.0,
                                   padding: 8.0,
@@ -709,7 +719,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        roundedButton(title: 'Set Time', color: toneColor),
+                        roundedButton(title: 'ตั้งเวลา', color: toneColor),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -731,7 +741,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    'Set Time On',
+                                    'ตั้งเวลาเปิด',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -739,7 +749,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                     ),
                                   ),
                                   Text(
-                                    'Set Time Off',
+                                    'ตั้งเวลาปิด',
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -776,7 +786,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            'Time : ',
+                                            'เวลา : ',
                                             style: TextStyle(
                                               fontSize: 20,
                                               fontWeight: FontWeight.bold,
@@ -820,7 +830,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            'Time : ',
+                                            'เวลา : ',
                                             style: TextStyle(
                                               fontSize: 20,
                                               fontWeight: FontWeight.bold,
@@ -848,7 +858,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: elevatedButton(
-                                    text: "Set Start",
+                                    text: "ยืนยัน",
                                     colors: [
                                       Colors.grey.shade800,
                                       Colors.grey.shade800,
@@ -870,7 +880,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: elevatedButton(
-                                    text: "Set Stop",
+                                    text: "ยืนยัน",
                                     colors: [
                                       Colors.grey.shade800,
                                       Colors.grey.shade800,

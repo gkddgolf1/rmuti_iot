@@ -50,6 +50,7 @@ dependencies:
   flutter_launcher_icons: ^0.12.0
   syncfusion_flutter_sliders: ^21.1.41
   syncfusion_flutter_core: ^21.1.41
+  syncfusion_flutter_gauges: ^21.1.41
   firebase_storage: ^11.2.0
   cached_network_image: ^3.2.3
   flutter_image: ^4.1.5

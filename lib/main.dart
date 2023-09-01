@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:rmuti_iot/screens/control_screen.dart';
 import 'package:rmuti_iot/screens/light_screen.dart';
 import 'package:rmuti_iot/screens/soil_moisture_Screen.dart';
@@ -103,40 +104,25 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Green House',
-                    style: TextStyle(
-                      fontSize: 18,
-                      color: textColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  RotatedBox(
-                    quarterTurns: 135,
-                    child: Icon(
-                      Icons.bar_chart_rounded,
-                      color: textColor,
-                      size: 28,
-                    ),
-                  )
-                ],
+              Center(
+                child: Text(
+                  'Green House',
+                  style: GoogleFonts.bebasNeue(fontSize: 30),
+                ),
               ),
               Expanded(
                 child: ListView(
                   physics: const BouncingScrollPhysics(),
                   children: [
                     const SizedBox(height: 32),
-                    Center(
+                    /* Center(
                       child: Image.asset(
                         'images/banner.png',
                         scale: 1.3,
                       ),
-                    ),
+                    ), 
                     const SizedBox(height: 16),
-                     Center(
+                    Center(
                       child: Text(
                         'Smart Farm',
                         style: TextStyle(
@@ -145,8 +131,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
+                    ),*/
+                    //const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -187,7 +173,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ],
                     ),
                     const SizedBox(height: 20),
-                     Text(
+                    Text(
                       'SERVICES',
                       style: TextStyle(
                         color: textColor,
@@ -296,7 +282,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           },
                           icon: 'images/picture.png',
                           title: 'ดูแปลงปลูก',
-                         colors: textColor,
+                          colors: textColor,
                         ),
                       ],
                     ),
@@ -345,7 +331,6 @@ class _MyHomePageState extends State<MyHomePage> {
     required Color colors,
     VoidCallback? onTap,
     Color color = Colors.white,
-    
   }) {
     return GestureDetector(
       onTap: onTap,
