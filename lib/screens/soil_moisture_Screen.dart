@@ -29,10 +29,8 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
 
   var soilMoisture = 0;
   var _time = '';
-  var _speedPump = 0;
-  var _setSoil = 0;
 
-  List<int> allowedValues = [1, 2, 3];
+  List<int> allowedValues = [20, 40, 60, 80, 100];
   List<int> allowedValuesSet = [20, 40, 60, 80, 100];
 
   var speedPump = 0;
@@ -93,12 +91,11 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
         .child('ESP32/setControl/PUMP/speedPump')
         .onValue
         .listen((event) {
-      int speedpump = (event.snapshot.value as int);
+      var speedpump = (event.snapshot.value as int);
 
       if (mounted) {
         setState(() {
           speedPump = speedpump;
-          _speedPump = speedpump;
         });
       }
     });
@@ -107,11 +104,10 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
         .child('ESP32/setControl/PUMP/setSoilmoilsture')
         .onValue
         .listen((event) {
-      int setsoilmoisture = (event.snapshot.value as int);
+      var setsoilmoisture = (event.snapshot.value as int);
       if (mounted) {
         setState(() {
           setSoilmoisture = setsoilmoisture;
-          _setSoil = setsoilmoisture;
         });
       }
     });
@@ -430,9 +426,9 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                               showLabels: true,
                               showTicks: true,
 
-                              interval: 1,
-                              min: 1,
-                              max: 3,
+                              interval: 20,
+                              min: 20,
+                              max: 100,
                               value: speedPump,
                               onChanged: (dynamic value) {
                                 int roundedValue = value.round();
