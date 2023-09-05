@@ -484,6 +484,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                               //enableTooltip: true,
                               numberFormat: NumberFormat('#'),
                               showLabels: true,
+                              showTicks: true,
                               interval: 20,
                               min: 20,
                               max: 100,
