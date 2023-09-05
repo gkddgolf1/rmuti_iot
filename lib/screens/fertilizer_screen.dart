@@ -26,6 +26,8 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
   var setP = 0;
   var setK = 0;
 
+  Color toneColor = Colors.grey.shade800;
+
   // นำไป set
   TextEditingController valueN = TextEditingController();
   TextEditingController valueP = TextEditingController();
@@ -287,13 +289,13 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                     onTap: () {
                       Navigator.pop(context);
                     },
-                    child: const Icon(
+                    child: Icon(
                       Icons.arrow_back_ios,
-                      color: Color.fromARGB(255, 24, 116, 24),
+                      color: toneColor,
                     ),
                   ),
                   const Text(
-                    "Fertilizer",
+                    "การให้ปุ๋ย",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -390,17 +392,18 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
+                            Text(
                               "ความอุดมสมบูรณ์: ",
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
+                                color: toneColor,
                               ),
                             ),
                             Text(
                               message,
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: textColor,
                               ),
@@ -446,15 +449,18 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                       ],
                     ),
                     const SizedBox(height: 32),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        roundedButton(
-                            title: 'Control',
-                            color: const Color.fromARGB(255, 24, 116, 24)),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Text(
+                        'การตั้งค่า',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: toneColor,
+                        ),
+                      ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 18),
                     Container(
                       padding: const EdgeInsets.symmetric(vertical: 18),
                       decoration: BoxDecoration(
@@ -466,19 +472,21 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                           Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 24),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 24),
                                 child: Row(
                                   children: [
                                     Text(
                                       'ตั้งค่าปุ๋ย',
                                       style: TextStyle(
-                                        fontSize: 20,
                                         fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: toneColor,
                                       ),
                                     ),
-                                    SizedBox(width: 2),
-                                    Tooltip(
+                                    const SizedBox(width: 2),
+                                    const Tooltip(
                                       message: 'ใส่ค่า NPK',
                                       triggerMode: TooltipTriggerMode
                                           .tap, // tooltip text
@@ -593,11 +601,11 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                       },
                                       child: Ink(
                                         decoration: BoxDecoration(
-                                          gradient: const LinearGradient(
+                                          gradient: LinearGradient(
                                             colors: [
-                                              Color.fromARGB(255, 24, 116, 24),
-                                              Color.fromARGB(255, 26, 160, 26),
-                                              Color.fromARGB(255, 24, 156, 24),
+                                              Colors.grey.shade800,
+                                              Colors.grey.shade800,
+                                              Colors.grey.shade800,
                                             ],
                                             begin: Alignment.topLeft,
                                             end: Alignment.bottomRight,
@@ -610,7 +618,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                               maxWidth: 100.0, minHeight: 40.0),
                                           alignment: Alignment.center,
                                           child: const Text(
-                                            "Submit",
+                                            "ยืนยัน",
                                             textAlign: TextAlign.center,
                                             style:
                                                 TextStyle(color: Colors.white),
@@ -626,19 +634,21 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 24),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 24),
                                 child: Row(
                                   children: [
                                     Text(
-                                      'Auto Fertilizer',
+                                      'อัตโนมัติ',
                                       style: TextStyle(
-                                        fontSize: 20,
                                         fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: toneColor,
                                       ),
                                     ),
-                                    SizedBox(width: 2),
-                                    Tooltip(
+                                    const SizedBox(width: 2),
+                                    const Tooltip(
                                       message: 'ให้ปุ๋ยเมื่อขาดสารอาหาร',
                                       triggerMode: TooltipTriggerMode
                                           .tap, // tooltip text
@@ -651,13 +661,16 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                 padding: const EdgeInsets.all(10),
                                 child: FlutterSwitch(
                                   width: 100,
-                                  height: 40,
-                                  valueFontSize: 25,
-                                  toggleSize: 45.0,
+                                  height: 42,
+                                  activeText: 'เปิด',
+                                  inactiveText: 'ปิด',
+                                  valueFontSize: 20,
+                                  toggleSize: 25.0,
                                   value: _statusAuto,
                                   borderRadius: 30.0,
                                   padding: 8.0,
                                   showOnOff: true,
+                                  activeColor: toneColor,
                                   onToggle: (value) {
                                     setState(() {
                                       _statusAuto = value;
@@ -681,19 +694,21 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 24),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 24),
                                 child: Row(
                                   children: [
                                     Text(
-                                      'Set Time',
+                                      'ตั้งเวลา',
                                       style: TextStyle(
-                                        fontSize: 20,
                                         fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: toneColor,
                                       ),
                                     ),
-                                    SizedBox(width: 2),
-                                    Tooltip(
+                                    const SizedBox(width: 2),
+                                    const Tooltip(
                                       message: 'ตั้งเวลาให้ปุ๋ย',
                                       triggerMode: TooltipTriggerMode
                                           .tap, // tooltip text
@@ -706,13 +721,16 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                 padding: const EdgeInsets.all(10),
                                 child: FlutterSwitch(
                                   width: 100,
-                                  height: 40,
-                                  valueFontSize: 25,
-                                  toggleSize: 45.0,
+                                  height: 42,
+                                  activeText: 'เปิด',
+                                  inactiveText: 'ปิด',
+                                  valueFontSize: 20,
+                                  toggleSize: 25.0,
                                   value: isSwitched,
                                   borderRadius: 30.0,
                                   padding: 8.0,
                                   showOnOff: true,
+                                  activeColor: toneColor,
                                   onToggle: (value) {
                                     setState(() {
                                       isSwitched = value;
@@ -736,13 +754,16 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                       ),
                     ),
                     const SizedBox(height: 32),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        roundedButton(
-                            title: 'Set Time',
-                            color: const Color.fromARGB(255, 24, 116, 24)),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Text(
+                        'ตั้งเวลา',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: toneColor,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Visibility(
@@ -755,17 +776,19 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                         ),
                         child: Column(
                           children: [
-                            const Padding(
+                            Padding(
                               padding: EdgeInsets.symmetric(horizontal: 24),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    'Set Time On',
+                                    'ตั้งเวลาให้ปุ๋ย',
                                     style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color: toneColor,
+                                    ),
                                   ),
                                   /* Text(
                                     'Set Time Off',
@@ -802,16 +825,20 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          const Text(
-                                            'Time : ',
+                                          Text(
+                                            'เวลา : ',
                                             style: TextStyle(
-                                                fontSize: 20,
-                                                color: Colors.black),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                              color: toneColor,
+                                            ),
                                           ),
                                           Text(
                                             '${timestart.hour} : ${timestart.minute}',
-                                            style: const TextStyle(
-                                              fontSize: 20,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                              color: toneColor,
                                             ),
                                           ),
                                         ],
@@ -867,11 +894,11 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: elevatedButton(
-                                    text: "Set Start",
+                                    text: "ยืนยัน",
                                     colors: [
-                                      const Color.fromARGB(255, 24, 116, 24),
-                                      const Color.fromARGB(255, 26, 160, 26),
-                                      const Color.fromARGB(255, 24, 156, 24)
+                                      Colors.grey.shade800,
+                                      Colors.grey.shade800,
+                                      Colors.grey.shade800,
                                     ],
                                     onPressed: () {
                                       int hour = timestart.hour;
@@ -941,23 +968,23 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
       circularStrokeCap: CircularStrokeCap.round,
       rotateLinearGradient: true,
       maskFilter: const MaskFilter.blur(BlurStyle.solid, 5.0),
-      linearGradient: const LinearGradient(
+      linearGradient: LinearGradient(
         colors: [
-          Color.fromARGB(255, 25, 92, 179),
-          Color.fromARGB(255, 14, 100, 212),
-          Color.fromARGB(255, 3, 108, 245),
+          Colors.grey.shade700,
+          Colors.grey.shade700,
+          Colors.grey.shade700,
         ],
-        stops: [0.0, 0.5, 1.0],
+        stops: const [0.0, 0.5, 1.0],
       ),
       center: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
             textTitel,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
-              color: Color.fromARGB(255, 24, 116, 24),
+              color: toneColor,
             ),
           ),
           const SizedBox(height: 5),
