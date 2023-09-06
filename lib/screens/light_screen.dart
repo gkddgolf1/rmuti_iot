@@ -18,6 +18,8 @@ class LightScreen extends StatefulWidget {
 class _LightScreenState extends State<LightScreen> {
   final databaseReference = FirebaseDatabase.instance.ref();
 
+  Color toneColor = Colors.grey.shade800;
+
   var _lux = 0;
   var _time = '';
 
@@ -282,16 +284,17 @@ class _LightScreenState extends State<LightScreen> {
                     onTap: () {
                       Navigator.pop(context);
                     },
-                    child: const Icon(
+                    child: Icon(
                       Icons.arrow_back_ios,
-                      color: Color.fromARGB(255, 228, 142, 14),
+                      color: toneColor,
                     ),
                   ),
-                  const Text(
-                    "Light intensity",
+                  Text(
+                    "การให้แสง",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
+                      color: toneColor,
                     ),
                   ),
                 ],
@@ -330,11 +333,12 @@ class _LightScreenState extends State<LightScreen> {
                         const SizedBox(
                           height: 20,
                         ),
-                        const Text(
+                        Text(
                           "Light intensity",
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
+                            color: toneColor,
                           ),
                         ),
                         const SizedBox(
@@ -343,17 +347,18 @@ class _LightScreenState extends State<LightScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
+                            Text(
                               "ความสมดุล: ",
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
+                                color: toneColor,
                               ),
                             ),
                             Text(
                               message,
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: textColor,
                               ),
@@ -363,17 +368,18 @@ class _LightScreenState extends State<LightScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
+                            Text(
                               "สถานะม่านบังแสง: ",
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
+                                color: toneColor,
                               ),
                             ),
                             Text(
                               statuscurtain,
                               style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: statuscurtainColor,
                               ),
@@ -383,14 +389,16 @@ class _LightScreenState extends State<LightScreen> {
                       ],
                     ),
                     const SizedBox(height: 32),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        roundedButton(
-                          title: 'Control',
-                          color: const Color.fromARGB(255, 228, 142, 14),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Text(
+                        'การทำงาน',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.grey.shade800,
                         ),
-                      ],
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Container(
@@ -401,19 +409,20 @@ class _LightScreenState extends State<LightScreen> {
                       ),
                       child: Column(
                         children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 24),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
                             child: Row(
                               children: [
                                 Text(
-                                  'Curtain control',
+                                  'ควบคุมม่าน',
                                   style: TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 18,
                                     fontWeight: FontWeight.bold,
+                                    color: toneColor,
                                   ),
                                 ),
-                                SizedBox(width: 2),
-                                Tooltip(
+                                const SizedBox(width: 2),
+                                const Tooltip(
                                   message: 'เลื่อนซ้ายปิด - เลื่อนขวาเปิด',
                                   triggerMode:
                                       TooltipTriggerMode.tap, // tooltip text
@@ -472,19 +481,21 @@ class _LightScreenState extends State<LightScreen> {
                           Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 24),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 24),
                                 child: Row(
                                   children: [
                                     Text(
-                                      'Auto Curtain',
+                                      'อัตโนมัติ',
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.bold,
+                                        color: toneColor,
                                       ),
                                     ),
-                                    SizedBox(width: 2),
-                                    Tooltip(
+                                    const SizedBox(width: 2),
+                                    const Tooltip(
                                       message: 'เปิด-ปิดม่านเมื่อแสงพอแล้ว',
                                       triggerMode: TooltipTriggerMode
                                           .tap, // tooltip text
@@ -522,8 +533,7 @@ class _LightScreenState extends State<LightScreen> {
                                           },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: _halfDay
-                                                ? const Color.fromARGB(
-                                                    255, 228, 142, 14)
+                                                ? toneColor
                                                 : Colors.grey,
                                           ),
                                           child: const Text('ครึ่งวัน'),
@@ -548,8 +558,7 @@ class _LightScreenState extends State<LightScreen> {
                                           },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: _fullDay
-                                                ? const Color.fromARGB(
-                                                    255, 228, 142, 14)
+                                                ? toneColor
                                                 : Colors.grey,
                                           ),
                                           child: const Text('เต็มวัน'),
@@ -561,13 +570,16 @@ class _LightScreenState extends State<LightScreen> {
                                           children: [
                                             FlutterSwitch(
                                               width: 100,
-                                              height: 40,
-                                              valueFontSize: 25,
-                                              toggleSize: 45.0,
+                                              height: 42,
+                                              activeText: 'เปิด',
+                                              inactiveText: 'ปิด',
+                                              valueFontSize: 20,
+                                              toggleSize: 25.0,
                                               value: _statusAuto,
                                               borderRadius: 30.0,
                                               padding: 8.0,
                                               showOnOff: true,
+                                              activeColor: toneColor,
                                               onToggle: (value) {
                                                 if (_halfDay) {
                                                   setState(() {
@@ -610,19 +622,21 @@ class _LightScreenState extends State<LightScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 24),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 24),
                                 child: Row(
                                   children: [
                                     Text(
-                                      'Set Time',
+                                      'ตั้งเวลา',
                                       style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 18,
                                         fontWeight: FontWeight.bold,
+                                        color: toneColor,
                                       ),
                                     ),
-                                    SizedBox(width: 2),
-                                    Tooltip(
+                                    const SizedBox(width: 2),
+                                    const Tooltip(
                                       message: 'ตั้งเวลาเปิด-ปิดม่าน',
                                       triggerMode: TooltipTriggerMode
                                           .tap, // tooltip text
@@ -635,13 +649,16 @@ class _LightScreenState extends State<LightScreen> {
                                 padding: const EdgeInsets.all(10),
                                 child: FlutterSwitch(
                                   width: 100,
-                                  height: 40,
-                                  valueFontSize: 25,
-                                  toggleSize: 45.0,
+                                  height: 42,
+                                  activeText: 'เปิด',
+                                  inactiveText: 'ปิด',
+                                  valueFontSize: 20,
+                                  toggleSize: 25.0,
                                   value: isSwitched,
                                   borderRadius: 30.0,
                                   padding: 8.0,
                                   showOnOff: true,
+                                  activeColor: toneColor,
                                   onToggle: (value) {
                                     setState(() {
                                       isSwitched = value;
@@ -662,14 +679,16 @@ class _LightScreenState extends State<LightScreen> {
                       ),
                     ),
                     const SizedBox(height: 32),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        roundedButton(
-                          title: 'Set Time',
-                          color: const Color.fromARGB(255, 228, 142, 14),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Text(
+                        'ตั้งเวลา',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.grey.shade800,
                         ),
-                      ],
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Visibility(
@@ -682,23 +701,27 @@ class _LightScreenState extends State<LightScreen> {
                         ),
                         child: Column(
                           children: [
-                            const Padding(
+                            Padding(
                               padding: EdgeInsets.symmetric(horizontal: 24),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    'Set Time On',
+                                    'ตั้งเวลาเปิด',
                                     style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: toneColor,
+                                    ),
                                   ),
                                   Text(
-                                    'Set Time Off',
+                                    'ตั้งเวลาปิด',
                                     style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: toneColor,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -727,18 +750,22 @@ class _LightScreenState extends State<LightScreen> {
                                       ),
                                       child: Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceAround,
                                         children: [
-                                          const Text(
-                                            'Time : ',
+                                          Text(
+                                            'เวลา : ',
                                             style: TextStyle(
-                                                fontSize: 20,
-                                                color: Colors.black),
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: toneColor,
+                                            ),
                                           ),
                                           Text(
                                             '${timestart.hour} : ${timestart.minute}',
-                                            style: const TextStyle(
-                                              fontSize: 20,
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: toneColor,
                                             ),
                                           ),
                                         ],
@@ -767,18 +794,22 @@ class _LightScreenState extends State<LightScreen> {
                                       ),
                                       child: Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                            MainAxisAlignment.spaceAround,
                                         children: [
-                                          const Text(
-                                            'Time : ',
+                                          Text(
+                                            'เวลา : ',
                                             style: TextStyle(
-                                                fontSize: 20,
-                                                color: Colors.black),
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: toneColor,
+                                            ),
                                           ),
                                           Text(
                                             '${timestop.hour} : ${timestop.minute}',
-                                            style: const TextStyle(
-                                              fontSize: 20,
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: toneColor,
                                             ),
                                           ),
                                         ],
@@ -792,13 +823,15 @@ class _LightScreenState extends State<LightScreen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 18,
+                                  ),
                                   child: elevatedButton(
-                                    text: "Set Start",
+                                    text: "ยืนยัน",
                                     colors: [
-                                      const Color.fromARGB(255, 184, 116, 15),
-                                      const Color.fromARGB(255, 201, 125, 12),
-                                      const Color.fromARGB(255, 247, 150, 4)
+                                      Colors.grey.shade700,
+                                      Colors.grey.shade700,
+                                      Colors.grey.shade700,
                                     ],
                                     onPressed: () {
                                       int hour = timestart.hour;
@@ -814,13 +847,15 @@ class _LightScreenState extends State<LightScreen> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 18,
+                                  ),
                                   child: elevatedButton(
-                                    text: "Set Stop",
+                                    text: "ยืนยัน",
                                     colors: [
-                                      const Color.fromARGB(255, 184, 116, 15),
-                                      const Color.fromARGB(255, 201, 125, 12),
-                                      const Color.fromARGB(255, 247, 150, 4)
+                                      Colors.grey.shade700,
+                                      Colors.grey.shade700,
+                                      Colors.grey.shade700,
                                     ],
                                     onPressed: () {
                                       int hour = timestop.hour;
@@ -861,15 +896,15 @@ class _LightScreenState extends State<LightScreen> {
       lineWidth: 20,
       percent: percentWheel,
       backgroundWidth: 10,
-      backgroundColor: Colors.deepPurple.shade100,
+      backgroundColor: Colors.grey.shade400,
       circularStrokeCap: CircularStrokeCap.round,
       rotateLinearGradient: true,
       maskFilter: const MaskFilter.blur(BlurStyle.solid, 8.0),
-      linearGradient: const LinearGradient(
+      linearGradient: LinearGradient(
         colors: [
-          Color.fromARGB(255, 180, 138, 22),
-          Color.fromARGB(255, 207, 156, 13),
-          Color.fromARGB(255, 255, 187, 0),
+          Colors.grey.shade700,
+          Colors.grey.shade700,
+          Colors.grey.shade700,
         ],
         stops: [0.0, 0.5, 1.0],
       ),
@@ -878,10 +913,10 @@ class _LightScreenState extends State<LightScreen> {
         children: [
           Text(
             textTitel,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
-              color: Colors.deepOrange,
+              color: toneColor,
             ),
           ),
           const SizedBox(height: 5),
@@ -907,8 +942,7 @@ class TriangleButtonPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
-      ..color =
-          isPressed ? const Color.fromARGB(255, 228, 142, 14) : Colors.grey
+      ..color = isPressed ? Colors.grey.shade800 : Colors.grey
       ..style = PaintingStyle.fill;
 
     Path path = Path();

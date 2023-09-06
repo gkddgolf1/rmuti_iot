@@ -1,6 +1,7 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:flutter_switch/flutter_switch.dart';
 
@@ -534,7 +535,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                         controller: valueP,
                                         maxLength: 3,
                                         keyboardType: TextInputType.number,
-                                        style: const TextStyle(fontSize: 18),
+                                        style: const TextStyle(fontSize: 16),
                                         decoration: const InputDecoration(
                                           labelText: 'P',
                                           counterText: '',
@@ -603,9 +604,9 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                         decoration: BoxDecoration(
                                           gradient: LinearGradient(
                                             colors: [
-                                              Colors.grey.shade800,
-                                              Colors.grey.shade800,
-                                              Colors.grey.shade800,
+                                              Colors.grey.shade700,
+                                              Colors.grey.shade700,
+                                              Colors.grey.shade700,
                                             ],
                                             begin: Alignment.topLeft,
                                             end: Alignment.bottomRight,
@@ -896,9 +897,9 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                   child: elevatedButton(
                                     text: "ยืนยัน",
                                     colors: [
-                                      Colors.grey.shade800,
-                                      Colors.grey.shade800,
-                                      Colors.grey.shade800,
+                                      Colors.grey.shade700,
+                                      Colors.grey.shade700,
+                                      Colors.grey.shade700,
                                     ],
                                     onPressed: () {
                                       int hour = timestart.hour;

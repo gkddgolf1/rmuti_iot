@@ -866,9 +866,9 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                   child: elevatedButton(
                                     text: "ยืนยัน",
                                     colors: [
-                                      Colors.grey.shade800,
-                                      Colors.grey.shade800,
-                                      Colors.grey.shade800,
+                                      Colors.grey.shade700,
+                                      Colors.grey.shade700,
+                                      Colors.grey.shade700,
                                     ],
                                     onPressed: () {
                                       int hour = timestart.hour;
@@ -890,9 +890,9 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                   child: elevatedButton(
                                     text: "ยืนยัน",
                                     colors: [
-                                      Colors.grey.shade800,
-                                      Colors.grey.shade800,
-                                      Colors.grey.shade800,
+                                      Colors.grey.shade700,
+                                      Colors.grey.shade700,
+                                      Colors.grey.shade700,
                                     ],
                                     onPressed: () {
                                       int hour = timestop.hour;

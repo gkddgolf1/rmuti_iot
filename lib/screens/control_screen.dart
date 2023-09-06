@@ -14,6 +14,8 @@ class SettingScreen extends StatefulWidget {
 class _SettingScreenState extends State<SettingScreen> {
   final databaseReference = FirebaseDatabase.instance.ref();
 
+  Color toneColor = Colors.grey.shade800;
+
   var _time = '';
 
   Color textColor = Colors.grey.shade800;
@@ -111,7 +113,7 @@ class _SettingScreenState extends State<SettingScreen> {
       }
     });
     /* -----------------------------NPK---------------------------------------- */
-    // StartHourPump
+    /* // StartHourPump
     databaseReference
         .child('ESP32/setControl/NPK/setTimeStart')
         .onValue
@@ -136,7 +138,7 @@ class _SettingScreenState extends State<SettingScreen> {
       }
     });
     // StopHourPump
-    databaseReference
+    /*  databaseReference
         .child('ESP32/setControl/NPK/setTimeStop')
         .onValue
         .listen((event) {
@@ -146,7 +148,7 @@ class _SettingScreenState extends State<SettingScreen> {
           stopNPK = stopNPK;
         });
       }
-    });
+    }); */
     // StopMinPump
     databaseReference
         .child('ESP32/setControl/NPK/setTimeStop')
@@ -158,7 +160,7 @@ class _SettingScreenState extends State<SettingScreen> {
           stopNPK = stopNPK;
         });
       }
-    });
+    }); */
   }
 
   void _showDialog(Widget child) {
@@ -200,17 +202,17 @@ class _SettingScreenState extends State<SettingScreen> {
                     onTap: () {
                       Navigator.pop(context);
                     },
-                    child:  Icon(
+                    child: Icon(
                       Icons.arrow_back_ios,
-                      color: textColor,
+                      color: toneColor,
                     ),
                   ),
-                   Text(
-                    "Setting",
+                  Text(
+                    "การตั้งค่า",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: textColor,
+                      color: toneColor,
                     ),
                   ),
                 ],
@@ -238,7 +240,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _roundedButton(title: 'Setting', isActive: true),
+                        _roundedButton(title: 'ตั้งค่า', isActive: true),
                       ],
                     ),
                     const SizedBox(height: 10),
@@ -255,13 +257,15 @@ class _SettingScreenState extends State<SettingScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             // ignore: prefer_const_literals_to_create_immutables
                             children: [
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 24),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 24),
                                 child: Text(
-                                  'Set Date',
+                                  'ตั้งวันที่',
                                   style: TextStyle(
-                                    fontSize: 20,
                                     fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.grey.shade800,
                                   ),
                                 ),
                               ),
@@ -288,8 +292,10 @@ class _SettingScreenState extends State<SettingScreen> {
                                       children: [
                                         Text(
                                           "${date.day}-${date.month}-${date.year}",
-                                          style: const TextStyle(
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
                                             fontSize: 20,
+                                            color: Colors.grey.shade800,
                                           ),
                                         ),
                                       ],
@@ -303,13 +309,15 @@ class _SettingScreenState extends State<SettingScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             // ignore: prefer_const_literals_to_create_immutables
                             children: [
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 24),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 24),
                                 child: Text(
-                                  'Set Time',
+                                  'ตั้งเวลา',
                                   style: TextStyle(
-                                    fontSize: 20,
                                     fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                    color: Colors.grey.shade800,
                                   ),
                                 ),
                               ),
@@ -336,8 +344,10 @@ class _SettingScreenState extends State<SettingScreen> {
                                       children: [
                                         Text(
                                           "${time.hour}:${time.minute} น.",
-                                          style: const TextStyle(
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
                                             fontSize: 20,
+                                            color: Colors.grey.shade800,
                                           ),
                                         ),
                                       ],
@@ -354,11 +364,11 @@ class _SettingScreenState extends State<SettingScreen> {
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: elevatedButton(
-                                  text: "Set Start",
+                                  text: "ยืนยัน",
                                   colors: [
-                                    const Color.fromARGB(255, 184, 116, 15),
-                                    const Color.fromARGB(255, 201, 125, 12),
-                                    const Color.fromARGB(255, 247, 150, 4)
+                                    Colors.grey.shade700,
+                                    Colors.grey.shade700,
+                                    Colors.grey.shade700,
                                   ],
                                   onPressed: () {
                                     int day = date.day;
@@ -370,7 +380,6 @@ class _SettingScreenState extends State<SettingScreen> {
                                         .child(
                                             'ESP32/setControl/setDateTime/date')
                                         .set(setDate);
-                                   
 
                                     int hour = time.hour;
                                     int minute = time.minute;
@@ -379,7 +388,6 @@ class _SettingScreenState extends State<SettingScreen> {
                                         .child(
                                             'ESP32/setControl/setDateTime/time')
                                         .set(setTime);
-                                    
                                   },
                                 ),
                               ),
@@ -389,12 +397,16 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _roundedButton(
-                            title: 'Set Time Sprinkle', isActive: true),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Text(
+                        'การตั้งเวลารดน้ำ',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.grey.shade800,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Container(
@@ -413,16 +425,20 @@ class _SettingScreenState extends State<SettingScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text(
-                                    'Start: ',
+                                  Text(
+                                    'เริ่ม: ',
                                     style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: toneColor,
+                                    ),
                                   ),
                                   Text(
                                     '$startPump น.',
-                                    style: const TextStyle(
-                                      fontSize: 20,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: toneColor,
                                     ),
                                   ),
                                 ],
@@ -435,16 +451,20 @@ class _SettingScreenState extends State<SettingScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
-                                  'Stop: ',
+                                Text(
+                                  'หยุด: ',
                                   style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: toneColor,
+                                  ),
                                 ),
                                 Text(
                                   '$stopPump น.',
-                                  style: const TextStyle(
-                                    fontSize: 20,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: toneColor,
                                   ),
                                 ),
                               ],
@@ -454,12 +474,16 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _roundedButton(
-                            title: 'Set Time Fertilizer', isActive: true),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Text(
+                        'การตั้งเวลาให้ปุ๋ย',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.grey.shade800,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Container(
@@ -478,16 +502,20 @@ class _SettingScreenState extends State<SettingScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text(
-                                    'Start: ',
+                                  Text(
+                                    'เริ่ม: ',
                                     style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: toneColor,
+                                    ),
                                   ),
                                   Text(
                                     '$startNPK น.',
-                                    style: const TextStyle(
-                                      fontSize: 20,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: toneColor,
                                     ),
                                   ),
                                 ],
@@ -500,16 +528,20 @@ class _SettingScreenState extends State<SettingScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
-                                  'Stop: ',
+                                Text(
+                                  'หยุด: ',
                                   style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: toneColor,
+                                  ),
                                 ),
                                 Text(
                                   '$stopNPK น.',
-                                  style: const TextStyle(
-                                    fontSize: 20,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: toneColor,
                                   ),
                                 ),
                               ],
@@ -519,12 +551,16 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _roundedButton(
-                            title: 'Set Time Curtain', isActive: true),
-                      ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Text(
+                        'ตั้งเวลารับแสง',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.grey.shade800,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Container(
@@ -543,17 +579,20 @@ class _SettingScreenState extends State<SettingScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text(
-                                    'Start: ',
+                                  Text(
+                                    'เริ่ม: ',
                                     style: TextStyle(
-                                      fontSize: 20,
+                                      fontSize: 18,
                                       fontWeight: FontWeight.bold,
+                                      color: toneColor,
                                     ),
                                   ),
                                   Text(
                                     '$startMotor น.',
-                                    style: const TextStyle(
-                                      fontSize: 20,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: toneColor,
                                     ),
                                   ),
                                 ],
@@ -566,17 +605,20 @@ class _SettingScreenState extends State<SettingScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
-                                  'Stop: ',
+                                Text(
+                                  'หยุด: ',
                                   style: TextStyle(
-                                    fontSize: 20,
+                                    fontSize: 18,
                                     fontWeight: FontWeight.bold,
+                                    color: toneColor,
                                   ),
                                 ),
                                 Text(
                                   '$stopMotor น.',
-                                  style: const TextStyle(
-                                    fontSize: 20,
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: toneColor,
                                   ),
                                 ),
                               ],
@@ -606,9 +648,9 @@ class _SettingScreenState extends State<SettingScreen> {
         horizontal: 32,
       ),
       decoration: BoxDecoration(
-        color: isActive ? Colors.indigo : Colors.transparent,
+        color: isActive ? Colors.grey.shade600 : Colors.transparent,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.indigo),
+        border: Border.all(color: Colors.grey.shade600),
       ),
       child: Text(
         title,
