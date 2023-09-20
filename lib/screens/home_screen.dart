@@ -8,6 +8,10 @@ import 'control_screen.dart';
 import 'fertilizer_screen.dart';
 import 'light_screen.dart';
 
+import 'package:provider/provider.dart';
+
+import 'package:rmuti_iot/services/app_provider.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -17,47 +21,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final databaseReference = FirebaseDatabase.instance.ref();
-
-  dynamic _temp;
-  dynamic _hum;
+  @override
+  void initState() {
+    super.initState();
+  }
 
   Color textColor = Colors.grey.shade800;
 
   @override
-  void initState() {
-    getData();
-    super.initState();
-  }
-
-  void getData() {
-    final databaseReference = FirebaseDatabase.instance.ref();
-
-    databaseReference
-        .child('ESP32/views/SHT31/temperature')
-        .onValue
-        .listen((event) {
-      dynamic temperature = (event.snapshot.value as dynamic);
-      if (mounted) {
-        setState(() {
-          _temp = temperature;
-        });
-      }
-    });
-    databaseReference
-        .child('ESP32/views/SHT31/humidity')
-        .onValue
-        .listen((event) {
-      dynamic humidity = (event.snapshot.value as dynamic);
-      if (mounted) {
-        setState(() {
-          _hum = humidity;
-        });
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final appProvider = Provider.of<AppProvider>(context);
     return Scaffold(
       backgroundColor: Colors.indigo.shade50,
       body: SafeArea(
@@ -78,31 +51,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   physics: const BouncingScrollPhysics(),
                   children: [
                     const SizedBox(height: 32),
-                    /* Center(
-                      child: Image.asset(
-                        'images/banner.png',
-                        scale: 1.3,
-                      ),
-                    ), 
-                    const SizedBox(height: 16),
-                    Center(
-                      child: Text(
-                        'Smart Farm',
-                        style: TextStyle(
-                          color: textColor,
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),*/
-                    //const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Row(
                           children: [
                             Text(
-                              '$_temp °C',
+                              '${appProvider.temperature} °C',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
@@ -119,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Row(
                           children: [
                             Text(
-                              '$_hum %',
+                              '${appProvider.humidity} %',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 20,
