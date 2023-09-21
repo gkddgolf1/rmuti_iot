@@ -1,5 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/material.dart';
 import 'package:rmuti_iot/screens/home_screen.dart';
 import 'package:rmuti_iot/services/app_provider.dart';
@@ -8,12 +8,20 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await FirebaseAppCheck.instance.activate(
-      webRecaptchaSiteKey: '6Le5WAQoAAAAAKAkPy1XsS4hlTQhAaLp75sJg5Nn');
+
+  // Automatically sign in anonymously
+  final userCredential = await FirebaseAuth.instance.signInAnonymously();
+  final uid = userCredential.user!.uid;
+
+  print('Sign in Success: $uid');
 
   runApp(ChangeNotifierProvider(
     create: (context) => AppProvider(context),
-    child: const MyApp(),
+    child: const MaterialApp(
+      // Wrap with MaterialApp
+      title: 'My App',
+      home: MyApp(),
+    ),
   ));
 }
 
