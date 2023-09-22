@@ -4,9 +4,10 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 import '../buttons/buttons.dart';
+import '../services/app_provider.dart';
 
 class LightScreen extends StatefulWidget {
   const LightScreen({super.key});
@@ -20,13 +21,6 @@ class _LightScreenState extends State<LightScreen> {
 
   Color toneColor = Colors.grey.shade800;
 
-  var _lux = 0;
-  var _time = '';
-
-  // sensor ตัวสีเหลือง && sensor สี
-  var _status1 = 0;
-  var _status2 = 0;
-
   bool _halfDay = false;
   bool _fullDay = false;
   bool _statusAuto = false;
@@ -36,143 +30,13 @@ class _LightScreenState extends State<LightScreen> {
   bool _isRightPressed = false;
 
   // set time start
-  DateTime datestart = DateTime(21, 1, 1);
   DateTime timestart = DateTime(11, 22);
   // set time stop
-  DateTime datestop = DateTime(22, 8, 3);
   DateTime timestop = DateTime(15, 55);
 
   @override
   void initState() {
     super.initState();
-    _loadSwitchState();
-
-    // ------------------- setControl ------------------- //
-    // _statusAuto
-    databaseReference
-        .child('ESP32/setControl/setAutoMode/motor')
-        .onValue
-        .listen((event) {
-      int statusAuto = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          _statusAuto = (statusAuto == 1);
-        });
-      }
-    });
-
-    // isSwitched
-    databaseReference
-        .child('ESP32/setControl/setTimerMode/motor')
-        .onValue
-        .listen((event) {
-      int settime = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          isSwitched = (settime == 1);
-        });
-      }
-    });
-
-    // _halfDay
-    databaseReference
-        .child('ESP32/setControl/MOTOR/setAuto/halfDay')
-        .onValue
-        .listen(
-      (event) {
-        int halfday = (event.snapshot.value as int);
-        if (mounted) {
-          setState(() {
-            if (halfday == 1000) {
-              _halfDay = true;
-            } else {
-              _halfDay = false;
-            }
-          });
-        }
-      },
-    );
-
-    // _fullDay
-    databaseReference
-        .child('ESP32/setControl/MOTOR/setAuto/fullDay')
-        .onValue
-        .listen(
-      (event) {
-        int fullday = (event.snapshot.value as int);
-        if (mounted) {
-          setState(() {
-            if (fullday == 1500) {
-              _fullDay = true;
-            } else {
-              _fullDay = false;
-            }
-          });
-        }
-      },
-    );
-
-    // ------------------------- views ------------------------- //
-    // BH1750
-    databaseReference.child('ESP32/views/BH1750/Lux').onValue.listen((event) {
-      int lux = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          _lux = lux;
-        });
-      }
-    });
-
-    // RTC1307
-    databaseReference.child('ESP32/views/RTC1307/Time').onValue.listen((event) {
-      var time = event.snapshot.value;
-      if (mounted) {
-        setState(() {
-          _time = time.toString();
-        });
-      }
-    });
-
-    // E18-D80NK (sensor สีตัวเหลือง)
-    databaseReference
-        .child('ESP32/views/E18-D80NK/status')
-        .onValue
-        .listen((event) {
-      int status1 = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          _status1 = status1;
-        });
-      }
-    });
-
-    // TCS-34725 (sensor สี)
-    databaseReference
-        .child('ESP32/views/TCS-34725/status')
-        .onValue
-        .listen((event) {
-      int status2 = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          _status2 = status2;
-        });
-      }
-    });
-  }
-
-  void _loadSwitchState() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _statusAuto = prefs.getBool('_statusAuto') ?? false;
-      isSwitched = prefs.getBool('isSwitched') ?? false;
-      _halfDay = prefs.getBool('_halfDay') ?? false;
-      _fullDay = prefs.getBool('_fullDay') ?? false;
-    });
-  }
-
-  void _saveSwitchState(String key, bool value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(key, value);
   }
 
   // ฟังก์ชันส่งค่ามอเตอร์
@@ -206,25 +70,25 @@ class _LightScreenState extends State<LightScreen> {
   }
 
   //ฟังก์ชันความสมดุลแสดง Text ตามค่าที่กำหนด
-  String displayText() {
+  String displayText(AppProvider appProvider) {
     String textToDisplay = '';
-    if (_lux <= 7000) {
+    if (appProvider.lux <= 7000) {
       textToDisplay = "ความเข้มแสงน้อย";
-    } else if (_lux > 7000 && _lux < 15000) {
+    } else if (appProvider.lux > 7000 && appProvider.lux < 15000) {
       textToDisplay = 'ความเข้มแสงปกติ';
-    } else if (_lux > 15000) {
+    } else if (appProvider.lux > 15000) {
       textToDisplay = 'ความเข้มแสงมาก';
     }
     return textToDisplay;
   }
 
-  String statusCurtain() {
+  String statusCurtain(AppProvider appProvider) {
     String statusDisplay = '';
-    if (_status1 == 1) {
+    if (appProvider.statusOpen == 1) {
       statusDisplay = "ปิด";
-    } else if (_status2 == 1) {
+    } else if (appProvider.statusOff == 1) {
       statusDisplay = "เปิด";
-    } else if (_status1 == 0 && _status2 == 0) {
+    } else if (appProvider.statusOpen == 0 && appProvider.statusOff == 0) {
       statusDisplay = "กำลังทำงาน";
     }
     return statusDisplay;
@@ -232,8 +96,10 @@ class _LightScreenState extends State<LightScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appProvider = Provider.of<AppProvider>(context);
+
     // เปลี่ยนสีข้อความสีส่งมาจากฟังก์ชัน displayText()
-    String message = displayText();
+    String message = displayText(appProvider);
     Color textColor = Colors.black;
     if (message == "ความเข้มแสงน้อย") {
       textColor = Colors.orange;
@@ -244,7 +110,7 @@ class _LightScreenState extends State<LightScreen> {
     }
 
     // เปลี่ยนสีข้อความสีส่งมาจากฟังก์ชัน statusCurtain()
-    String statuscurtain = statusCurtain();
+    String statuscurtain = statusCurtain(appProvider);
     Color statuscurtainColor = Colors.black;
     if (statuscurtain == "ปิด") {
       statuscurtainColor = Colors.green;
@@ -255,13 +121,15 @@ class _LightScreenState extends State<LightScreen> {
     }
 
     // ประกาศตัวแปร wheel ขึ้นมาเพื่อเก็บไปเป็นค่าวงล้อ
-    double wheel = _lux.toDouble();
+    double wheel = appProvider.lux.toDouble();
     if (wheel >= 0 && wheel <= 100) {
       wheel = wheel / 100;
     } else if (wheel > 100 && wheel <= 1000) {
       wheel = wheel / 1000;
-    } else if (wheel > 1000) {
+    } else if (wheel > 1000 && wheel <= 10000) {
       wheel = wheel / 10000;
+    } else if (wheel > 10000) {
+      wheel = wheel / 100000;
     }
 
     //ขนาด TextField
@@ -307,7 +175,7 @@ class _LightScreenState extends State<LightScreen> {
                 children: [
                   GestureDetector(
                     child: Text(
-                      "$_time น.",
+                      "${appProvider.time} น.",
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 25,
@@ -328,7 +196,7 @@ class _LightScreenState extends State<LightScreen> {
                         ),
                         _wheelCircle(
                             percentWheel: wheel,
-                            textTitel: "$_lux",
+                            textTitel: "${appProvider.lux}",
                             textLong: "Lux"),
                         const SizedBox(
                           height: 20,
@@ -515,11 +383,10 @@ class _LightScreenState extends State<LightScreen> {
                                       children: [
                                         ElevatedButton(
                                           onPressed: () {
-                                            if (_statusAuto == false) {
+                                            if (appProvider.lightAuto ==
+                                                false) {
                                               setState(() {
                                                 _halfDay = true;
-                                                _saveSwitchState(
-                                                    '_halfDay', true);
                                               });
                                               databaseReference
                                                   .child(
@@ -528,11 +395,11 @@ class _LightScreenState extends State<LightScreen> {
                                               databaseReference
                                                   .child(
                                                       'ESP32/setControl/MOTOR/setAuto/halfDay')
-                                                  .set(1000);
+                                                  .set(1);
                                             }
                                           },
                                           style: ElevatedButton.styleFrom(
-                                            backgroundColor: _halfDay
+                                            backgroundColor: appProvider.halfDay
                                                 ? toneColor
                                                 : Colors.grey,
                                           ),
@@ -540,11 +407,10 @@ class _LightScreenState extends State<LightScreen> {
                                         ),
                                         ElevatedButton(
                                           onPressed: () {
-                                            if (_statusAuto == false) {
+                                            if (appProvider.lightAuto ==
+                                                false) {
                                               setState(() {
                                                 _fullDay = true;
-                                                _saveSwitchState(
-                                                    '_fullDay', true);
                                               });
                                               databaseReference
                                                   .child(
@@ -553,11 +419,11 @@ class _LightScreenState extends State<LightScreen> {
                                               databaseReference
                                                   .child(
                                                       'ESP32/setControl/MOTOR/setAuto/fullDay')
-                                                  .set(1500);
+                                                  .set(1);
                                             }
                                           },
                                           style: ElevatedButton.styleFrom(
-                                            backgroundColor: _fullDay
+                                            backgroundColor: appProvider.fullDay
                                                 ? toneColor
                                                 : Colors.grey,
                                           ),
@@ -575,17 +441,15 @@ class _LightScreenState extends State<LightScreen> {
                                               inactiveText: 'ปิด',
                                               valueFontSize: 20,
                                               toggleSize: 25.0,
-                                              value: _statusAuto,
+                                              value: appProvider.lightAuto,
                                               borderRadius: 30.0,
                                               padding: 8.0,
                                               showOnOff: true,
                                               activeColor: toneColor,
                                               onToggle: (value) {
-                                                if (_halfDay) {
+                                                if (appProvider.halfDay) {
                                                   setState(() {
                                                     _statusAuto = value;
-                                                    _saveSwitchState(
-                                                        '_statusAuto', value);
                                                   });
                                                   int statusAuto =
                                                       _statusAuto ? 1 : 0;
@@ -594,11 +458,14 @@ class _LightScreenState extends State<LightScreen> {
                                                       .child(
                                                           'ESP32/setControl/setAutoMode/motor')
                                                       .set(statusAuto);
-                                                } else if (_fullDay) {
+                                                  databaseReference
+                                                      .child(
+                                                          'ESP32/setControl/setTimerMode/motor')
+                                                      .set(0);
+                                                } else if (appProvider
+                                                    .fullDay) {
                                                   setState(() {
                                                     _statusAuto = value;
-                                                    _saveSwitchState(
-                                                        '_statusAuto', value);
                                                   });
                                                   int statusAuto =
                                                       _statusAuto ? 1 : 0;
@@ -607,6 +474,10 @@ class _LightScreenState extends State<LightScreen> {
                                                       .child(
                                                           'ESP32/setControl/setAutoMode/motor')
                                                       .set(statusAuto);
+                                                  databaseReference
+                                                      .child(
+                                                          'ESP32/setControl/setTimerMode/motor')
+                                                      .set(0);
                                                 }
                                               },
                                             ),
@@ -654,7 +525,7 @@ class _LightScreenState extends State<LightScreen> {
                                   inactiveText: 'ปิด',
                                   valueFontSize: 20,
                                   toggleSize: 25.0,
-                                  value: isSwitched,
+                                  value: appProvider.setTimeLight,
                                   borderRadius: 30.0,
                                   padding: 8.0,
                                   showOnOff: true,
@@ -662,7 +533,6 @@ class _LightScreenState extends State<LightScreen> {
                                   onToggle: (value) {
                                     setState(() {
                                       isSwitched = value;
-                                      _saveSwitchState('isSwitched', value);
                                     });
                                     int setTime = isSwitched ? 1 : 0;
 
@@ -670,6 +540,10 @@ class _LightScreenState extends State<LightScreen> {
                                         .child(
                                             'ESP32/setControl/setTimerMode/motor')
                                         .set(setTime);
+                                    databaseReference
+                                        .child(
+                                            'ESP32/setControl/setAutoMode/motor')
+                                        .set(0);
                                   },
                                 ),
                               ),

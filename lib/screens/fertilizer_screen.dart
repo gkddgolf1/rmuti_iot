@@ -1,13 +1,15 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'package:flutter_switch/flutter_switch.dart';
 
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:provider/provider.dart';
 
 import 'package:rmuti_iot/buttons/buttons.dart';
+
+import '../services/app_provider.dart';
 
 class FertilizerScreen extends StatefulWidget {
   const FertilizerScreen({super.key});
@@ -18,14 +20,6 @@ class FertilizerScreen extends StatefulWidget {
 
 class _FertilizerScreenState extends State<FertilizerScreen> {
   final databaseReference = FirebaseDatabase.instance.ref();
-  // รับมาแสดง
-  var N = 0;
-  var P = 0;
-  var K = 0;
-  var _time = '';
-  var setN = 0;
-  var setP = 0;
-  var setK = 0;
 
   Color toneColor = Colors.grey.shade800;
 
@@ -39,121 +33,14 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
   bool isSwitched = false;
 
   // set time start
-  DateTime datestart = DateTime(21, 1, 1);
   DateTime timestart = DateTime(11, 22);
   // set time stop
-  DateTime datestop = DateTime(22, 8, 3);
   DateTime timestop = DateTime(15, 55);
 
   @override
   void initState() {
     super.initState();
-    //_loadSwitchState();
-
-    // ----------------------- setControl -------------------------- //
-    // setAutoMode
-    databaseReference
-        .child('ESP32/setControl/setAutoMode/npk')
-        .onValue
-        .listen((event) {
-      int statusAuto = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          _statusAuto = (statusAuto == 1);
-        });
-      }
-    });
-    // setTimerMode
-    databaseReference
-        .child('ESP32/setControl/setTimerMode/npk')
-        .onValue
-        .listen((event) {
-      int settime = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          isSwitched = (settime == 1);
-        });
-      }
-    });
-    // setN
-    databaseReference.child('ESP32/setControl/NPK/N').onValue.listen((event) {
-      int n = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          setN = n;
-        });
-      }
-    });
-    // setP
-    databaseReference.child('ESP32/setControl/NPK/P').onValue.listen((event) {
-      int p = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          setP = p;
-        });
-      }
-    });
-    //  setK
-    databaseReference.child('ESP32/setControl/NPK/K').onValue.listen((event) {
-      int k = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          setK = k;
-        });
-      }
-    });
-
-    // ---------------------------- views ------------------------ //
-    // RTC1307
-    databaseReference.child('ESP32/views/RTC1307/Time').onValue.listen((event) {
-      var time = event.snapshot.value;
-      if (mounted) {
-        setState(() {
-          _time = time.toString();
-        });
-      }
-    });
-    // RS485 == N
-    databaseReference.child('ESP32/views/RS485/N').onValue.listen((event) {
-      int n = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          N = n;
-        });
-      }
-    });
-    // RS485 == P
-    databaseReference.child('ESP32/views/RS485/P').onValue.listen((event) {
-      int p = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          P = p;
-        });
-      }
-    });
-    // RS485 == K
-    databaseReference.child('ESP32/views/RS485/K').onValue.listen((event) {
-      int k = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          K = k;
-        });
-      }
-    });
   }
-
-  /* void _loadSwitchState() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _statusAuto = prefs.getBool('_statusAuto') ?? false;
-      isSwitched = prefs.getBool('isSwitched') ?? false;
-    });
-  }
-
-  void _saveSwitchState(String key, bool value) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(key, value);
-  } */
 
   // ฟังก์ชันโชว์ ui นาฬิกาเมื่อกด
   void _showDialog(Widget child) {
@@ -179,24 +66,32 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
 
 //ฟังก์ชันความสมดุลแสดง Text ตามค่าที N
   String displayTextN() {
+    final appProvider = Provider.of<AppProvider>(context);
     String textToDisplay = '';
-    if (N < 90 && P < 10 && K < 100) {
+    if (appProvider.fertilizerN < 90 &&
+        appProvider.fertilizerP < 10 &&
+        appProvider.fertilizerK < 100) {
       textToDisplay = "ขาดปุ๋ย";
-    } else if (N >= 90 && N < 120 && P >= 10 && P < 20 && K >= 100 && K < 150) {
+    } else if (appProvider.fertilizerN >= 90 &&
+        appProvider.fertilizerN < 120 &&
+        appProvider.fertilizerP >= 10 &&
+        appProvider.fertilizerP < 20 &&
+        appProvider.fertilizerK >= 100 &&
+        appProvider.fertilizerK < 150) {
       textToDisplay = "ปุ๋ยน้อย";
-    } else if (N >= 120 &&
-        N < 150 &&
-        P >= 20 &&
-        P < 40 &&
-        K >= 150 &&
-        K < 200) {
+    } else if (appProvider.fertilizerN >= 120 &&
+        appProvider.fertilizerN < 150 &&
+        appProvider.fertilizerP >= 20 &&
+        appProvider.fertilizerP < 40 &&
+        appProvider.fertilizerK >= 150 &&
+        appProvider.fertilizerK < 200) {
       textToDisplay = "ปานกลาง";
-    } else if (N >= 150 &&
-        N < 200 &&
-        P >= 40 &&
-        P < 80 &&
-        K >= 200 &&
-        K < 250) {
+    } else if (appProvider.fertilizerN >= 150 &&
+        appProvider.fertilizerN < 200 &&
+        appProvider.fertilizerP >= 40 &&
+        appProvider.fertilizerP < 80 &&
+        appProvider.fertilizerK >= 200 &&
+        appProvider.fertilizerK < 250) {
       textToDisplay = "อุดมสมบูรณ์";
     }
     return textToDisplay;
@@ -234,10 +129,11 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appProvider = Provider.of<AppProvider>(context);
     // ประกาศตัวแปร wheel ขึ้นมาเพื่อเก็บไปเป็นค่าวงล้อ
-    double wheelN = N.toDouble();
-    double wheelP = P.toDouble();
-    double wheelK = K.toDouble();
+    double wheelN = appProvider.fertilizerN.toDouble();
+    double wheelP = appProvider.fertilizerP.toDouble();
+    double wheelK = appProvider.fertilizerK.toDouble();
     if (wheelN >= 1 && wheelN <= 100) {
       wheelN = wheelN / 100;
     } else if (wheelN > 100) {
@@ -309,7 +205,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                 children: [
                   GestureDetector(
                     child: Text(
-                      "$_time น.",
+                      "${appProvider.time} น.",
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 25,
@@ -333,7 +229,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                           children: [
                             _wheelCircle(
                                 percentWheel: wheelN,
-                                textTitel: "$N",
+                                textTitel: "${appProvider.fertilizerN}",
                                 textLong: "mg/kg"),
                             const SizedBox(
                               height: 20,
@@ -355,7 +251,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                           children: [
                             _wheelCircle(
                                 percentWheel: wheelP,
-                                textTitel: "$P",
+                                textTitel: "${appProvider.fertilizerP}",
                                 textLong: "mg/kg"),
                             const SizedBox(
                               height: 20,
@@ -375,7 +271,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                       children: [
                         _wheelCircle(
                             percentWheel: wheelN,
-                            textTitel: "$K",
+                            textTitel: "${appProvider.fertilizerK}",
                             textLong: "mg/kg"),
                         const SizedBox(
                           height: 20,
@@ -425,21 +321,21 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                               ),
                             ),
                             Text(
-                              'N: $setN ',
+                              'N: ${appProvider.setN} ',
                               style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             Text(
-                              'P: $setP ',
+                              'P: ${appProvider.setP} ',
                               style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
                             Text(
-                              'K: $setK ',
+                              'K: ${appProvider.setK} ',
                               style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
@@ -667,7 +563,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                   inactiveText: 'ปิด',
                                   valueFontSize: 20,
                                   toggleSize: 25.0,
-                                  value: _statusAuto,
+                                  value: appProvider.fertilizerAuto,
                                   borderRadius: 30.0,
                                   padding: 8.0,
                                   showOnOff: true,
@@ -675,7 +571,6 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                   onToggle: (value) {
                                     setState(() {
                                       _statusAuto = value;
-                                      //_saveSwitchState('_statusAuto', value);
                                     });
                                     int statusAuto = _statusAuto ? 1 : 0;
                                     // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
@@ -727,7 +622,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                   inactiveText: 'ปิด',
                                   valueFontSize: 20,
                                   toggleSize: 25.0,
-                                  value: isSwitched,
+                                  value: appProvider.setTimeFertilizer,
                                   borderRadius: 30.0,
                                   padding: 8.0,
                                   showOnOff: true,
@@ -735,7 +630,6 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                   onToggle: (value) {
                                     setState(() {
                                       isSwitched = value;
-                                      //_saveSwitchState('isSwitched', value);
                                     });
                                     int setTime = isSwitched ? 1 : 0;
                                     databaseReference
@@ -778,7 +672,8 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                         child: Column(
                           children: [
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 24),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 24),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,

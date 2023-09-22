@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:provider/provider.dart';
 
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 import '../buttons/buttons.dart';
+import '../services/app_provider.dart';
 
 class SoilMoistureScreen extends StatefulWidget {
   const SoilMoistureScreen({super.key});
@@ -26,114 +28,23 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
   final double horizontalPadding = 15;
   final double verticalPadding = 15;
 
-  var soilMoisture = 0;
-  var _time = '';
-
+  // ค่าของ Slid
   List<int> allowedValues = [20, 40, 60, 80, 100];
   List<int> allowedValuesSet = [20, 40, 60, 80, 100];
 
-  var speedPump = 0;
-  var setSoilmoisture = 0;
-
+  // ตัวแปรสำหรับ Switch
   bool _status = false;
   bool _statusAuto = false;
   bool isSwitched = false;
 
   // set time start
-  DateTime datestart = DateTime(21, 1, 1);
   DateTime timestart = DateTime(11, 22);
   // set time stop
-  DateTime datestop = DateTime(22, 8, 3);
   DateTime timestop = DateTime(15, 55);
 
   @override
   void initState() {
     super.initState();
-    //_loadSwitchState();
-
-    // ------------------- setControl ------------------- //
-    databaseReference
-        .child('ESP32/setControl/PUMP/status')
-        .onValue
-        .listen((event) {
-      int status = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          _status = (status == 1);
-        });
-      }
-    });
-    databaseReference
-        .child('ESP32/setControl/setAutoMode/pump')
-        .onValue
-        .listen((event) {
-      int statusAuto = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          _statusAuto = (statusAuto == 1);
-        });
-      }
-    });
-    databaseReference
-        .child('ESP32/setControl/setTimerMode/pump')
-        .onValue
-        .listen((event) {
-      int settime = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          isSwitched = (settime == 1);
-        });
-      }
-    });
-    // speedPump
-    databaseReference
-        .child('ESP32/setControl/PUMP/speedPump')
-        .onValue
-        .listen((event) {
-      var speedpump = (event.snapshot.value as int);
-
-      if (mounted) {
-        setState(() {
-          speedPump = speedpump;
-        });
-      }
-    });
-    // setSoilmoisture
-    databaseReference
-        .child('ESP32/setControl/PUMP/setSoilmoilsture')
-        .onValue
-        .listen((event) {
-      var setsoilmoisture = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          setSoilmoisture = setsoilmoisture;
-        });
-      }
-    });
-
-    // ----------------------- views ------------------------- //
-
-    // BH1750
-    databaseReference
-        .child('ESP32/views/TrTs/soil_moisture')
-        .onValue
-        .listen((event) {
-      int soilmoisture = (event.snapshot.value as int);
-      if (mounted) {
-        setState(() {
-          soilMoisture = soilmoisture;
-        });
-      }
-    });
-    // RTC1307
-    databaseReference.child('ESP32/views/RTC1307/Time').onValue.listen((event) {
-      var time = event.snapshot.value;
-      if (mounted) {
-        setState(() {
-          _time = time.toString();
-        });
-      }
-    });
   }
 
   // ฟังก์ชันโชว์ ui นาฬิกาเมื่อกด
@@ -160,16 +71,21 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
 
   //ฟังก์ชันความสมดุลแสดง Text ตามค่าที่กำหนด
   String displayText() {
+    final appProvider = Provider.of<AppProvider>(context);
     String textToDisplay = '';
-    if (soilMoisture <= 39) {
+    if (appProvider.soilMoisture <= 39) {
       textToDisplay = "สภาวะวิกฤติ";
-    } else if (soilMoisture >= 40 && soilMoisture <= 49) {
+    } else if (appProvider.soilMoisture >= 40 &&
+        appProvider.soilMoisture <= 49) {
       textToDisplay = "สภาวะดินแห้ง";
-    } else if (soilMoisture >= 50 && soilMoisture <= 69) {
+    } else if (appProvider.soilMoisture >= 50 &&
+        appProvider.soilMoisture <= 69) {
       textToDisplay = "สภาวะดินปกติ";
-    } else if (soilMoisture >= 70 && soilMoisture <= 79) {
+    } else if (appProvider.soilMoisture >= 70 &&
+        appProvider.soilMoisture <= 79) {
       textToDisplay = "สภาวะดินแฉะ";
-    } else if (soilMoisture >= 80 && soilMoisture <= 100) {
+    } else if (appProvider.soilMoisture >= 80 &&
+        appProvider.soilMoisture <= 100) {
       textToDisplay = "สภาวะอันตรายต่อพืช";
     }
 
@@ -178,6 +94,8 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appProvider = Provider.of<AppProvider>(context);
+
     // เปลี่ยนสีข้อความสีส่งมาจากฟังก์ชัน displayText()
     String message = displayText();
     Color textColor = Colors.black;
@@ -195,7 +113,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
 
     // เปลี่ยนสี slide แรงดันน้ำ
     Color rangeColor = Colors.black;
-    if (speedPump >= 0 && speedPump <= 80) {
+    if (appProvider.speedPump >= 0 && appProvider.speedPump <= 80) {
       rangeColor = Colors.grey.shade700;
     } else {
       rangeColor = Colors.red;
@@ -203,14 +121,14 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
 
     // เปลี่ยนสี slide ความชื้น
     Color soilColor = Colors.black;
-    if (setSoilmoisture >= 0 && setSoilmoisture <= 80) {
+    if (appProvider.setSoilmoisture >= 0 && appProvider.setSoilmoisture <= 80) {
       soilColor = Colors.grey.shade700;
     } else {
       soilColor = Colors.red;
     }
 
     // ประกาศตัวแปร wheel ขึ้นมาเพื่อเก็บไปเป็นค่าวงล้อ
-    double wheel = soilMoisture.toDouble();
+    double wheel = appProvider.soilMoisture.toDouble();
     if (wheel >= 1 && wheel <= 100) {
       wheel = wheel / 100;
     } else if (wheel > 100) {
@@ -261,7 +179,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                 children: [
                   GestureDetector(
                     child: Text(
-                      "$_time น.",
+                      "${appProvider.time} น.",
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 25,
@@ -283,7 +201,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                         Container(
                           child: _wheelCircle(
                             percentWheel: wheel,
-                            textTitel: "$soilMoisture%",
+                            textTitel: "${appProvider.soilMoisture}%",
                             //textLong: "Soil Moisture",
                           ),
                         ),
@@ -346,48 +264,6 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          /* Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "แรงดันน้ำ: ",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color: toneColor,
-                                ),
-                              ),
-                              Text(
-                                '$speedPump',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color: toneColor,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "ระดับความชื้น: ",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color: toneColor,
-                                ),
-                              ),
-                              Text(
-                                '$setSoilmoisture',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color: toneColor,
-                                ),
-                              ),
-                            ],
-                          ), */
                           const SizedBox(
                             height: 20,
                           ),
@@ -429,7 +305,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                               interval: 20,
                               min: 20,
                               max: 100,
-                              value: speedPump,
+                              value: appProvider.speedPump,
                               onChanged: (dynamic value) {
                                 int roundedValue = value.round();
                                 int nearestAllowedValue = allowedValues.reduce(
@@ -438,11 +314,10 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                       ? a
                                       : b,
                                 );
-                                setState(() {
-                                  speedPump = nearestAllowedValue;
-                                });
-                                int speedpump = speedPump.truncate();
-
+                                /* setState(() {
+                                  appProvider.speedPump = nearestAllowedValue;
+                                }); */
+                                int speedpump = nearestAllowedValue;
                                 databaseReference
                                     .child('ESP32/setControl/PUMP/speedPump')
                                     .set(speedpump);
@@ -488,7 +363,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                               interval: 20,
                               min: 20,
                               max: 100,
-                              value: setSoilmoisture.toDouble(),
+                              value: appProvider.setSoilmoisture.toDouble(),
                               onChanged: (dynamic value) {
                                 int roundedValue = value.round();
                                 int nearestAllowedValueSet =
@@ -498,12 +373,11 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                       ? a
                                       : b,
                                 );
-                                setState(() {
+                                /* setState(() {
                                   setSoilmoisture = nearestAllowedValueSet;
                                   //_saveSwitchState('_setSoilmoisture', value);
-                                });
-                                int setsoilmoisture =
-                                    setSoilmoisture.truncate();
+                                }); */
+                                int setsoilmoisture = nearestAllowedValueSet;
                                 databaseReference
                                     .child(
                                         'ESP32/setControl/PUMP/setSoilmoilsture')
@@ -570,7 +444,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                   inactiveText: 'ปิด',
                                   valueFontSize: 20,
                                   toggleSize: 25.0,
-                                  value: _status,
+                                  value: appProvider.status,
                                   borderRadius: 30.0,
                                   padding: 8.0,
                                   showOnOff: true,
@@ -578,13 +452,12 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                   onToggle: (value) {
                                     setState(() {
                                       _status = value;
-                                      //_saveSwitchState('_status', value);
                                     });
-                                    int status = _status ? 1 : 0;
+                                    int sentStatus = _status ? 1 : 0;
                                     // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
                                     databaseReference
                                         .child('ESP32/setControl/PUMP/status')
-                                        .set(status);
+                                        .set(sentStatus);
                                   },
                                 ),
                               ),
@@ -626,7 +499,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                   inactiveText: 'ปิด',
                                   valueFontSize: 20,
                                   toggleSize: 25.0,
-                                  value: _statusAuto,
+                                  value: appProvider.statusAuto,
                                   borderRadius: 30.0,
                                   padding: 8.0,
                                   showOnOff: true,
@@ -634,14 +507,13 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                   onToggle: (value) async {
                                     setState(() {
                                       _statusAuto = value;
-                                      //_saveSwitchState('_statusAuto', value);
                                     });
-                                    int statusAuto = _statusAuto ? 1 : 0;
+                                    int sentStatusAuto = _statusAuto ? 1 : 0;
                                     // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
                                     databaseReference
                                         .child(
                                             'ESP32/setControl/setAutoMode/pump')
-                                        .set(statusAuto);
+                                        .set(sentStatusAuto);
                                     databaseReference
                                         .child(
                                             'ESP32/setControl/setTimerMode/pump')
@@ -686,7 +558,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                   inactiveText: 'ปิด',
                                   valueFontSize: 20,
                                   toggleSize: 25.0,
-                                  value: isSwitched,
+                                  value: appProvider.isSwitched,
                                   borderRadius: 30.0,
                                   padding: 8.0,
                                   showOnOff: true,
@@ -694,7 +566,6 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                   onToggle: (value) {
                                     setState(() {
                                       isSwitched = value;
-                                      // _saveSwitchState('isSwitched', value);
                                     });
                                     int setTime = isSwitched ? 1 : 0;
                                     // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ

@@ -15,7 +15,7 @@ class _PlantingScreenState extends State<PlantingScreen> {
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
   List<Map<String, dynamic>> imageList = [];
-  int visibleImageCount = 5;
+  int visibleImageCount = 10;
   bool showMoreButton = true;
   bool isLoading = false;
 
@@ -66,7 +66,7 @@ class _PlantingScreenState extends State<PlantingScreen> {
 
   void loadMoreImages() {
     setState(() {
-      visibleImageCount += 5;
+      visibleImageCount += 10;
       if (visibleImageCount >= imageList.length) {
         visibleImageCount = imageList.length;
         showMoreButton = false;
@@ -132,7 +132,13 @@ class _PlantingScreenState extends State<PlantingScreen> {
 
                     return GestureDetector(
                       onTap: () {
-                        // Handle image click here
+                        // แสดงรูปภาพใหญ่ขึ้นแบบเต็มหน้าจอ
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => FullScreenImage(imageUrl),
+                          ),
+                        );
                       },
                       child: Center(
                         child: CachedNetworkImage(
@@ -141,9 +147,10 @@ class _PlantingScreenState extends State<PlantingScreen> {
                               const CircularProgressIndicator(),
                           errorWidget: (context, url, error) =>
                               const Icon(Icons.error),
+                          // ปรับลดความชัดของภาพขนาดเล็ก
+                          fit: BoxFit.fitWidth,
+                          width: 100,
                         ),
-
-                        // Text('Created at: $createdAt'),
                       ),
                     );
                   },
@@ -158,6 +165,24 @@ class _PlantingScreenState extends State<PlantingScreen> {
                 ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class FullScreenImage extends StatelessWidget {
+  final String imageUrl;
+
+  const FullScreenImage(this.imageUrl, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: CachedNetworkImage(
+          imageUrl: imageUrl,
+          fit: BoxFit.cover,
         ),
       ),
     );
