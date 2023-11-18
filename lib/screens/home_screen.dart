@@ -67,20 +67,17 @@ class _HomeScreenState extends State<HomeScreen> {
                             Image.asset(
                               'images/temp.png',
                               height: 30,
-                              //color: Colors.grey[800],
                             ),
                           ],
                         ),
                         Row(
                           children: [
-                            Text(
-                              '${appProvider.humidity} %',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                                color: textColor,
-                              ),
-                            ),
+                            Text('${appProvider.humidity} %',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                  color: textColor,
+                                )),
                             Image.asset(
                               'images/hum.png',
                               height: 30,

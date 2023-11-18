@@ -5,15 +5,23 @@ import 'package:rmuti_iot/screens/home_screen.dart';
 import 'package:rmuti_iot/services/app_provider.dart';
 import 'package:provider/provider.dart';
 
+/* const FirebaseOptions android = FirebaseOptions(
+  apiKey: 'AIzaSyBRTkK1mjO90zTCQSpKSts562hfpUwl2gk',
+  appId: '1:54519034830:android:8547f42c9cf3903c94f19f',
+  projectId: 'projectgreenhouse-6f492',
+  messagingSenderId: '54519034830',
+  storageBucket: 'gs://projectgreenhouse-6f492.appspot.com/data',
+); */
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  // Automatically sign in anonymously
+  /* // Automatically sign in anonymously
   final userCredential = await FirebaseAuth.instance.signInAnonymously();
   final uid = userCredential.user!.uid;
 
-  print('Sign in Success: $uid');
+  print('Sign in Success: $uid'); */
 
   runApp(ChangeNotifierProvider(
     create: (context) => AppProvider(context),

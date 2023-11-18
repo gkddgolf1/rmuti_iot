@@ -113,7 +113,6 @@ class AppProvider extends ChangeNotifier {
         .onValue
         .listen((event) {
       dynamic temperature = (event.snapshot.value as dynamic);
-
       if (isWidgetMounted(context)) {
         _temp = temperature;
         notifyListeners();
