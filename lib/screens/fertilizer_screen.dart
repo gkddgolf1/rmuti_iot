@@ -8,6 +8,8 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
 
 import 'package:rmuti_iot/buttons/buttons.dart';
+import 'package:syncfusion_flutter_core/theme.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 import '../services/app_provider.dart';
 
@@ -36,6 +38,8 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
   DateTime timestart = DateTime(11, 22);
   // set time stop
   DateTime timestop = DateTime(15, 55);
+
+  double _value = 10.0;
 
   @override
   void initState() {
@@ -310,7 +314,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                         const SizedBox(
                           height: 20,
                         ),
-                        Row(
+                        /* Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Text(
@@ -342,7 +346,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                               ),
                             ),
                           ],
-                        ),
+                        ), */
                       ],
                     ),
                     const SizedBox(height: 32),
@@ -353,7 +357,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
-                          color: toneColor,
+                          color: Colors.grey.shade800,
                         ),
                       ),
                     ),
@@ -365,384 +369,323 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 24),
-                                child: Row(
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 24),
+                            child: Row(
+                              children: [
+                                Text(
+                                  'การให้ปุ๋ย',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: toneColor,
+                                  ),
+                                ),
+                                const SizedBox(width: 2),
+                                const Tooltip(
+                                  message: 'ปรับระดับการให้ปุ๋ย',
+                                  triggerMode:
+                                      TooltipTriggerMode.tap, // tooltip text
+                                  child: Icon(Icons.help_outline),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SfSliderTheme(
+                            data: SfSliderThemeData(
+                              tooltipBackgroundColor: Colors.blue,
+                              overlayColor: Colors.transparent,
+                              activeTrackColor: Colors.grey.shade700,
+                              thumbColor: Colors.grey.shade700,
+                              inactiveTrackColor: Colors.grey.shade500,
+                            ),
+                            child: SfSlider(
+                              showLabels: true,
+                              showTicks: true,
+                              interval: 10,
+                              min: 0,
+                              max: 30,
+                              value: _value,
+                              labelPlacement: LabelPlacement.betweenTicks,
+                              labelFormatterCallback:
+                                  (dynamic actualValue, String formattedText) {
+                                switch (actualValue) {
+                                  case 0:
+                                    return 'Low';
+                                  case 10:
+                                    return 'Medium';
+                                  case 20:
+                                    return 'High';
+                                }
+                                return actualValue.toString();
+                              },
+                              onChanged: (dynamic newValue) {
+                                setState(() {
+                                  _value = newValue;
+                                  if (_value == 0) {
+                                    databaseReference
+                                        .child('ESP32/setControl/NPK/NPK')
+                                        .set("Low");
+                                  } else if (_value == 10) {
+                                    databaseReference
+                                        .child('ESP32/setControl/NPK/NPK')
+                                        .set("Normal");
+                                  } else if (_value == 20) {
+                                    databaseReference
+                                        .child('ESP32/setControl/NPK/NPK')
+                                        .set("High");
+                                  }
+                                });
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
+                            child: Text(
+                              'การทำงาน',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: toneColor,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 18),
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 18),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      'ตั้งค่าปุ๋ย',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                        color: toneColor,
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 24),
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            'อัตโนมัติ',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                              color: toneColor,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 2),
+                                          const Tooltip(
+                                            message: 'ให้ปุ๋ยเมื่อขาดสารอาหาร',
+                                            triggerMode: TooltipTriggerMode
+                                                .tap, // tooltip text
+                                            child: Icon(Icons.help_outline),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    const SizedBox(width: 2),
-                                    const Tooltip(
-                                      message: 'ใส่ค่า NPK',
-                                      triggerMode: TooltipTriggerMode
-                                          .tap, // tooltip text
-                                      child: Icon(Icons.help_outline),
+                                    Padding(
+                                      padding: const EdgeInsets.all(10),
+                                      child: FlutterSwitch(
+                                        width: 100,
+                                        height: 42,
+                                        activeText: 'เปิด',
+                                        inactiveText: 'ปิด',
+                                        valueFontSize: 20,
+                                        toggleSize: 25.0,
+                                        value: appProvider.fertilizerAuto,
+                                        borderRadius: 30.0,
+                                        padding: 8.0,
+                                        showOnOff: true,
+                                        activeColor: toneColor,
+                                        onToggle: (value) {
+                                          setState(() {
+                                            _statusAuto = value;
+                                          });
+                                          int statusAuto = _statusAuto ? 1 : 0;
+                                          // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
+                                          databaseReference
+                                              .child(
+                                                  'ESP32/setControl/setAutoMode/npk')
+                                              .set(statusAuto);
+                                          databaseReference
+                                              .child(
+                                                  'ESP32/setControl/setTimerMode/npk')
+                                              .set(0);
+                                        },
+                                      ),
                                     ),
                                   ],
                                 ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 24),
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            'ตั้งเวลา',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                              color: toneColor,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 2),
+                                          const Tooltip(
+                                            message: 'ตั้งเวลาให้ปุ๋ย',
+                                            triggerMode: TooltipTriggerMode
+                                                .tap, // tooltip text
+                                            child: Icon(Icons.help_outline),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(10),
+                                      child: FlutterSwitch(
+                                        width: 100,
+                                        height: 42,
+                                        activeText: 'เปิด',
+                                        inactiveText: 'ปิด',
+                                        valueFontSize: 20,
+                                        toggleSize: 25.0,
+                                        value: appProvider.setTimeFertilizer,
+                                        borderRadius: 30.0,
+                                        padding: 8.0,
+                                        showOnOff: true,
+                                        activeColor: toneColor,
+                                        onToggle: (value) {
+                                          setState(() {
+                                            isSwitched = value;
+                                          });
+                                          int setTime = isSwitched ? 1 : 0;
+                                          databaseReference
+                                              .child(
+                                                  'ESP32/setControl/setTimerMode/npk')
+                                              .set(setTime);
+                                          databaseReference
+                                              .child(
+                                                  'ESP32/setControl/setAutoMode/npk')
+                                              .set(0);
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 32),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 5),
+                            child: Text(
+                              'ตั้งเวลา',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                color: toneColor,
                               ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Visibility(
+                            visible: isSwitched,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 18),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Column(
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.only(left: 24),
-                                    child: SizedBox(
-                                      width: 60,
-                                      height: 40,
-                                      child: Center(
-                                        child: TextField(
-                                          controller: valueN,
-                                          maxLength: 3,
-                                          keyboardType: TextInputType.number,
-                                          style: const TextStyle(fontSize: 18),
-                                          decoration: const InputDecoration(
-                                            labelText: 'N',
-                                            counterText: '',
-                                            labelStyle: TextStyle(fontSize: 15),
-                                            focusedBorder: OutlineInputBorder(),
-                                            enabledBorder: OutlineInputBorder(
-                                              borderRadius: BorderRadius.all(
-                                                Radius.circular(10.0),
-                                              ),
-                                            ),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 24),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'ตั้งเวลาให้ปุ๋ย',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                            color: toneColor,
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(1),
-                                    child: SizedBox(
-                                      width: 60,
-                                      height: 40,
-                                      child: TextField(
-                                        controller: valueP,
-                                        maxLength: 3,
-                                        keyboardType: TextInputType.number,
-                                        style: const TextStyle(fontSize: 16),
-                                        decoration: const InputDecoration(
-                                          labelText: 'P',
-                                          counterText: '',
-                                          labelStyle: TextStyle(fontSize: 15),
-                                          focusedBorder: OutlineInputBorder(),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(10.0),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(1),
-                                    child: SizedBox(
-                                      width: 60,
-                                      height: 40,
-                                      child: TextField(
-                                        controller: valueK,
-                                        maxLength: 3,
-                                        keyboardType: TextInputType.number,
-                                        style: const TextStyle(fontSize: 18),
-                                        decoration: const InputDecoration(
-                                          labelText: 'K',
-                                          counterText: '',
-                                          labelStyle: TextStyle(fontSize: 15),
-                                          focusedBorder: OutlineInputBorder(),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius: BorderRadius.all(
-                                              Radius.circular(10.0),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(18.0),
-                                        ),
-                                        backgroundColor: Colors.transparent,
-                                        padding: const EdgeInsets.all(0.0),
-                                        elevation: 0.0,
-                                      ),
-                                      onPressed: () {
-                                        int setN = int.parse(valueN.text);
-                                        int setP = int.parse(valueP.text);
-                                        int setK = int.parse(valueK.text);
-                                        databaseReference
-                                            .child('ESP32/setControl/NPK/N')
-                                            .set(setN);
-                                        databaseReference
-                                            .child('ESP32/setControl/NPK/P')
-                                            .set(setP);
-                                        databaseReference
-                                            .child('ESP32/setControl/NPK/K')
-                                            .set(setK);
-                                      },
-                                      child: Ink(
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            colors: [
-                                              Colors.grey.shade700,
-                                              Colors.grey.shade700,
-                                              Colors.grey.shade700,
-                                            ],
-                                            begin: Alignment.topLeft,
-                                            end: Alignment.bottomRight,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(18.0),
-                                        ),
-                                        child: Container(
-                                          constraints: const BoxConstraints(
-                                              maxWidth: 100.0, minHeight: 40.0),
-                                          alignment: Alignment.center,
-                                          child: const Text(
-                                            "ยืนยัน",
-                                            textAlign: TextAlign.center,
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 24),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'อัตโนมัติ',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                        color: toneColor,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 2),
-                                    const Tooltip(
-                                      message: 'ให้ปุ๋ยเมื่อขาดสารอาหาร',
-                                      triggerMode: TooltipTriggerMode
-                                          .tap, // tooltip text
-                                      child: Icon(Icons.help_outline),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: FlutterSwitch(
-                                  width: 100,
-                                  height: 42,
-                                  activeText: 'เปิด',
-                                  inactiveText: 'ปิด',
-                                  valueFontSize: 20,
-                                  toggleSize: 25.0,
-                                  value: appProvider.fertilizerAuto,
-                                  borderRadius: 30.0,
-                                  padding: 8.0,
-                                  showOnOff: true,
-                                  activeColor: toneColor,
-                                  onToggle: (value) {
-                                    setState(() {
-                                      _statusAuto = value;
-                                    });
-                                    int statusAuto = _statusAuto ? 1 : 0;
-                                    // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
-                                    databaseReference
-                                        .child(
-                                            'ESP32/setControl/setAutoMode/npk')
-                                        .set(statusAuto);
-                                    databaseReference
-                                        .child(
-                                            'ESP32/setControl/setTimerMode/npk')
-                                        .set(0);
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 24),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      'ตั้งเวลา',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                        color: toneColor,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 2),
-                                    const Tooltip(
-                                      message: 'ตั้งเวลาให้ปุ๋ย',
-                                      triggerMode: TooltipTriggerMode
-                                          .tap, // tooltip text
-                                      child: Icon(Icons.help_outline),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: FlutterSwitch(
-                                  width: 100,
-                                  height: 42,
-                                  activeText: 'เปิด',
-                                  inactiveText: 'ปิด',
-                                  valueFontSize: 20,
-                                  toggleSize: 25.0,
-                                  value: appProvider.setTimeFertilizer,
-                                  borderRadius: 30.0,
-                                  padding: 8.0,
-                                  showOnOff: true,
-                                  activeColor: toneColor,
-                                  onToggle: (value) {
-                                    setState(() {
-                                      isSwitched = value;
-                                    });
-                                    int setTime = isSwitched ? 1 : 0;
-                                    databaseReference
-                                        .child(
-                                            'ESP32/setControl/setTimerMode/npk')
-                                        .set(setTime);
-                                    databaseReference
-                                        .child(
-                                            'ESP32/setControl/setAutoMode/npk')
-                                        .set(0);
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 5),
-                      child: Text(
-                        'ตั้งเวลา',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: toneColor,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Visibility(
-                      visible: isSwitched,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 18),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 24),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    'ตั้งเวลาให้ปุ๋ย',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                      color: toneColor,
-                                    ),
-                                  ),
-                                  /* Text(
+                                        /* Text(
                                     'Set Time Off',
                                     style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold),
                                   ), */
-                                ],
-                              ),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 0),
-                                  child: SizedBox(
-                                    width: screenWidth * 0.42,
-                                    child: CupertinoButton(
-                                      // Display a CupertinoDatePicker in time picker mode.
-                                      onPressed: () => _showDialog(
-                                        CupertinoDatePicker(
-                                          initialDateTime: timestart,
-                                          mode: CupertinoDatePickerMode.time,
-                                          use24hFormat: true,
-                                          // This is called when the user changes the time.
-                                          onDateTimeChanged:
-                                              (DateTime newTime) {
-                                            setState(() => timestart = newTime);
-                                          },
-                                        ),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            'เวลา : ',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18,
-                                              color: toneColor,
-                                            ),
-                                          ),
-                                          Text(
-                                            '${timestart.hour} : ${timestart.minute}',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18,
-                                              color: toneColor,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                      ],
                                     ),
                                   ),
-                                ),
-                                /* Padding(
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 0),
+                                        child: SizedBox(
+                                          width: screenWidth * 0.42,
+                                          child: CupertinoButton(
+                                            // Display a CupertinoDatePicker in time picker mode.
+                                            onPressed: () => _showDialog(
+                                              CupertinoDatePicker(
+                                                initialDateTime: timestart,
+                                                mode: CupertinoDatePickerMode
+                                                    .time,
+                                                use24hFormat: true,
+                                                // This is called when the user changes the time.
+                                                onDateTimeChanged:
+                                                    (DateTime newTime) {
+                                                  setState(() =>
+                                                      timestart = newTime);
+                                                },
+                                              ),
+                                            ),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  'เวลา : ',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 18,
+                                                    color: toneColor,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  '${timestart.hour} : ${timestart.minute}',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 18,
+                                                    color: toneColor,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      /* Padding(
                                   padding:
                                       const EdgeInsets.symmetric(horizontal: 0),
                                   child: SizedBox(
@@ -782,34 +725,36 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                     ),
                                   ),
                                 ), */
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: elevatedButton(
-                                    text: "ยืนยัน",
-                                    colors: [
-                                      Colors.grey.shade700,
-                                      Colors.grey.shade700,
-                                      Colors.grey.shade700,
                                     ],
-                                    onPressed: () {
-                                      int hour = timestart.hour;
-                                      int minute = timestart.minute;
-
-                                      String setTimeStart = '$hour:$minute';
-
-                                      databaseReference
-                                          .child(
-                                              'ESP32/setControl/NPK/setTimeStart')
-                                          .set(setTimeStart);
-                                    },
                                   ),
-                                ),
-                                /* Padding(
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: elevatedButton(
+                                          text: "ยืนยัน",
+                                          colors: [
+                                            Colors.grey.shade700,
+                                            Colors.grey.shade700,
+                                            Colors.grey.shade700,
+                                          ],
+                                          onPressed: () {
+                                            int hour = timestart.hour;
+                                            int minute = timestart.minute;
+
+                                            String setTimeStart =
+                                                '$hour:$minute';
+
+                                            databaseReference
+                                                .child(
+                                                    'ESP32/setControl/NPK/setTimeStart')
+                                                .set(setTimeStart);
+                                          },
+                                        ),
+                                      ),
+                                      /* Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: elevatedButton(
                                     text: "Set Stop",
@@ -833,13 +778,16 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                     },
                                   ),
                                 ), */
-                              ],
-                            )
-                          ],
-                        ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 24),
                   ],
                 ),
               ),

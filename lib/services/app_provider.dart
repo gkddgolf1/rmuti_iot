@@ -19,9 +19,7 @@ class AppProvider extends ChangeNotifier {
   // Fertilizer
   bool _fertilizerAuto = false;
   bool _setTimeFertilizer = false;
-  int _setN = 0;
-  int _setP = 0;
-  int _setK = 0;
+  String _setNPK = '';
   int _fertilizerN = 0;
   int _fertilizerP = 0;
   int _fertilizerK = 0;
@@ -54,9 +52,7 @@ class AppProvider extends ChangeNotifier {
   // Fertilizer
   bool get fertilizerAuto => _fertilizerAuto;
   bool get setTimeFertilizer => _setTimeFertilizer;
-  int get setN => _setN;
-  int get setP => _setP;
-  int get setK => _setK;
+  String get setNPK => _setNPK;
   int get fertilizerN => _fertilizerN;
   int get fertilizerP => _fertilizerP;
   int get fertilizerK => _fertilizerK;
@@ -85,9 +81,7 @@ class AppProvider extends ChangeNotifier {
     updateSoilMoisture(context);
     updateFertilizerAuto(context);
     updateSetTimeFertilizer(context);
-    updateSetN(context);
-    updateSetP(context);
-    updateSetK(context);
+    updateSetNPK(context);
     updateFertilizerN(context);
     updateFertilizerP(context);
     updateFertilizerK(context);
@@ -254,32 +248,15 @@ class AppProvider extends ChangeNotifier {
     });
   }
 
-  // ฟังก์ชันเซ็ทค่าปุ๋ย N
-  void updateSetN(BuildContext context) {
-    _databaseReference.child('ESP32/setControl/NPK/N').onValue.listen((event) {
-      int n = (event.snapshot.value as int);
+  // ฟังก์ชันเซ็ทค่าปุ๋ย NPK
+  void updateSetNPK(BuildContext context) {
+    _databaseReference
+        .child('ESP32/setControl/NPK/NPK')
+        .onValue
+        .listen((event) {
+      String npk = (event.snapshot.value as String);
       if (isWidgetMounted(context)) {
-        _setN = n;
-      }
-    });
-  }
-
-  // ฟังก์ชันเซ็ทค่าปุ๋ย P
-  void updateSetP(BuildContext context) {
-    _databaseReference.child('ESP32/setControl/NPK/P').onValue.listen((event) {
-      int p = (event.snapshot.value as int);
-      if (isWidgetMounted(context)) {
-        _setP = p;
-      }
-    });
-  }
-
-  // ฟังก์ชันเซ็ทค่าปุ๋ย K
-  void updateSetK(BuildContext context) {
-    _databaseReference.child('ESP32/setControl/NPK/K').onValue.listen((event) {
-      int k = (event.snapshot.value as int);
-      if (isWidgetMounted(context)) {
-        _setK = k;
+        _setNPK = npk;
       }
     });
   }
