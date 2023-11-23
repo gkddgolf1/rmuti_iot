@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_switch/flutter_switch.dart';
+import 'package:intl/intl.dart';
 
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
@@ -39,7 +40,8 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
   // set time stop
   DateTime timestop = DateTime(15, 55);
 
-  double _value = 10.0;
+  // ค่าของ Slid
+  List<int> allowedValues = [0, 10, 20];
 
   @override
   void initState() {
@@ -371,9 +373,6 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const SizedBox(
-                            height: 20,
-                          ),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 24),
                             child: Row(
@@ -405,13 +404,13 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                               inactiveTrackColor: Colors.grey.shade500,
                             ),
                             child: SfSlider(
+                              numberFormat: NumberFormat('#'),
                               showLabels: true,
                               showTicks: true,
                               interval: 10,
                               min: 0,
-                              max: 30,
-                              value: _value,
-                              labelPlacement: LabelPlacement.betweenTicks,
+                              max: 20,
+                              value: appProvider.setNPK.toDouble(),
                               labelFormatterCallback:
                                   (dynamic actualValue, String formattedText) {
                                 switch (actualValue) {
@@ -424,268 +423,274 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                 }
                                 return actualValue.toString();
                               },
-                              onChanged: (dynamic newValue) {
-                                setState(() {
-                                  _value = newValue;
-                                  if (_value == 0) {
-                                    databaseReference
-                                        .child('ESP32/setControl/NPK/NPK')
-                                        .set("Low");
-                                  } else if (_value == 10) {
-                                    databaseReference
-                                        .child('ESP32/setControl/NPK/NPK')
-                                        .set("Normal");
-                                  } else if (_value == 20) {
-                                    databaseReference
-                                        .child('ESP32/setControl/NPK/NPK')
-                                        .set("High");
-                                  }
-                                });
+                              onChanged: (dynamic value) {
+                                int roundedValue = value.round();
+                                int nearestAllowedValue = allowedValues.reduce(
+                                  (a, b) => (roundedValue - a).abs() <
+                                          (roundedValue - b).abs()
+                                      ? a
+                                      : b,
+                                );
+                                int test = nearestAllowedValue;
+                                databaseReference
+                                    .child('ESP32/setControl/NPK/test')
+                                    .set(test);
+
+                                if (nearestAllowedValue == 0) {
+                                  databaseReference
+                                      .child('ESP32/setControl/NPK/NPK')
+                                      .set("Low");
+                                } else if (nearestAllowedValue == 10) {
+                                  databaseReference
+                                      .child('ESP32/setControl/NPK/NPK')
+                                      .set("Normal");
+                                } else if (nearestAllowedValue == 20) {
+                                  databaseReference
+                                      .child('ESP32/setControl/NPK/NPK')
+                                      .set("High");
+                                }
                               },
                             ),
                           ),
-                          const SizedBox(height: 32),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 5),
-                            child: Text(
-                              'การทำงาน',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                                color: toneColor,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 18),
-                          Container(
-                            padding: const EdgeInsets.symmetric(vertical: 18),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Text(
+                        'การทำงาน',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: toneColor,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    Container(
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 24),
+                                child: Row(
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 24),
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            'อัตโนมัติ',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18,
-                                              color: toneColor,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 2),
-                                          const Tooltip(
-                                            message: 'ให้ปุ๋ยเมื่อขาดสารอาหาร',
-                                            triggerMode: TooltipTriggerMode
-                                                .tap, // tooltip text
-                                            child: Icon(Icons.help_outline),
-                                          ),
-                                        ],
+                                    Text(
+                                      'อัตโนมัติ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: toneColor,
                                       ),
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(10),
-                                      child: FlutterSwitch(
-                                        width: 100,
-                                        height: 42,
-                                        activeText: 'เปิด',
-                                        inactiveText: 'ปิด',
-                                        valueFontSize: 20,
-                                        toggleSize: 25.0,
-                                        value: appProvider.fertilizerAuto,
-                                        borderRadius: 30.0,
-                                        padding: 8.0,
-                                        showOnOff: true,
-                                        activeColor: toneColor,
-                                        onToggle: (value) {
-                                          setState(() {
-                                            _statusAuto = value;
-                                          });
-                                          int statusAuto = _statusAuto ? 1 : 0;
-                                          // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
-                                          databaseReference
-                                              .child(
-                                                  'ESP32/setControl/setAutoMode/npk')
-                                              .set(statusAuto);
-                                          databaseReference
-                                              .child(
-                                                  'ESP32/setControl/setTimerMode/npk')
-                                              .set(0);
-                                        },
-                                      ),
+                                    const SizedBox(width: 2),
+                                    const Tooltip(
+                                      message: 'ให้ปุ๋ยเมื่อขาดสารอาหาร',
+                                      triggerMode: TooltipTriggerMode
+                                          .tap, // tooltip text
+                                      child: Icon(Icons.help_outline),
                                     ),
                                   ],
                                 ),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: FlutterSwitch(
+                                  width: 100,
+                                  height: 42,
+                                  activeText: 'เปิด',
+                                  inactiveText: 'ปิด',
+                                  valueFontSize: 20,
+                                  toggleSize: 25.0,
+                                  value: appProvider.fertilizerAuto,
+                                  borderRadius: 30.0,
+                                  padding: 8.0,
+                                  showOnOff: true,
+                                  activeColor: toneColor,
+                                  onToggle: (value) {
+                                    setState(() {
+                                      _statusAuto = value;
+                                    });
+                                    int statusAuto = _statusAuto ? 1 : 0;
+                                    // ส่งค่ากลับไป Firebase เพื่อสั่งรดน้ำ
+                                    databaseReference
+                                        .child(
+                                            'ESP32/setControl/setAutoMode/npk')
+                                        .set(statusAuto);
+                                    databaseReference
+                                        .child(
+                                            'ESP32/setControl/setTimerMode/npk')
+                                        .set(0);
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 24),
+                                child: Row(
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 24),
-                                      child: Row(
-                                        children: [
-                                          Text(
-                                            'ตั้งเวลา',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 18,
-                                              color: toneColor,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 2),
-                                          const Tooltip(
-                                            message: 'ตั้งเวลาให้ปุ๋ย',
-                                            triggerMode: TooltipTriggerMode
-                                                .tap, // tooltip text
-                                            child: Icon(Icons.help_outline),
-                                          ),
-                                        ],
+                                    Text(
+                                      'ตั้งเวลา',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: toneColor,
                                       ),
                                     ),
-                                    Padding(
-                                      padding: const EdgeInsets.all(10),
-                                      child: FlutterSwitch(
-                                        width: 100,
-                                        height: 42,
-                                        activeText: 'เปิด',
-                                        inactiveText: 'ปิด',
-                                        valueFontSize: 20,
-                                        toggleSize: 25.0,
-                                        value: appProvider.setTimeFertilizer,
-                                        borderRadius: 30.0,
-                                        padding: 8.0,
-                                        showOnOff: true,
-                                        activeColor: toneColor,
-                                        onToggle: (value) {
-                                          setState(() {
-                                            isSwitched = value;
-                                          });
-                                          int setTime = isSwitched ? 1 : 0;
-                                          databaseReference
-                                              .child(
-                                                  'ESP32/setControl/setTimerMode/npk')
-                                              .set(setTime);
-                                          databaseReference
-                                              .child(
-                                                  'ESP32/setControl/setAutoMode/npk')
-                                              .set(0);
-                                        },
-                                      ),
+                                    const SizedBox(width: 2),
+                                    const Tooltip(
+                                      message: 'ตั้งเวลาให้ปุ๋ย',
+                                      triggerMode: TooltipTriggerMode
+                                          .tap, // tooltip text
+                                      child: Icon(Icons.help_outline),
                                     ),
                                   ],
                                 ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 32),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 5),
-                            child: Text(
-                              'ตั้งเวลา',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                                color: toneColor,
                               ),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Visibility(
-                            visible: isSwitched,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 18),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8),
+                              Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: FlutterSwitch(
+                                  width: 100,
+                                  height: 42,
+                                  activeText: 'เปิด',
+                                  inactiveText: 'ปิด',
+                                  valueFontSize: 20,
+                                  toggleSize: 25.0,
+                                  value: appProvider.setTimeFertilizer,
+                                  borderRadius: 30.0,
+                                  padding: 8.0,
+                                  showOnOff: true,
+                                  activeColor: toneColor,
+                                  onToggle: (value) {
+                                    setState(() {
+                                      isSwitched = value;
+                                    });
+                                    int setTime = isSwitched ? 1 : 0;
+                                    databaseReference
+                                        .child(
+                                            'ESP32/setControl/setTimerMode/npk')
+                                        .set(setTime);
+                                    databaseReference
+                                        .child(
+                                            'ESP32/setControl/setAutoMode/npk')
+                                        .set(0);
+                                  },
+                                ),
                               ),
-                              child: Column(
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 5),
+                      child: Text(
+                        'ตั้งเวลา',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: toneColor,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Visibility(
+                      visible: isSwitched,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 24),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 24),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          'ตั้งเวลาให้ปุ๋ย',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18,
-                                            color: toneColor,
-                                          ),
-                                        ),
-                                        /* Text(
+                                  Text(
+                                    'ตั้งเวลาให้ปุ๋ย',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                      color: toneColor,
+                                    ),
+                                  ),
+                                  /* Text(
                                     'Set Time Off',
                                     style: TextStyle(
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold),
                                   ), */
-                                      ],
-                                    ),
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 0),
-                                        child: SizedBox(
-                                          width: screenWidth * 0.42,
-                                          child: CupertinoButton(
-                                            // Display a CupertinoDatePicker in time picker mode.
-                                            onPressed: () => _showDialog(
-                                              CupertinoDatePicker(
-                                                initialDateTime: timestart,
-                                                mode: CupertinoDatePickerMode
-                                                    .time,
-                                                use24hFormat: true,
-                                                // This is called when the user changes the time.
-                                                onDateTimeChanged:
-                                                    (DateTime newTime) {
-                                                  setState(() =>
-                                                      timestart = newTime);
-                                                },
-                                              ),
-                                            ),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  'เวลา : ',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 18,
-                                                    color: toneColor,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  '${timestart.hour} : ${timestart.minute}',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 18,
-                                                    color: toneColor,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
+                                ],
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 0),
+                                  child: SizedBox(
+                                    width: screenWidth * 0.42,
+                                    child: CupertinoButton(
+                                      // Display a CupertinoDatePicker in time picker mode.
+                                      onPressed: () => _showDialog(
+                                        CupertinoDatePicker(
+                                          initialDateTime: timestart,
+                                          mode: CupertinoDatePickerMode.time,
+                                          use24hFormat: true,
+                                          // This is called when the user changes the time.
+                                          onDateTimeChanged:
+                                              (DateTime newTime) {
+                                            setState(() => timestart = newTime);
+                                          },
                                         ),
                                       ),
-                                      /* Padding(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            'เวลา : ',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                              color: toneColor,
+                                            ),
+                                          ),
+                                          Text(
+                                            '${timestart.hour} : ${timestart.minute}',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                              color: toneColor,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                /* Padding(
                                   padding:
                                       const EdgeInsets.symmetric(horizontal: 0),
                                   child: SizedBox(
@@ -725,36 +730,34 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                     ),
                                   ),
                                 ), */
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: elevatedButton(
+                                    text: "ยืนยัน",
+                                    colors: [
+                                      Colors.grey.shade700,
+                                      Colors.grey.shade700,
+                                      Colors.grey.shade700,
                                     ],
+                                    onPressed: () {
+                                      int hour = timestart.hour;
+                                      int minute = timestart.minute;
+
+                                      String setTimeStart = '$hour:$minute';
+
+                                      databaseReference
+                                          .child(
+                                              'ESP32/setControl/NPK/setTimeStart')
+                                          .set(setTimeStart);
+                                    },
                                   ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: elevatedButton(
-                                          text: "ยืนยัน",
-                                          colors: [
-                                            Colors.grey.shade700,
-                                            Colors.grey.shade700,
-                                            Colors.grey.shade700,
-                                          ],
-                                          onPressed: () {
-                                            int hour = timestart.hour;
-                                            int minute = timestart.minute;
-
-                                            String setTimeStart =
-                                                '$hour:$minute';
-
-                                            databaseReference
-                                                .child(
-                                                    'ESP32/setControl/NPK/setTimeStart')
-                                                .set(setTimeStart);
-                                          },
-                                        ),
-                                      ),
-                                      /* Padding(
+                                ),
+                                /* Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: elevatedButton(
                                     text: "Set Stop",
@@ -778,16 +781,13 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                     },
                                   ),
                                 ), */
-                                    ],
-                                  )
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                        ],
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
+                    const SizedBox(height: 24),
                   ],
                 ),
               ),

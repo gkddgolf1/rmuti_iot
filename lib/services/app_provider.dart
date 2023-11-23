@@ -19,7 +19,7 @@ class AppProvider extends ChangeNotifier {
   // Fertilizer
   bool _fertilizerAuto = false;
   bool _setTimeFertilizer = false;
-  String _setNPK = '';
+  int _setNPK = 0;
   int _fertilizerN = 0;
   int _fertilizerP = 0;
   int _fertilizerK = 0;
@@ -52,7 +52,7 @@ class AppProvider extends ChangeNotifier {
   // Fertilizer
   bool get fertilizerAuto => _fertilizerAuto;
   bool get setTimeFertilizer => _setTimeFertilizer;
-  String get setNPK => _setNPK;
+  int get setNPK => _setNPK;
   int get fertilizerN => _fertilizerN;
   int get fertilizerP => _fertilizerP;
   int get fertilizerK => _fertilizerK;
@@ -251,12 +251,13 @@ class AppProvider extends ChangeNotifier {
   // ฟังก์ชันเซ็ทค่าปุ๋ย NPK
   void updateSetNPK(BuildContext context) {
     _databaseReference
-        .child('ESP32/setControl/NPK/NPK')
+        .child('ESP32/setControl/NPK/test')
         .onValue
         .listen((event) {
-      String npk = (event.snapshot.value as String);
+      int npk = (event.snapshot.value as int);
       if (isWidgetMounted(context)) {
         _setNPK = npk;
+        notifyListeners();
       }
     });
   }
@@ -267,6 +268,7 @@ class AppProvider extends ChangeNotifier {
       int n = (event.snapshot.value as int);
       if (isWidgetMounted(context)) {
         _fertilizerN = n;
+        notifyListeners();
       }
     });
   }
@@ -277,6 +279,7 @@ class AppProvider extends ChangeNotifier {
       int p = (event.snapshot.value as int);
       if (isWidgetMounted(context)) {
         _fertilizerP = p;
+        notifyListeners();
       }
     });
   }
@@ -287,6 +290,7 @@ class AppProvider extends ChangeNotifier {
       int k = (event.snapshot.value as int);
       if (isWidgetMounted(context)) {
         _fertilizerK = k;
+        notifyListeners();
       }
     });
   }
@@ -301,6 +305,7 @@ class AppProvider extends ChangeNotifier {
       int statusAuto = (event.snapshot.value as int);
       if (isWidgetMounted(context)) {
         _lightAuto = (statusAuto == 1);
+        notifyListeners();
       }
     });
   }
@@ -314,6 +319,7 @@ class AppProvider extends ChangeNotifier {
       int settime = (event.snapshot.value as int);
       if (isWidgetMounted(context)) {
         _setTimeLight = (settime == 1);
+        notifyListeners();
       }
     });
   }
@@ -327,6 +333,7 @@ class AppProvider extends ChangeNotifier {
       int halfday = (event.snapshot.value as int);
       if (isWidgetMounted(context)) {
         _halfDay = (halfday == 1);
+        notifyListeners();
       }
     });
   }
@@ -340,6 +347,7 @@ class AppProvider extends ChangeNotifier {
       int fullday = (event.snapshot.value as int);
       if (isWidgetMounted(context)) {
         _fullDay = (fullday == 1);
+        notifyListeners();
       }
     });
   }
@@ -350,6 +358,7 @@ class AppProvider extends ChangeNotifier {
       int lux = (event.snapshot.value as int);
       if (isWidgetMounted(context)) {
         _lux = lux;
+        notifyListeners();
       }
     });
   }
@@ -363,6 +372,7 @@ class AppProvider extends ChangeNotifier {
       int status = (event.snapshot.value as int);
       if (isWidgetMounted(context)) {
         _statusOpen = status;
+        notifyListeners();
       }
     });
   }
@@ -376,6 +386,7 @@ class AppProvider extends ChangeNotifier {
       int status = (event.snapshot.value as int);
       if (isWidgetMounted(context)) {
         _statusOff = status;
+        notifyListeners();
       }
     });
   }

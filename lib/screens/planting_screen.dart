@@ -7,6 +7,7 @@ class PlantingScreen extends StatefulWidget {
   const PlantingScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _PlantingScreenState createState() => _PlantingScreenState();
 }
 
@@ -15,7 +16,7 @@ class _PlantingScreenState extends State<PlantingScreen> {
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
   List<Map<String, dynamic>> imageList = [];
-  int visibleImageCount = 10;
+  int visibleImageCount = 50;
   bool showMoreButton = true;
   bool isLoading = false;
 
@@ -56,6 +57,7 @@ class _PlantingScreenState extends State<PlantingScreen> {
         showMoreButton = imageList.length > visibleImageCount;
       });
     } catch (e) {
+      // ignore: avoid_print
       print('Error fetching image URLs: $e');
       // Handle the error (e.g., show a snackbar to the user)
       setState(() {
@@ -128,7 +130,6 @@ class _PlantingScreenState extends State<PlantingScreen> {
                   itemCount: visibleImages.length,
                   itemBuilder: (context, index) {
                     final imageUrl = visibleImages[index]['url'];
-                    final createdAt = visibleImages[index]['createdAt'];
 
                     return GestureDetector(
                       onTap: () {
@@ -149,7 +150,7 @@ class _PlantingScreenState extends State<PlantingScreen> {
                               const Icon(Icons.error),
                           // ปรับลดความชัดของภาพขนาดเล็ก
                           fit: BoxFit.fitWidth,
-                          width: 100,
+                          width: 100, // ลองปรับค่านี้
                         ),
                       ),
                     );

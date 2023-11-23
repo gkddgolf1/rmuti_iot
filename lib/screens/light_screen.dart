@@ -21,8 +21,6 @@ class _LightScreenState extends State<LightScreen> {
 
   Color toneColor = Colors.grey.shade800;
 
-  bool _halfDay = false;
-  bool _fullDay = false;
   bool _statusAuto = false;
   bool isSwitched = false;
 
@@ -385,9 +383,7 @@ class _LightScreenState extends State<LightScreen> {
                                           onPressed: () {
                                             if (appProvider.lightAuto ==
                                                 false) {
-                                              setState(() {
-                                                _halfDay = true;
-                                              });
+                                              setState(() {});
                                               databaseReference
                                                   .child(
                                                       'ESP32/setControl/MOTOR/setAuto/fullDay')
@@ -409,9 +405,7 @@ class _LightScreenState extends State<LightScreen> {
                                           onPressed: () {
                                             if (appProvider.lightAuto ==
                                                 false) {
-                                              setState(() {
-                                                _fullDay = true;
-                                              });
+                                              setState(() {});
                                               databaseReference
                                                   .child(
                                                       'ESP32/setControl/MOTOR/setAuto/halfDay')
@@ -576,7 +570,8 @@ class _LightScreenState extends State<LightScreen> {
                         child: Column(
                           children: [
                             Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 24),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 24),
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -780,7 +775,7 @@ class _LightScreenState extends State<LightScreen> {
           Colors.grey.shade700,
           Colors.grey.shade700,
         ],
-        stops: [0.0, 0.5, 1.0],
+        stops: const [0.0, 0.5, 1.0],
       ),
       center: Column(
         mainAxisAlignment: MainAxisAlignment.center,

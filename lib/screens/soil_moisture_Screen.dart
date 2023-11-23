@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 import 'package:flutter/cupertino.dart';
 
 import 'package:firebase_database/firebase_database.dart';
@@ -373,10 +375,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                       ? a
                                       : b,
                                 );
-                                /* setState(() {
-                                  setSoilmoisture = nearestAllowedValueSet;
-                                  //_saveSwitchState('_setSoilmoisture', value);
-                                }); */
+
                                 int setsoilmoisture = nearestAllowedValueSet;
                                 databaseReference
                                     .child(
