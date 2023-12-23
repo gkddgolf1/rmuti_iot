@@ -415,11 +415,11 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                   (dynamic actualValue, String formattedText) {
                                 switch (actualValue) {
                                   case 0:
-                                    return 'Low';
+                                    return 'ปุ๋ยน้อย';
                                   case 10:
-                                    return 'Medium';
+                                    return 'ปานกลาง';
                                   case 20:
-                                    return 'High';
+                                    return 'ปุ๋ยมาก';
                                 }
                                 return actualValue.toString();
                               },

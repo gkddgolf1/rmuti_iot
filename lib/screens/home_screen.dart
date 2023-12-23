@@ -194,7 +194,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const PlantingScreen(),
+                                builder: (context) => MyImageWidget(
+                                  imageUrl: '',
+                                ),
                               ),
                             ).then((_) {
                               int sendPlant = 0;
