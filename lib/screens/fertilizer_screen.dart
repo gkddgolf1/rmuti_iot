@@ -26,11 +26,6 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
 
   Color toneColor = Colors.grey.shade800;
 
-  // นำไป set
-  TextEditingController valueN = TextEditingController();
-  TextEditingController valueP = TextEditingController();
-  TextEditingController valueK = TextEditingController();
-
   // สวิท
   bool _statusAuto = false;
   bool isSwitched = false;
@@ -70,111 +65,46 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
             ));
   }
 
-//ฟังก์ชันความสมดุลแสดง Text ตามค่าที N
-  String displayTextN() {
+//ฟังก์ชันความสมดุลค่าปุ๋ย
+  String displayText() {
     final appProvider = Provider.of<AppProvider>(context);
     String textToDisplay = '';
-    if (appProvider.fertilizerN < 90 &&
-        appProvider.fertilizerP < 10 &&
-        appProvider.fertilizerK < 100) {
+    if (appProvider.fertilizer == 0) {
       textToDisplay = "ขาดปุ๋ย";
-    } else if (appProvider.fertilizerN >= 90 &&
-        appProvider.fertilizerN < 120 &&
-        appProvider.fertilizerP >= 10 &&
-        appProvider.fertilizerP < 20 &&
-        appProvider.fertilizerK >= 100 &&
-        appProvider.fertilizerK < 150) {
+    } else if (appProvider.fertilizer == 1) {
       textToDisplay = "ปุ๋ยน้อย";
-    } else if (appProvider.fertilizerN >= 120 &&
-        appProvider.fertilizerN < 150 &&
-        appProvider.fertilizerP >= 20 &&
-        appProvider.fertilizerP < 40 &&
-        appProvider.fertilizerK >= 150 &&
-        appProvider.fertilizerK < 200) {
-      textToDisplay = "ปานกลาง";
-    } else if (appProvider.fertilizerN >= 150 &&
-        appProvider.fertilizerN < 200 &&
-        appProvider.fertilizerP >= 40 &&
-        appProvider.fertilizerP < 80 &&
-        appProvider.fertilizerK >= 200 &&
-        appProvider.fertilizerK < 250) {
+    } else if (appProvider.fertilizer == 2) {
       textToDisplay = "อุดมสมบูรณ์";
+    } else if (appProvider.fertilizer == 3) {
+      textToDisplay = "อุดมสมบูรณ์มาก";
     }
     return textToDisplay;
   }
-
-  /* //ฟังก์ชันความสมดุลแสดง Text ตามค่าที P
-  String displayTextP() {
-    String textToDisplay = '';
-    if (P < 10) {
-      textToDisplay = "ขาดปุ๋ย";
-    } else if (P >= 10 && P < 20) {
-      textToDisplay = "ปุ๋ยน้อย";
-    } else if (P >= 20 && P < 40) {
-      textToDisplay = "ปานกลาง";
-    } else if (P >= 40 && P < 80) {
-      textToDisplay = "อุดมสมบูรณ์";
-    }
-    return textToDisplay;
-  }
-
-  //ฟังก์ชันความสมดุลแสดง Text ตามค่าที K
-  String displayTextK() {
-    String textToDisplay = '';
-    if (K < 100) {
-      textToDisplay = "ขาดปุ๋ย";
-    } else if (K >= 100 && K < 150) {
-      textToDisplay = "ปุ๋ยน้อย";
-    } else if (K >= 150 && K < 200) {
-      textToDisplay = "ปานกลาง";
-    } else if (K >= 200 && K < 250) {
-      textToDisplay = "อุดมสมบูรณ์";
-    }
-    return textToDisplay;
-  } */
 
   @override
   Widget build(BuildContext context) {
     final appProvider = Provider.of<AppProvider>(context);
+
+    String messageFertilizer = displayText();
+
     // ประกาศตัวแปร wheel ขึ้นมาเพื่อเก็บไปเป็นค่าวงล้อ
-    double wheelN = appProvider.fertilizerN.toDouble();
-    double wheelP = appProvider.fertilizerP.toDouble();
-    double wheelK = appProvider.fertilizerK.toDouble();
-    if (wheelN >= 1 && wheelN <= 100) {
-      wheelN = wheelN / 100;
-    } else if (wheelN > 100) {
-      wheelN = 100;
-      wheelN = wheelN / 100;
-    }
-    if (wheelP >= 1 && wheelP <= 100) {
-      wheelP = wheelP / 100;
-    } else if (wheelP > 100) {
-      wheelP = 100;
-      wheelP = wheelP / 100;
-    }
-    if (wheelK >= 1 && wheelK <= 100) {
-      wheelK = wheelK / 100;
-    } else if (wheelK > 100) {
-      wheelK = 100;
-      wheelK = wheelK / 100;
+    double wheelFertilizer = appProvider.fertilizer.toDouble();
+    if (wheelFertilizer == 0) {
+      wheelFertilizer = wheelFertilizer / 100;
+    } else if (wheelFertilizer == 1) {
+      wheelFertilizer = 33.34;
+      wheelFertilizer = wheelFertilizer / 100;
+    } else if (wheelFertilizer == 2) {
+      wheelFertilizer = 66.68;
+      wheelFertilizer = wheelFertilizer / 100;
+    } else if (wheelFertilizer == 3) {
+      wheelFertilizer = 100;
+      wheelFertilizer = wheelFertilizer / 100;
     }
 
-    //ขนาด TextField
+    //ขนาด TextField ของตั้งเวลา
     double screenWidth;
     screenWidth = MediaQuery.of(context).size.width;
-
-    // เปลี่ยนสีข้อความสีส่งมาจากฟังก์ชัน displayText(esp32)   N
-    String message = displayTextN();
-    Color textColor = Colors.black;
-    if (message == "ขาดปุ๋ย") {
-      textColor = Colors.red;
-    } else if (message == "ปุ๋ยน้อย") {
-      textColor = Colors.orange;
-    } else if (message == "ปานกลาง") {
-      textColor = Colors.green;
-    } else if (message == "อุดมสมบูรณ์") {
-      textColor = Colors.orange;
-    }
 
     return Scaffold(
       backgroundColor: Colors.indigo.shade50,
@@ -228,62 +158,18 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                     const SizedBox(
                       height: 30,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Column(
-                          children: [
-                            _wheelCircle(
-                                percentWheel: wheelN,
-                                textTitel: "${appProvider.fertilizerN}",
-                                textLong: "mg/kg"),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            const Text(
-                              "ค่า N",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          width: 10,
-                          height: 180,
-                        ),
-                        Column(
-                          children: [
-                            _wheelCircle(
-                                percentWheel: wheelP,
-                                textTitel: "${appProvider.fertilizerP}",
-                                textLong: "mg/kg"),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            const Text(
-                              "ค่า P",
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
                     Column(
                       children: [
                         _wheelCircle(
-                            percentWheel: wheelN,
-                            textTitel: "${appProvider.fertilizerK}",
-                            textLong: "mg/kg"),
+                          percentWheel: wheelFertilizer,
+                          textTitel: messageFertilizer,
+                          //textLong: "ความอุดมสมบูรณ์",
+                        ),
                         const SizedBox(
                           height: 20,
                         ),
                         const Text(
-                          "ค่า K",
+                          "Fertilizer",
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -292,63 +178,6 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                         const SizedBox(
                           height: 20,
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "ความอุดมสมบูรณ์: ",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: toneColor,
-                              ),
-                            ),
-                            Text(
-                              message,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: textColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        /* Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Text(
-                              "ตั้งค่าให้ปุ๋ย: ",
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              'N: ${appProvider.setN} ',
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              'P: ${appProvider.setP} ',
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              'K: ${appProvider.setK} ',
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ), */
                       ],
                     ),
                     const SizedBox(height: 32),
@@ -801,17 +630,17 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
   Widget _wheelCircle({
     required double percentWheel,
     required String textTitel,
-    required String textLong,
+    //required String textLong,
   }) {
     return CircularPercentIndicator(
-      radius: 80,
-      lineWidth: 16,
+      radius: 120,
+      lineWidth: 20,
       percent: percentWheel,
       backgroundWidth: 10,
       backgroundColor: Colors.deepPurple.shade100,
       circularStrokeCap: CircularStrokeCap.round,
       rotateLinearGradient: true,
-      maskFilter: const MaskFilter.blur(BlurStyle.solid, 5.0),
+      maskFilter: const MaskFilter.blur(BlurStyle.solid, 8.0),
       linearGradient: LinearGradient(
         colors: [
           Colors.grey.shade700,
@@ -826,19 +655,19 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
           Text(
             textTitel,
             style: TextStyle(
-              fontSize: 32,
+              fontSize: 22,
               fontWeight: FontWeight.bold,
               color: toneColor,
             ),
           ),
           const SizedBox(height: 5),
-          Text(
+          /* Text(
             textLong,
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[700],
             ),
-          ),
+          ), */
         ],
       ),
     );

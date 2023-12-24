@@ -20,9 +20,7 @@ class AppProvider extends ChangeNotifier {
   bool _fertilizerAuto = false;
   bool _setTimeFertilizer = false;
   int _setNPK = 0;
-  int _fertilizerN = 0;
-  int _fertilizerP = 0;
-  int _fertilizerK = 0;
+  int _fertilizer = 0;
 
   // Light
   bool _lightAuto = false;
@@ -32,6 +30,7 @@ class AppProvider extends ChangeNotifier {
   int _lux = 0;
   int _statusOpen = 0;
   int _statusOff = 0;
+  String _record = "0";
 
   // อื่นๆ
   String _time = "";
@@ -53,9 +52,7 @@ class AppProvider extends ChangeNotifier {
   bool get fertilizerAuto => _fertilizerAuto;
   bool get setTimeFertilizer => _setTimeFertilizer;
   int get setNPK => _setNPK;
-  int get fertilizerN => _fertilizerN;
-  int get fertilizerP => _fertilizerP;
-  int get fertilizerK => _fertilizerK;
+  int get fertilizer => _fertilizer;
 
   // Light
   bool get lightAuto => _lightAuto;
@@ -65,6 +62,7 @@ class AppProvider extends ChangeNotifier {
   int get lux => _lux;
   int get statusOpen => _statusOpen;
   int get statusOff => _statusOff;
+  String get recode => _record;
 
   // อื่นๆ
   String get time => _time;
@@ -82,10 +80,9 @@ class AppProvider extends ChangeNotifier {
     updateFertilizerAuto(context);
     updateSetTimeFertilizer(context);
     updateSetNPK(context);
-    updateFertilizerN(context);
-    updateFertilizerP(context);
-    updateFertilizerK(context);
+    updateFertilizer(context);
     updateLightAuto(context);
+    updateRecord(context);
     updateSetTimeLight(context);
     updateHalfDay(context);
     updateFullDay(context);
@@ -262,34 +259,15 @@ class AppProvider extends ChangeNotifier {
     });
   }
 
-  // ฟังก์ชันอ่านค่า N
-  void updateFertilizerN(BuildContext context) {
-    _databaseReference.child('ESP32/views/RS485/N').onValue.listen((event) {
-      int n = (event.snapshot.value as int);
+  // ฟังก์ชันอ่านค่าปุ๋ย
+  void updateFertilizer(BuildContext context) {
+    _databaseReference
+        .child('ESP32/views/RS485/Fertility')
+        .onValue
+        .listen((event) {
+      int fertility = (event.snapshot.value as int);
       if (isWidgetMounted(context)) {
-        _fertilizerN = n;
-        notifyListeners();
-      }
-    });
-  }
-
-  // ฟังก์ชันอ่านค่า P
-  void updateFertilizerP(BuildContext context) {
-    _databaseReference.child('ESP32/views/RS485/P').onValue.listen((event) {
-      int p = (event.snapshot.value as int);
-      if (isWidgetMounted(context)) {
-        _fertilizerP = p;
-        notifyListeners();
-      }
-    });
-  }
-
-  // ฟังก์ชันอ่านค่า K
-  void updateFertilizerK(BuildContext context) {
-    _databaseReference.child('ESP32/views/RS485/K').onValue.listen((event) {
-      int k = (event.snapshot.value as int);
-      if (isWidgetMounted(context)) {
-        _fertilizerK = k;
+        _fertilizer = fertility;
         notifyListeners();
       }
     });
@@ -305,6 +283,20 @@ class AppProvider extends ChangeNotifier {
       int statusAuto = (event.snapshot.value as int);
       if (isWidgetMounted(context)) {
         _lightAuto = (statusAuto == 1);
+        notifyListeners();
+      }
+    });
+  }
+
+  // ฟังก์ชันตั้งเวลาเปิด-ปิดม่าน
+  void updateRecord(BuildContext context) {
+    _databaseReference
+        .child('ESP32/setControl/MOTOR/setAuto/setRecord')
+        .onValue
+        .listen((event) {
+      String record = event.snapshot.value as String;
+      if (isWidgetMounted(context)) {
+        _record = record;
         notifyListeners();
       }
     });

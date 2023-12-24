@@ -800,7 +800,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
     //required String textLong,
   }) {
     return CircularPercentIndicator(
-      radius: 90,
+      radius: 120,
       lineWidth: 20,
       percent: percentWheel,
       backgroundWidth: 10,
