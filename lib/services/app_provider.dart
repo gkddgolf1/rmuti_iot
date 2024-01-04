@@ -25,12 +25,13 @@ class AppProvider extends ChangeNotifier {
   // Light
   bool _lightAuto = false;
   bool _setTimeLight = false;
-  bool _halfDay = false;
-  bool _fullDay = false;
+/*   bool _halfDay = false;
+  bool _fullDay = false; */
   int _lux = 0;
   int _statusOpen = 0;
   int _statusOff = 0;
-  String _record = "0";
+  int _record = 0;
+  int _setHour = 0;
 
   // อื่นๆ
   String _time = "";
@@ -57,12 +58,13 @@ class AppProvider extends ChangeNotifier {
   // Light
   bool get lightAuto => _lightAuto;
   bool get setTimeLight => _setTimeLight;
-  bool get halfDay => _halfDay;
-  bool get fullDay => _fullDay;
+/*   bool get halfDay => _halfDay;
+  bool get fullDay => _fullDay; */
   int get lux => _lux;
   int get statusOpen => _statusOpen;
   int get statusOff => _statusOff;
-  String get recode => _record;
+  int get record => _record;
+  int get setHour => _setHour;
 
   // อื่นๆ
   String get time => _time;
@@ -83,9 +85,10 @@ class AppProvider extends ChangeNotifier {
     updateFertilizer(context);
     updateLightAuto(context);
     updateRecord(context);
+    //updateSetHour(context);
     updateSetTimeLight(context);
-    updateHalfDay(context);
-    updateFullDay(context);
+/*     updateHalfDay(context);
+    updateFullDay(context); */
     updateLight(context);
     updateStatusOpen(context);
     updateStatusOff(context);
@@ -288,13 +291,27 @@ class AppProvider extends ChangeNotifier {
     });
   }
 
+/*   // ฟังก์ชันตั้งเวลาเปิด-ปิดม่าน
+  void updateSetHour(BuildContext context) {
+    _databaseReference
+        .child('ESP32/setControl/MOTOR/setAuto/hour')
+        .onValue
+        .listen((event) {
+      int setHour = event.snapshot.value as int;
+      if (isWidgetMounted(context)) {
+        _setHour = setHour;
+        notifyListeners();
+      }
+    });
+  } */
+
   // ฟังก์ชันตั้งเวลาเปิด-ปิดม่าน
   void updateRecord(BuildContext context) {
     _databaseReference
-        .child('ESP32/setControl/MOTOR/setAuto/setRecord')
+        .child('ESP32/views/Lux_Record/min_today')
         .onValue
         .listen((event) {
-      String record = event.snapshot.value as String;
+      int record = event.snapshot.value as int;
       if (isWidgetMounted(context)) {
         _record = record;
         notifyListeners();
@@ -316,7 +333,7 @@ class AppProvider extends ChangeNotifier {
     });
   }
 
-  // ฟังก์ชันการตั้งค่าครึ่งวัน
+  /*  // ฟังก์ชันการตั้งค่าครึ่งวัน
   void updateHalfDay(BuildContext context) {
     _databaseReference
         .child('ESP32/setControl/MOTOR/setAuto/halfDay')
@@ -342,7 +359,7 @@ class AppProvider extends ChangeNotifier {
         notifyListeners();
       }
     });
-  }
+  } */
 
   // ฟังก์ชันอ่านค่าเซ็นเซอร์แสง
   void updateLight(BuildContext context) {

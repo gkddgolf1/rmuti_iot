@@ -134,6 +134,8 @@ class _LightScreenState extends State<LightScreen> {
     double screenWidth;
     screenWidth = MediaQuery.of(context).size.width;
 
+    TextEditingController? setHour;
+
     return Scaffold(
       backgroundColor: Colors.indigo.shade50,
       body: SafeArea(
@@ -264,7 +266,7 @@ class _LightScreenState extends State<LightScreen> {
                               ),
                             ),
                             Text(
-                              appProvider.recode,
+                              "${appProvider.record}",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -398,9 +400,9 @@ class _LightScreenState extends State<LightScreen> {
                                   children: [
                                     Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        ElevatedButton(
+                                        /* ElevatedButton(
                                           onPressed: () {
                                             if (appProvider.lightAuto ==
                                                 false) {
@@ -443,60 +445,75 @@ class _LightScreenState extends State<LightScreen> {
                                                 : Colors.grey,
                                           ),
                                           child: const Text('เต็มวัน'),
+                                        ), */
+                                        SizedBox(
+                                          width: 80,
+                                          height: 40,
+                                          child: Center(
+                                            child: TextField(
+                                              textAlign: TextAlign.center,
+                                              controller: setHour,
+                                              maxLength: 2,
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              style:
+                                                  const TextStyle(fontSize: 18),
+                                              decoration: const InputDecoration(
+                                                labelText: 'ชั่วโมง',
+                                                counterText: '',
+                                                labelStyle:
+                                                    TextStyle(fontSize: 15),
+                                                focusedBorder:
+                                                    OutlineInputBorder(),
+                                                enabledBorder:
+                                                    OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                    Radius.circular(10.0),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                         ),
                                         const SizedBox(height: 10),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            FlutterSwitch(
-                                              width: 100,
-                                              height: 42,
-                                              activeText: 'เปิด',
-                                              inactiveText: 'ปิด',
-                                              valueFontSize: 20,
-                                              toggleSize: 25.0,
-                                              value: appProvider.lightAuto,
-                                              borderRadius: 30.0,
-                                              padding: 8.0,
-                                              showOnOff: true,
-                                              activeColor: toneColor,
-                                              onToggle: (value) {
-                                                if (appProvider.halfDay) {
-                                                  setState(() {
-                                                    _statusAuto = value;
-                                                  });
-                                                  int statusAuto =
-                                                      _statusAuto ? 1 : 0;
-                                                  //send values back to Firebase to order watering
-                                                  databaseReference
-                                                      .child(
-                                                          'ESP32/setControl/setAutoMode/motor')
-                                                      .set(statusAuto);
-                                                  databaseReference
-                                                      .child(
-                                                          'ESP32/setControl/setTimerMode/motor')
-                                                      .set(0);
-                                                } else if (appProvider
-                                                    .fullDay) {
-                                                  setState(() {
-                                                    _statusAuto = value;
-                                                  });
-                                                  int statusAuto =
-                                                      _statusAuto ? 1 : 0;
-                                                  //send values back to Firebase to order watering
-                                                  databaseReference
-                                                      .child(
-                                                          'ESP32/setControl/setAutoMode/motor')
-                                                      .set(statusAuto);
-                                                  databaseReference
-                                                      .child(
-                                                          'ESP32/setControl/setTimerMode/motor')
-                                                      .set(0);
-                                                }
-                                              },
-                                            ),
-                                          ],
+                                        Padding(
+                                          padding: const EdgeInsets.all(10),
+                                          child: FlutterSwitch(
+                                            width: 100,
+                                            height: 42,
+                                            activeText: 'เปิด',
+                                            inactiveText: 'ปิด',
+                                            valueFontSize: 20,
+                                            toggleSize: 25.0,
+                                            value: appProvider.lightAuto,
+                                            borderRadius: 30.0,
+                                            padding: 8.0,
+                                            showOnOff: true,
+                                            activeColor: toneColor,
+                                            onToggle: (value) {
+                                              setState(() {
+                                                _statusAuto = value;
+                                              });
+                                              TextEditingController? setHour0 =
+                                                  setHour;
+
+                                              int statusAuto =
+                                                  _statusAuto ? 1 : 0;
+
+                                              databaseReference
+                                                  .child(
+                                                      'ESP32/setControl/setAutoMode/motor')
+                                                  .set(statusAuto);
+
+                                              if (statusAuto == 1) {
+                                                databaseReference
+                                                    .child(
+                                                        'ESP32/setControl/MOTOR/setAuto/hour')
+                                                    .set(setHour0);
+                                              }
+                                            },
+                                          ),
                                         ),
                                       ],
                                     ),
