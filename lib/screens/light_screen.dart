@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
@@ -23,6 +24,8 @@ class _LightScreenState extends State<LightScreen> {
 
   bool _statusAuto = false;
   bool isSwitched = false;
+
+  TextEditingController setHour = TextEditingController();
 
   bool _isLeftPressed = false;
   bool _isRightPressed = false;
@@ -133,8 +136,6 @@ class _LightScreenState extends State<LightScreen> {
     //ขนาด TextField
     double screenWidth;
     screenWidth = MediaQuery.of(context).size.width;
-
-    TextEditingController? setHour;
 
     return Scaffold(
       backgroundColor: Colors.indigo.shade50,
@@ -258,21 +259,21 @@ class _LightScreenState extends State<LightScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "บันทึกการเก็บแสง: ",
+                              "บันทึกการเก็บแสง: ${appProvider.record} นาที",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: toneColor,
                               ),
                             ),
-                            Text(
+                            /* Text(
                               "${appProvider.record}",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
                                 color: toneColor,
                               ),
-                            ),
+                            ), */
                           ],
                         ),
                       ],
@@ -453,11 +454,19 @@ class _LightScreenState extends State<LightScreen> {
                                             child: TextField(
                                               textAlign: TextAlign.center,
                                               controller: setHour,
-                                              maxLength: 2,
+                                              maxLength: 1,
                                               keyboardType:
                                                   TextInputType.number,
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter
+                                                    .digitsOnly
+                                              ],
                                               style:
                                                   const TextStyle(fontSize: 18),
+                                              onChanged: (value) {
+                                                // Handle changes in the TextField here
+                                                // You can update the state or perform any necessary actions
+                                              },
                                               decoration: const InputDecoration(
                                                 labelText: 'ชั่วโมง',
                                                 counterText: '',
@@ -491,26 +500,25 @@ class _LightScreenState extends State<LightScreen> {
                                             padding: 8.0,
                                             showOnOff: true,
                                             activeColor: toneColor,
-                                            onToggle: (value) {
+                                            onToggle: (value) async {
                                               setState(() {
                                                 _statusAuto = value;
                                               });
-                                              TextEditingController? setHour0 =
-                                                  setHour;
 
-                                              int statusAuto =
-                                                  _statusAuto ? 1 : 0;
+                                              int statusAuto = value ? 1 : 0;
 
-                                              databaseReference
+                                              await databaseReference
                                                   .child(
                                                       'ESP32/setControl/setAutoMode/motor')
                                                   .set(statusAuto);
 
-                                              if (statusAuto == 1) {
-                                                databaseReference
+                                              int? setHourValue =
+                                                  int.tryParse(setHour.text);
+                                              if (setHourValue != null) {
+                                                await databaseReference
                                                     .child(
                                                         'ESP32/setControl/MOTOR/setAuto/hour')
-                                                    .set(setHour0);
+                                                    .set(setHourValue);
                                               }
                                             },
                                           ),
