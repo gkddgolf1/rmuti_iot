@@ -35,6 +35,7 @@ class AppProvider extends ChangeNotifier {
 
   // อื่นๆ
   String _time = "";
+  int _minConverter = 0;
 
   // Add getters for your state variables
   // HomeScreen
@@ -68,6 +69,7 @@ class AppProvider extends ChangeNotifier {
 
   // อื่นๆ
   String get time => _time;
+  int get minConverter => _minConverter;
 
   AppProvider(BuildContext context) {
     updateTime(context);
@@ -92,6 +94,7 @@ class AppProvider extends ChangeNotifier {
     updateLight(context);
     updateStatusOpen(context);
     updateStatusOff(context);
+    updateMinConverter(context);
   }
 
   bool isWidgetMounted(BuildContext context) {
@@ -410,6 +413,20 @@ class AppProvider extends ChangeNotifier {
 
       if (isWidgetMounted(context)) {
         _time = time.toString();
+        notifyListeners();
+      }
+    });
+  }
+
+  // ------------------------------other-----------------------------------//
+  void updateMinConverter(BuildContext context) {
+    _databaseReference
+        .child('ESP32/setControl/MOTOR/minConverter')
+        .onValue
+        .listen((event) {
+      int minConverter = event.snapshot.value as int;
+      if (isWidgetMounted(context)) {
+        _minConverter = minConverter;
         notifyListeners();
       }
     });

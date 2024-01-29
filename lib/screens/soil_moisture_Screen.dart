@@ -32,7 +32,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
 
   // ค่าของ Slid
   List<int> allowedValues = [20, 40, 60, 80, 100];
-  List<int> allowedValuesSet = [20, 40, 60, 80, 100];
+  List<int> allowedValuesSet = [10, 15, 20, 25, 30, 35, 40, 45, 50];
 
   // ตัวแปรสำหรับ Switch
   bool _status = false;
@@ -304,6 +304,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                               numberFormat: NumberFormat('#'),
                               showLabels: true,
                               showTicks: true,
+                              showDividers: true,
                               interval: 20,
                               min: 20,
                               max: 100,
@@ -358,13 +359,14 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                               inactiveTrackColor: Colors.grey.shade500,
                             ),
                             child: SfSlider(
-                              //enableTooltip: true,
+                              enableTooltip: true,
                               numberFormat: NumberFormat('#'),
                               showLabels: true,
                               showTicks: true,
-                              interval: 20,
-                              min: 20,
-                              max: 100,
+                              showDividers: true,
+                              interval: 10,
+                              min: 10,
+                              max: 50,
                               value: appProvider.setSoilmoisture.toDouble(),
                               onChanged: (dynamic value) {
                                 int roundedValue = value.round();

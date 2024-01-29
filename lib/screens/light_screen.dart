@@ -25,7 +25,16 @@ class _LightScreenState extends State<LightScreen> {
   bool _statusAuto = false;
   bool isSwitched = false;
 
-  TextEditingController setHour = TextEditingController();
+  TextEditingController setHour = TextEditingController(text: '0');
+  TextEditingController setMin = TextEditingController(text: '0');
+
+  void updateTotalMinutes() {
+    // Convert hours and minutes to total minutes
+    int hours = int.parse(setHour.text);
+    int minutes = int.parse(setMin.text);
+
+    int totalMinutes = (hours * 60) + minutes;
+  }
 
   bool _isLeftPressed = false;
   bool _isRightPressed = false;
@@ -86,9 +95,9 @@ class _LightScreenState extends State<LightScreen> {
   String statusCurtain(AppProvider appProvider) {
     String statusDisplay = '';
     if (appProvider.statusOpen == 1) {
-      statusDisplay = "ปิด";
-    } else if (appProvider.statusOff == 1) {
       statusDisplay = "เปิด";
+    } else if (appProvider.statusOff == 1) {
+      statusDisplay = "ปิด";
     } else if (appProvider.statusOpen == 0 && appProvider.statusOff == 0) {
       statusDisplay = "กำลังทำงาน";
     }
@@ -113,9 +122,9 @@ class _LightScreenState extends State<LightScreen> {
     // เปลี่ยนสีข้อความสีส่งมาจากฟังก์ชัน statusCurtain()
     String statuscurtain = statusCurtain(appProvider);
     Color statuscurtainColor = Colors.black;
-    if (statuscurtain == "ปิด") {
+    if (statuscurtain == "เปิด") {
       statuscurtainColor = Colors.green;
-    } else if (statuscurtain == "เปิด") {
+    } else if (statuscurtain == "ปิด") {
       statuscurtainColor = Colors.green;
     } else if (statuscurtain == "กำลังทำงาน") {
       statuscurtainColor = Colors.orange;
@@ -259,7 +268,7 @@ class _LightScreenState extends State<LightScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "บันทึกการเก็บแสง: ${appProvider.record} นาที",
+                              "บันทึกการเก็บแสง: ${appProvider.minConverter}/${appProvider.record} นาที",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -403,86 +412,89 @@ class _LightScreenState extends State<LightScreen> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        /* ElevatedButton(
-                                          onPressed: () {
-                                            if (appProvider.lightAuto ==
-                                                false) {
-                                              setState(() {});
-                                              databaseReference
-                                                  .child(
-                                                      'ESP32/setControl/MOTOR/setAuto/fullDay')
-                                                  .set(0);
-                                              databaseReference
-                                                  .child(
-                                                      'ESP32/setControl/MOTOR/setAuto/halfDay')
-                                                  .set(1);
-                                            }
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: appProvider.halfDay
-                                                ? toneColor
-                                                : Colors.grey,
-                                          ),
-                                          child: const Text('ครึ่งวัน'),
-                                        ),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            if (appProvider.lightAuto ==
-                                                false) {
-                                              setState(() {});
-                                              databaseReference
-                                                  .child(
-                                                      'ESP32/setControl/MOTOR/setAuto/halfDay')
-                                                  .set(0);
-                                              databaseReference
-                                                  .child(
-                                                      'ESP32/setControl/MOTOR/setAuto/fullDay')
-                                                  .set(1);
-                                            }
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: appProvider.fullDay
-                                                ? toneColor
-                                                : Colors.grey,
-                                          ),
-                                          child: const Text('เต็มวัน'),
-                                        ), */
                                         SizedBox(
-                                          width: 80,
+                                          width:
+                                              160, // Adjust the width as needed
                                           height: 40,
-                                          child: Center(
-                                            child: TextField(
-                                              textAlign: TextAlign.center,
-                                              controller: setHour,
-                                              maxLength: 1,
-                                              keyboardType:
-                                                  TextInputType.number,
-                                              inputFormatters: [
-                                                FilteringTextInputFormatter
-                                                    .digitsOnly
-                                              ],
-                                              style:
-                                                  const TextStyle(fontSize: 18),
-                                              onChanged: (value) {
-                                                // Handle changes in the TextField here
-                                                // You can update the state or perform any necessary actions
-                                              },
-                                              decoration: const InputDecoration(
-                                                labelText: 'ชั่วโมง',
-                                                counterText: '',
-                                                labelStyle:
-                                                    TextStyle(fontSize: 15),
-                                                focusedBorder:
-                                                    OutlineInputBorder(),
-                                                enabledBorder:
-                                                    OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                    Radius.circular(10.0),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          right: 8.0),
+                                                  child: TextField(
+                                                    textAlign: TextAlign.center,
+                                                    controller: setHour,
+                                                    maxLength: 2,
+                                                    keyboardType:
+                                                        TextInputType.number,
+                                                    inputFormatters: [
+                                                      FilteringTextInputFormatter
+                                                          .digitsOnly
+                                                    ],
+                                                    style: const TextStyle(
+                                                        fontSize: 18),
+                                                    onChanged: (value) {},
+                                                    decoration:
+                                                        const InputDecoration(
+                                                      labelText: 'ชั่วโมง',
+                                                      counterText: '',
+                                                      labelStyle: TextStyle(
+                                                          fontSize: 15),
+                                                      focusedBorder:
+                                                          OutlineInputBorder(),
+                                                      enabledBorder:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                          Radius.circular(10.0),
+                                                        ),
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
+                                              const Text(':'),
+                                              Expanded(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 8.0),
+                                                  child: TextField(
+                                                    textAlign: TextAlign.center,
+                                                    controller:
+                                                        setMin, // Use a separate TextEditingController for minutes
+                                                    maxLength: 2,
+                                                    keyboardType:
+                                                        TextInputType.number,
+                                                    inputFormatters: [
+                                                      FilteringTextInputFormatter
+                                                          .digitsOnly
+                                                    ],
+                                                    style: const TextStyle(
+                                                        fontSize: 18),
+                                                    onChanged: (value) {},
+                                                    decoration:
+                                                        const InputDecoration(
+                                                      labelText: 'นาที',
+                                                      counterText: '',
+                                                      labelStyle: TextStyle(
+                                                          fontSize: 15),
+                                                      focusedBorder:
+                                                          OutlineInputBorder(),
+                                                      enabledBorder:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                          Radius.circular(10.0),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                         const SizedBox(height: 10),
@@ -512,13 +524,30 @@ class _LightScreenState extends State<LightScreen> {
                                                       'ESP32/setControl/setAutoMode/motor')
                                                   .set(statusAuto);
 
-                                              int? setHourValue =
-                                                  int.tryParse(setHour.text);
-                                              if (setHourValue != null) {
+                                              String setKeepTime =
+                                                  '${setHour.text}:${setMin.text}';
+
+                                              if (setKeepTime != null) {
+                                                if (statusAuto == 0) {
+                                                } else {
+                                                  await databaseReference
+                                                      .child(
+                                                          'ESP32/setControl/MOTOR/hour')
+                                                      .set(setKeepTime);
+                                                }
+                                              }
+                                              int hours =
+                                                  int.parse(setHour.text);
+                                              int minutes =
+                                                  int.parse(setMin.text);
+                                              int minConverter =
+                                                  (hours * 60) + minutes;
+                                              if (statusAuto == 0) {
+                                              } else {
                                                 await databaseReference
                                                     .child(
-                                                        'ESP32/setControl/MOTOR/setAuto/hour')
-                                                    .set(setHourValue);
+                                                        'ESP32/setControl/MOTOR/minConverter')
+                                                    .set(minConverter);
                                               }
                                             },
                                           ),
