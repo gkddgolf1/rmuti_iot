@@ -138,6 +138,50 @@ class _PlantingScreenState extends State<PlantingScreen> {
   }
 }
 
+String getTimeStringFromUrl(String url) {
+  // แบ่ง URL ด้วย '/'
+  List<String> parts = url.split('%2F');
+
+  // นับจำนวนส่วนที่ได้หลังจากการแบ่ง URL
+  int numberOfParts = parts.length;
+
+  // ถ้ามีส่วนมากกว่า 1 (ไม่นับส่วนแรกที่เป็น "https:")
+  if (numberOfParts > 1) {
+    // ดึงส่วนที่ 2 ถึงส่วนสุดท้าย
+    List<String> fileNameParts = parts.sublist(1, numberOfParts);
+
+    // ถ้ามี '?' ในส่วนสุดท้าย (ที่มีแท็ก 'token' และ 'alt')
+    int questionMarkIndex = fileNameParts.last.indexOf('?');
+    if (questionMarkIndex != -1) {
+      // นำส่วนก่อน '?' เป็นชื่อไฟล์
+      String fileName = fileNameParts.last.substring(0, questionMarkIndex);
+
+      // แยกส่วนวันที่และเวลาจากชื่อไฟล์
+      List<String> dateAndTimeParts = fileName.split('_');
+
+      // ถ้ามีส่วนที่ต้องการหรือมีข้อผิดพลาด
+      if (dateAndTimeParts.length >= 5) {
+        // นำ 5 ส่วนแรก (รวมถึง '_' ที่อยู่ระหว่างส่วนที่ 4 และ 5) มารวมกัน
+        String dateString = dateAndTimeParts.getRange(0, 3).join('/');
+        String timeString = dateAndTimeParts.getRange(3, 5).join(':');
+
+        // แยกวันที่และเวลา
+        List<String> dateParts = dateString.split('/');
+        List<String> timeParts = timeString.split(':');
+
+        // สลับตำแหน่งระหว่างวันที่และเวลา
+        String formattedString =
+            'วันที่ ${dateParts[2]}/${dateParts[1]}/${dateParts[0]} \nเวลา ${timeParts[0]}:${timeParts[1]} น.';
+
+        return formattedString;
+      }
+    }
+  }
+
+  // ถ้าไม่พบส่วนที่ต้องการหรือมีข้อผิดพลาด
+  return '';
+}
+
 class ImagePage extends StatelessWidget {
   final String imageUrl;
 
@@ -145,11 +189,22 @@ class ImagePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Image.network(
-        imageUrl,
-        fit: BoxFit.contain,
-      ),
+    return Column(
+      children: [
+        Text(
+          '\n${getTimeStringFromUrl(imageUrl)}',
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16.0,
+          ),
+        ),
+        Expanded(
+          child: Image.network(
+            imageUrl,
+            fit: BoxFit.contain,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -172,26 +227,13 @@ Future<List<String>> getImageUrls() async {
     imageUrls.add(url);
   });
 
+  // เรียกใช้ฟังก์ชันเพื่อดึงชื่อไฟล์
+  List<String> fileNames = imageUrls.map(getTimeStringFromUrl).toList();
+  print(fileNames);
+
   // เรียงลำดับ URL ตามชื่อไฟล์
   imageUrls.sort();
   print(imageUrls);
 
   return imageUrls;
-}
-
-class MyImageWidget extends StatelessWidget {
-  final String imageUrl;
-
-  const MyImageWidget({super.key, required this.imageUrl});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.all(8.0),
-      child: Image.network(
-        imageUrl,
-        fit: BoxFit.contain,
-      ),
-    );
-  }
 }
