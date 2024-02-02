@@ -121,13 +121,13 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
       rangeColor = Colors.red;
     }
 
-    // เปลี่ยนสี slide ความชื้น
+    /* // เปลี่ยนสี slide ความชื้น
     Color soilColor = Colors.black;
     if (appProvider.setSoilmoisture >= 0 && appProvider.setSoilmoisture <= 80) {
       soilColor = Colors.grey.shade700;
     } else {
       soilColor = Colors.red;
-    }
+    } */
 
     // ประกาศตัวแปร wheel ขึ้นมาเพื่อเก็บไปเป็นค่าวงล้อ
     double wheel = appProvider.soilMoisture.toDouble();
@@ -317,9 +317,6 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                       ? a
                                       : b,
                                 );
-                                /* setState(() {
-                                  appProvider.speedPump = nearestAllowedValue;
-                                }); */
                                 int speedpump = nearestAllowedValue;
                                 databaseReference
                                     .child('ESP32/setControl/PUMP/speedPump')
@@ -352,37 +349,59 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                           ),
                           SfSliderTheme(
                             data: SfSliderThemeData(
-                              tooltipBackgroundColor: Colors.blue,
+                              tooltipBackgroundColor: rangeColor,
                               overlayColor: Colors.transparent,
-                              activeTrackColor: soilColor,
-                              thumbColor: soilColor,
+                              activeTrackColor: rangeColor,
+                              thumbColor: rangeColor,
                               inactiveTrackColor: Colors.grey.shade500,
                             ),
-                            child: SfSlider(
+                            child: SfRangeSlider(
                               enableTooltip: true,
                               numberFormat: NumberFormat('#'),
+                              activeColor: rangeColor,
+                              inactiveColor: Colors.grey[500],
                               showLabels: true,
                               showTicks: true,
                               showDividers: true,
                               interval: 10,
                               min: 10,
                               max: 50,
-                              value: appProvider.setSoilmoisture.toDouble(),
-                              onChanged: (dynamic value) {
-                                int roundedValue = value.round();
-                                int nearestAllowedValueSet =
+                              values: SfRangeValues(appProvider.setSoilMin,
+                                  appProvider.setSoilMax),
+                              onChanged: (SfRangeValues value) {
+                                dynamic roundedValueStart = value.start;
+                                dynamic nearestAllowedValueStart =
                                     allowedValuesSet.reduce(
-                                  (a, b) => (roundedValue - a).abs() <
-                                          (roundedValue - b).abs()
+                                  (a, b) => (roundedValueStart - a).abs() <
+                                          (roundedValueStart - b).abs()
                                       ? a
                                       : b,
                                 );
+                                dynamic roundedValueEnd = value.end;
+                                dynamic nearestAllowedValueEnd =
+                                    allowedValuesSet.reduce(
+                                  (a, b) => (roundedValueEnd - a).abs() <
+                                          (roundedValueEnd - b).abs()
+                                      ? a
+                                      : b,
+                                );
+                                dynamic soilMin = appProvider.setSoilMin;
+                                dynamic soilMax = appProvider.setSoilMax;
 
-                                int setsoilmoisture = nearestAllowedValueSet;
+                                setState(() {
+                                  soilMin = nearestAllowedValueStart;
+                                  soilMax = nearestAllowedValueEnd;
+                                });
+
+                                int setSoilMin = soilMin;
+                                int setSoilMax = soilMax;
+
                                 databaseReference
-                                    .child(
-                                        'ESP32/setControl/PUMP/setSoilmoilsture')
-                                    .set(setsoilmoisture);
+                                    .child('ESP32/setControl/PUMP/setSoilMin')
+                                    .set(setSoilMin);
+                                databaseReference
+                                    .child('ESP32/setControl/PUMP/setSoilMax')
+                                    .set(setSoilMax);
                               },
                             ),
                           ),

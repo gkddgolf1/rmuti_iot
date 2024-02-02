@@ -138,6 +138,35 @@ class _PlantingScreenState extends State<PlantingScreen> {
   }
 }
 
+Future<List<String>> getImageUrls() async {
+  List<String> imageUrls = [];
+
+  // กำหนด path ของโฟลเดอร์ใน Firebase Storage
+  String path = 'data';
+
+  // ดึงอ้างอิงของ Firebase Storage
+  final Reference storageRef = FirebaseStorage.instance.ref().child(path);
+
+  // ดึงรายการของไฟล์ในโฟลเดอร์
+  final ListResult result = await storageRef.listAll();
+
+  // นำ URL ของรูปภาพทั้งหมดมาเก็บไว้
+  await Future.forEach(result.items, (Reference ref) async {
+    String url = await ref.getDownloadURL();
+    imageUrls.add(url);
+  });
+
+  // เรียกใช้ฟังก์ชันเพื่อดึงชื่อไฟล์
+  List<String> fileNames = imageUrls.map(getTimeStringFromUrl).toList();
+  print(fileNames);
+
+  // เรียงลำดับ URL ตามชื่อไฟล์
+  imageUrls.sort();
+  print(imageUrls);
+
+  return imageUrls;
+}
+
 String getTimeStringFromUrl(String url) {
   // แบ่ง URL ด้วย '/'
   List<String> parts = url.split('%2F');
@@ -207,33 +236,4 @@ class ImagePage extends StatelessWidget {
       ],
     );
   }
-}
-
-Future<List<String>> getImageUrls() async {
-  List<String> imageUrls = [];
-
-  // กำหนด path ของโฟลเดอร์ใน Firebase Storage
-  String path = 'data';
-
-  // ดึงอ้างอิงของ Firebase Storage
-  final Reference storageRef = FirebaseStorage.instance.ref().child(path);
-
-  // ดึงรายการของไฟล์ในโฟลเดอร์
-  final ListResult result = await storageRef.listAll();
-
-  // นำ URL ของรูปภาพทั้งหมดมาเก็บไว้
-  await Future.forEach(result.items, (Reference ref) async {
-    String url = await ref.getDownloadURL();
-    imageUrls.add(url);
-  });
-
-  // เรียกใช้ฟังก์ชันเพื่อดึงชื่อไฟล์
-  List<String> fileNames = imageUrls.map(getTimeStringFromUrl).toList();
-  print(fileNames);
-
-  // เรียงลำดับ URL ตามชื่อไฟล์
-  imageUrls.sort();
-  print(imageUrls);
-
-  return imageUrls;
 }

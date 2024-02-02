@@ -253,18 +253,26 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                 return formattedText;
                               },
                               onChanged: (dynamic value) {
+                                // เมื่อค่าเปลี่ยนแปลง ทำการปัดค่าทศนิยมเป็นจำนวนเต็ม
                                 int roundedValue = value.round();
+
+                                // หาค่าใน allowedValues ที่ใกล้ที่สุดกับ roundedValue
                                 int nearestAllowedValue = allowedValues.reduce(
                                   (a, b) => (roundedValue - a).abs() <
                                           (roundedValue - b).abs()
                                       ? a
                                       : b,
                                 );
+
+                                // นำค่าที่หาได้มาเก็บไว้ในตัวแปร test
                                 int test = nearestAllowedValue;
+
+                                // เขียนค่า test ลงใน Firebase Realtime Database
                                 databaseReference
                                     .child('ESP32/setControl/NPK/test')
                                     .set(test);
 
+                                // ตรวจสอบค่าใน nearestAllowedValue แล้วกำหนดค่าใน Firebase Realtime Database ตามเงื่อนไข
                                 if (nearestAllowedValue == 0) {
                                   databaseReference
                                       .child('ESP32/setControl/NPK/NPK')

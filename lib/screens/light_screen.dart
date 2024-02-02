@@ -513,43 +513,55 @@ class _LightScreenState extends State<LightScreen> {
                                             showOnOff: true,
                                             activeColor: toneColor,
                                             onToggle: (value) async {
+                                              // Callback function เมื่อมีการเปลี่ยนสถานะ Toggle
                                               setState(() {
-                                                _statusAuto = value;
+                                                // เริ่มการอัพเดทสถานะใน State ด้วยการใช้ setState
+                                                _statusAuto =
+                                                    value; // อัพเดทค่า _statusAuto ด้วยค่าที่ได้จากการ Toggle
                                               });
 
-                                              int statusAuto = value ? 1 : 0;
+                                              int statusAuto = value
+                                                  ? 1
+                                                  : 0; // กำหนดค่า statusAuto เป็น 1 ถ้า value เป็น true และเป็น 0 ถ้า value เป็น false
 
                                               await databaseReference
                                                   .child(
-                                                      'ESP32/setControl/setAutoMode/motor')
+                                                      'ESP32/setControl/setAutoMode/motor') // เขียนข้อมูลสถานะ Auto Mode ลงใน Firebase Realtime Database
                                                   .set(statusAuto);
 
                                               String setKeepTime =
-                                                  '${setHour.text}:${setMin.text}';
+                                                  '${setHour.text}:${setMin.text}'; // รวมข้อมูลชั่วโมงและนาทีเข้าด้วยกัน
 
                                               if (setKeepTime != null) {
+                                                // ตรวจสอบว่า setKeepTime มีค่าหรือไม่
                                                 if (statusAuto == 0) {
+                                                  // ถ้าสถานะ Auto เป็น 0 (ปิด)
+                                                  // ไม่ทำอะไร
                                                 } else {
                                                   await databaseReference
                                                       .child(
-                                                          'ESP32/setControl/MOTOR/hour')
+                                                          'ESP32/setControl/MOTOR/hour') // เขียนข้อมูลชั่วโมงที่ต้องการเก็บลงใน Firebase Realtime Database
                                                       .set(setKeepTime);
                                                 }
                                               }
-                                              int hours =
-                                                  int.parse(setHour.text);
-                                              int minutes =
-                                                  int.parse(setMin.text);
-                                              int minConverter =
-                                                  (hours * 60) + minutes;
+
+                                              int hours = int.parse(setHour
+                                                  .text); // แปลงข้อความใน setHour เป็นตัวเลข
+                                              int minutes = int.parse(setMin
+                                                  .text); // แปลงข้อความใน setMin เป็นตัวเลข
+                                              int minConverter = (hours * 60) +
+                                                  minutes; // คำนวณเวลาในรูปแบบนาที
+
                                               if (statusAuto == 0) {
+                                                // ถ้าสถานะ Auto เป็น 0 (ปิด)
+                                                // ไม่ทำอะไร
                                               } else {
                                                 await databaseReference
                                                     .child(
-                                                        'ESP32/setControl/MOTOR/minConverter')
+                                                        'ESP32/setControl/MOTOR/minConverter') // เขียนข้อมูลรูปแบบนาทีลงใน Firebase Realtime Database
                                                     .set(minConverter);
                                               }
-                                            },
+                                            }, // ปิด Callback function
                                           ),
                                         ),
                                       ],

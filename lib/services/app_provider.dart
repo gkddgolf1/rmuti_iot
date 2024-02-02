@@ -13,7 +13,8 @@ class AppProvider extends ChangeNotifier {
   bool _statusAuto = false;
   bool _isSwitched = false;
   int _speedPump = 0;
-  int _setSoilmoisture = 0;
+  int _setSoilMax = 0;
+  int _setSoilMin = 0;
   int _soilMoisture = 0;
 
   // Fertilizer
@@ -47,7 +48,8 @@ class AppProvider extends ChangeNotifier {
   bool get statusAuto => _statusAuto;
   bool get isSwitched => _isSwitched;
   int get speedPump => _speedPump;
-  int get setSoilmoisture => _setSoilmoisture;
+  int get setSoilMax => _setSoilMax;
+  int get setSoilMin => _setSoilMin;
   int get soilMoisture => _soilMoisture;
 
   // Fertilizer
@@ -79,7 +81,8 @@ class AppProvider extends ChangeNotifier {
     updateStatusAuto(context);
     updateSwitched(context);
     updateSpeedPump(context);
-    updateSetSoilmoisture(context);
+    updateSetSoilMax(context);
+    updateSetSoilMin(context);
     updateSoilMoisture(context);
     updateFertilizerAuto(context);
     updateSetTimeFertilizer(context);
@@ -192,15 +195,29 @@ class AppProvider extends ChangeNotifier {
   }
 
   // ฟังก์ชันตั้งค่าความชื้นดิน
-  void updateSetSoilmoisture(BuildContext context) {
+  void updateSetSoilMax(BuildContext context) {
     _databaseReference
-        .child('ESP32/setControl/PUMP/setSoilmoilsture')
+        .child('ESP32/setControl/PUMP/setSoilMax')
         .onValue
         .listen((event) {
-      int setSoilmoisture = (event.snapshot.value as int);
+      int setSoilMax = (event.snapshot.value as int);
 
       if (isWidgetMounted(context)) {
-        _setSoilmoisture = setSoilmoisture;
+        _setSoilMax = setSoilMax;
+        notifyListeners();
+      }
+    });
+  }
+
+  void updateSetSoilMin(BuildContext context) {
+    _databaseReference
+        .child('ESP32/setControl/PUMP/setSoilMin')
+        .onValue
+        .listen((event) {
+      int setSoilMin = (event.snapshot.value as int);
+
+      if (isWidgetMounted(context)) {
+        _setSoilMin = setSoilMin;
         notifyListeners();
       }
     });
