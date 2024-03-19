@@ -268,7 +268,7 @@ class _LightScreenState extends State<LightScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "บันทึกการเก็บแสง: ${appProvider.minConverter}/${appProvider.record} นาที",
+                              "บันทึกการเก็บแสง: ${appProvider.record}/${appProvider.minConverter} นาที",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -528,6 +528,17 @@ class _LightScreenState extends State<LightScreen> {
                                                   .child(
                                                       'ESP32/setControl/setAutoMode/motor') // เขียนข้อมูลสถานะ Auto Mode ลงใน Firebase Realtime Database
                                                   .set(statusAuto);
+
+                                              if (statusAuto == 0) {
+                                                databaseReference
+                                                    .child(
+                                                        'ESP32/views/Lux_Record/min_today')
+                                                    .set(0);
+                                                databaseReference
+                                                    .child(
+                                                        'ESP32/setControl/MOTOR/minConverter')
+                                                    .set(0);
+                                              }
 
                                               String setKeepTime =
                                                   '${setHour.text}:${setMin.text}'; // รวมข้อมูลชั่วโมงและนาทีเข้าด้วยกัน

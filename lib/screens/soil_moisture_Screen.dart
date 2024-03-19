@@ -349,21 +349,22 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                           ),
                           SfSliderTheme(
                             data: SfSliderThemeData(
-                              tooltipBackgroundColor: rangeColor,
+                              tooltipBackgroundColor: Colors.grey.shade500,
                               overlayColor: Colors.transparent,
-                              activeTrackColor: rangeColor,
-                              thumbColor: rangeColor,
+                              activeTrackColor: Colors.grey.shade500,
+                              thumbColor: Colors.grey.shade500,
                               inactiveTrackColor: Colors.grey.shade500,
                             ),
                             child: SfRangeSlider(
                               enableTooltip: true,
                               numberFormat: NumberFormat('#'),
-                              activeColor: rangeColor,
+                              activeColor: Colors.grey.shade700,
                               inactiveColor: Colors.grey[500],
                               showLabels: true,
                               showTicks: true,
                               showDividers: true,
                               interval: 10,
+                              stepSize: 10,
                               min: 10,
                               max: 50,
                               values: SfRangeValues(appProvider.setSoilMin,
@@ -385,6 +386,7 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
                                       ? a
                                       : b,
                                 );
+
                                 dynamic soilMin = appProvider.setSoilMin;
                                 dynamic soilMax = appProvider.setSoilMax;
 

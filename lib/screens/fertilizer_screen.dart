@@ -36,7 +36,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
   DateTime timestop = DateTime(15, 55);
 
   // ค่าของ Slid
-  List<int> allowedValues = [0, 50, 100];
+  List<int> allowedValues = [1, 2, 3];
 
   @override
   void initState() {
@@ -236,18 +236,18 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                               numberFormat: NumberFormat('#'),
                               showLabels: true,
                               showTicks: true,
-                              interval: 50,
-                              min: 0,
-                              max: 100,
+                              interval: 1,
+                              min: 1,
+                              max: 3,
                               value: appProvider.setNPK.toDouble(),
                               labelFormatterCallback:
                                   (dynamic value, String formattedText) {
                                 switch (value) {
-                                  case 0:
+                                  case 1:
                                     return 'น้อย';
-                                  case 50:
+                                  case 2:
                                     return 'ปานกลาง';
-                                  case 100:
+                                  case 3:
                                     return 'มาก';
                                 }
                                 return formattedText;
@@ -273,15 +273,15 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                     .set(test);
 
                                 // ตรวจสอบค่าใน nearestAllowedValue แล้วกำหนดค่าใน Firebase Realtime Database ตามเงื่อนไข
-                                if (nearestAllowedValue == 0) {
+                                if (nearestAllowedValue == 1) {
                                   databaseReference
                                       .child('ESP32/setControl/NPK/NPK')
                                       .set("Low");
-                                } else if (nearestAllowedValue == 50) {
+                                } else if (nearestAllowedValue == 2) {
                                   databaseReference
                                       .child('ESP32/setControl/NPK/NPK')
                                       .set("Normal");
-                                } else if (nearestAllowedValue == 100) {
+                                } else if (nearestAllowedValue == 3) {
                                   databaseReference
                                       .child('ESP32/setControl/NPK/NPK')
                                       .set("High");
