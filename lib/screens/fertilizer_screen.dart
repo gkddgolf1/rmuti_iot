@@ -471,12 +471,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                       color: toneColor,
                                     ),
                                   ),
-                                  /* Text(
-                                    'Set Time Off',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
-                                  ), */
+                                 
                                 ],
                               ),
                             ),
@@ -527,46 +522,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                     ),
                                   ),
                                 ),
-                                /* Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(horizontal: 0),
-                                  child: SizedBox(
-                                    width: screenWidth * 0.42,
-                                    child: CupertinoButton(
-                                      // Display a CupertinoDatePicker in time picker mode.
-                                      onPressed: () => _showDialog(
-                                        CupertinoDatePicker(
-                                          initialDateTime: timestop,
-                                          mode: CupertinoDatePickerMode.time,
-                                          use24hFormat: true,
-                                          // This is called when the user changes the time.
-                                          onDateTimeChanged:
-                                              (DateTime newTime) {
-                                            setState(() => timestop = newTime);
-                                          },
-                                        ),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          const Text(
-                                            'Time : ',
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                color: Colors.black),
-                                          ),
-                                          Text(
-                                            '${timestop.hour} : ${timestop.minute}',
-                                            style: const TextStyle(
-                                              fontSize: 20,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ), */
+                               
                               ],
                             ),
                             Row(
@@ -594,30 +550,7 @@ class _FertilizerScreenState extends State<FertilizerScreen> {
                                     },
                                   ),
                                 ),
-                                /* Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: elevatedButton(
-                                    text: "Set Stop",
-                                    colors: [
-                                      const Color.fromARGB(255, 24, 116, 24),
-                                      const Color.fromARGB(255, 26, 160, 26),
-                                      const Color.fromARGB(255, 24, 156, 24),
-                                    ],
-                                    onPressed: () {
-                                      int hour = timestop.hour;
-                                      int minute = timestop.minute;
-
-                                      databaseReference
-                                          .child(
-                                              'ESP32/setControl/NPK/setTimeStop/hour')
-                                          .set(hour);
-                                      databaseReference
-                                          .child(
-                                              'ESP32/setControl/NPK/setTimeStop/minute')
-                                          .set(minute);
-                                    },
-                                  ),
-                                ), */
+                               
                               ],
                             )
                           ],
