@@ -131,11 +131,11 @@ class _SoilMoistureScreenState extends State<SoilMoistureScreen> {
 
     // ประกาศตัวแปร wheel ขึ้นมาเพื่อเก็บไปเป็นค่าวงล้อ
     double wheel = appProvider.soilMoisture.toDouble();
-    if (wheel >= 1 && wheel <= 100) {
-      wheel = wheel / 100;
-    } else if (wheel > 100) {
-      wheel = 100;
-      wheel = wheel / 100;
+    if (wheel >= 1 && wheel <= 50) {
+      wheel = wheel / 50;
+    } else if (wheel > 50) {
+      wheel = 50;
+      wheel = wheel / 50;
     }
 
     //ขนาด TextField
