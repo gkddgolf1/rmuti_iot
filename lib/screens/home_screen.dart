@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rmuti_iot/screens/planting_screen.dart';
 import 'package:rmuti_iot/screens/soil_moisture_Screen.dart';
+import 'package:rmuti_iot/services/models/firebase_provider.dart';
 
 import 'control_screen.dart';
 import 'fertilizer_screen.dart';
@@ -20,7 +21,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final databaseReference = FirebaseDatabase.instance.ref();
+  final FirebaseProvider firebaseProvider = FirebaseProvider();
   @override
   void initState() {
     super.initState();
@@ -30,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final appProvider = Provider.of<AppProvider>(context);
+    firebaseProvider.readData((String onData) {}, context);
     return Scaffold(
       backgroundColor: Colors.indigo.shade50,
       body: SafeArea(
@@ -51,42 +52,63 @@ class _HomeScreenState extends State<HomeScreen> {
                   physics: const BouncingScrollPhysics(),
                   children: [
                     const SizedBox(height: 32),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              '${appProvider.temperature} °C',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
-                                color: textColor,
+                    StreamBuilder<Object>(
+                        stream: FirebaseDatabase.instance
+                            .ref()
+                            .child('esp')
+                            .onValue,
+                        builder: (context, snapshot) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Row(
+                                children: [
+                                  Text(
+                                    firebaseProvider.temp1.text.isNotEmpty
+                                        ? '${firebaseProvider.temp1.text} °C'
+                                        : 'รอสถานะ',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      color: textColor,
+                                    ),
+                                  ),
+                                  Image.asset(
+                                    'images/temp.png',
+                                    height: 30,
+                                  ),
+                                ],
                               ),
-                            ),
-                            Image.asset(
-                              'images/temp.png',
-                              height: 30,
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text('${appProvider.humidity} %',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20,
-                                  color: textColor,
-                                )),
-                            Image.asset(
-                              'images/hum.png',
-                              height: 30,
-                              //color: Colors.grey[800],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                              Row(
+                                children: [
+                                  Text(
+                                      firebaseProvider.hum1.text.isNotEmpty
+                                          ? '${firebaseProvider.hum1.text} %'
+                                          : 'รอสถานะ',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20,
+                                        color: textColor,
+                                      )),
+                                  Image.asset(
+                                    'images/hum.png',
+                                    height: 30,
+                                    //color: Colors.grey[800],
+                                  ),
+                                ],
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.refresh),
+                                color: Colors.blue,
+                                iconSize: 35,
+                                onPressed: () {
+                                  firebaseProvider.readTempHum();
+                                  setState(() {});
+                                },
+                              )
+                            ],
+                          );
+                        }),
                     const SizedBox(height: 20),
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 10.0),
@@ -110,10 +132,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         _cardMenu(
                           onTap: () {
-                            int sendsoil = 1;
+                            /* int sendsoil = 1;
                             databaseReference
                                 .child('ESP32/setControl/view/soil')
-                                .set(sendsoil);
+                                .set(sendsoil); */
 
                             Navigator.push(
                               context,
@@ -122,10 +144,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                     const SoilMoistureScreen(),
                               ),
                             ).then((_) {
-                              int sendsoil = 0;
+                              /* int sendsoil = 0;
                               databaseReference
                                   .child('ESP32/setControl/view/soil')
-                                  .set(sendsoil);
+                                  .set(sendsoil); */
                             });
                           },
                           icon: 'images/humidity.png',
@@ -134,10 +156,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         _cardMenu(
                           onTap: () {
-                            int sendNPK = 1;
+                            /* int sendNPK = 1;
                             databaseReference
                                 .child('ESP32/setControl/view/npk')
-                                .set(sendNPK);
+                                .set(sendNPK); */
 
                             Navigator.push(
                               context,
@@ -145,10 +167,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 builder: (context) => const FertilizerScreen(),
                               ),
                             ).then((_) {
-                              int sendNPK = 0;
+                              /* int sendNPK = 0;
                               databaseReference
                                   .child('ESP32/setControl/view/npk')
-                                  .set(sendNPK);
+                                  .set(sendNPK); */
                             });
                           },
                           icon: 'images/fertilizer.png',
@@ -163,10 +185,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         _cardMenu(
                           onTap: () {
-                            int sendLux = 1;
+                            /* int sendLux = 1;
                             databaseReference
                                 .child('ESP32/setControl/view/lux')
-                                .set(sendLux);
+                                .set(sendLux); */
 
                             Navigator.push(
                               context,
@@ -174,10 +196,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 builder: (context) => const LightScreen(),
                               ),
                             ).then((_) {
-                              int sendLux = 0;
+                              /* int sendLux = 0;
                               databaseReference
                                   .child('ESP32/setControl/view/lux')
-                                  .set(sendLux);
+                                  .set(sendLux); */
                             });
                           },
                           icon: 'images/sun.png',
@@ -186,10 +208,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         _cardMenu(
                           onTap: () {
-                            int sendPlant = 1;
+                            /* int sendPlant = 1;
                             databaseReference
                                 .child('ESP32/setControl/view/plant')
-                                .set(sendPlant);
+                                .set(sendPlant); */
 
                             Navigator.push(
                               context,
@@ -197,10 +219,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 builder: (context) => const PlantingScreen(),
                               ),
                             ).then((_) {
-                              int sendPlant = 0;
+                              /* int sendPlant = 0;
                               databaseReference
                                   .child('ESP32/setControl/view/plant')
-                                  .set(sendPlant);
+                                  .set(sendPlant); */
                             });
                           },
                           icon: 'images/picture.png',
@@ -215,10 +237,10 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         _cardMenu(
                           onTap: () {
-                            int sendSetting = 1;
+                            /* int sendSetting = 1;
                             databaseReference
                                 .child('ESP32/setControl/view/setting')
-                                .set(sendSetting);
+                                .set(sendSetting); */
 
                             Navigator.push(
                               context,
@@ -226,10 +248,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                 builder: (context) => const SettingScreen(),
                               ),
                             ).then((_) {
-                              int sendSetting = 0;
+                              /* int sendSetting = 0;
                               databaseReference
                                   .child('ESP32/setControl/view/setting')
-                                  .set(sendSetting);
+                                  .set(sendSetting); */
                             });
                           },
                           icon: 'images/control.png',
